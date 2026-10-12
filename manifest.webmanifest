@@ -1,0 +1,17 @@
+{
+  "name": "The Place Department",
+  "short_name": "The Place",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#12100e",
+  "theme_color": "#12100e",
+  "description": "The Place Department assigns the apartment. The apartment keeps its own hours.",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

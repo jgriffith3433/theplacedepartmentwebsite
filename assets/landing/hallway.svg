@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="A narrow hallway with one door left ajar.">
+  <rect width="1600" height="900" fill="#100e0c"/>
+  <polygon points="200,80 1400,80 1180,820 420,820" fill="#1a1714"/>
+  <polygon points="700,260 900,260 980,820 620,820" fill="#241e18"/>
+  <rect x="250" y="180" width="160" height="420" fill="#16130f" stroke="#3a3228" stroke-width="6"/>
+  <rect x="470" y="220" width="130" height="360" fill="#16130f" stroke="#3a3228" stroke-width="6"/>
+  <rect x="1000" y="220" width="130" height="360" fill="#16130f" stroke="#3a3228" stroke-width="6"/>
+  <rect x="1180" y="180" width="160" height="420" fill="#2a2118" stroke="#f0b36a" stroke-width="4"/>
+  <polygon points="1340,180 1500,230 1500,640 1340,600" fill="#f0b36a" opacity="0.28"/>
+  <rect x="620" y="700" width="360" height="28" fill="#3a2e24"/>
+  <circle cx="300" cy="390" r="6" fill="#8eae86"/>
+  <circle cx="520" cy="400" r="5" fill="#8eae86" opacity="0.6"/>
+  <circle cx="1240" cy="390" r="6" fill="#f0b36a"/>
+</svg>

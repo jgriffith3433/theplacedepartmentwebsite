@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <!--
+      Unity WebGL drop-in, same layout as sickofitgamewebsite/Game.
+
+      Export the player with product name ThePlacedApartment and drop the build here:
+
+        Game/v1/ThePlacedApartment/Build/ThePlacedApartment.loader.js
+        Game/v1/ThePlacedApartment/Build/ThePlacedApartment.data.unityweb
+        Game/v1/ThePlacedApartment/Build/ThePlacedApartment.framework.js.unityweb
+        Game/v1/ThePlacedApartment/Build/ThePlacedApartment.wasm.unityweb
+        Game/v1/ThePlacedApartment/StreamingAssets/   (if the build has any)
+
+      Use Gzip or Brotli with Decompression Fallback so Unity emits .unityweb
+      files. GitHub Pages does not send Content-Encoding for precompressed
+      files; the Unity loader decompresses .unityweb itself.
+
+      A new publish goes in Game/<version>/ThePlacedApartment/ and gameVersion
+      below changes to match that folder.
+    -->
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#100e0c">
+    <title>The Place Department</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+
+      html, body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: #100e0c;
+        position: fixed;
+        overscroll-behavior: none;
+        touch-action: none;
+        font-family: Georgia, "Times New Roman", serif;
+      }
+
+      #unity-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #100e0c;
+      }
+
+      #unity-canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        background: #100e0c;
+        touch-action: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      #unity-loading-bar {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        display: block;
+        z-index: 1500;
+        text-align: center;
+        width: min(320px, 80vw);
+      }
+
+      #unity-mark {
+        color: #f6f1e8;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-size: 13px;
+        margin-bottom: 18px;
+      }
+
+      #unity-progress-bar-empty {
+        width: 100%;
+        height: 8px;
+        margin: 0 auto;
+        background: rgba(246, 241, 232, 0.16);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      #unity-progress-bar-full {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, #f0b36a, #efe2cc);
+        border-radius: 999px;
+        transition: width 0.3s ease;
+      }
+
+      #unity-warning {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        max-width: 80%;
+      }
+
+      #unity-warning > div {
+        background: rgba(90, 24, 18, 0.94);
+        color: #f6f1e8;
+        padding: 12px 18px;
+        border-radius: 6px;
+        margin: 5px 0;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      #rotate-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(16, 14, 12, 0.96);
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 3000;
+      }
+
+      #rotate-overlay.show {
+        display: flex;
+      }
+
+      #rotate-message {
+        color: #f6f1e8;
+        font-family: Arial, sans-serif;
+        font-size: 22px;
+        text-align: center;
+        padding: 0 20px;
+        letter-spacing: 0.04em;
+      }
+
+      #version-display {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 9999;
+        background: rgba(16, 14, 12, 0.72);
+        color: #e7d3b0;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        font-size: 12px;
+        cursor: pointer;
+        border: 1px solid rgba(231, 211, 176, 0.28);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="version-display">v1</div>
+    <div id="rotate-overlay">
+      <div id="rotate-message">Turn the phone sideways</div>
+    </div>
+    <div id="unity-container">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-mark">The Place Department</div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+      <div id="unity-warning"></div>
+    </div>
+    <script>
+      var consoleLogs = [];
+      var originalConsole = {
+        log: console.log,
+        warn: console.warn,
+        error: console.error,
+        info: console.info
+      };
+
+      function captureLog(type, args) {
+        var timestamp = new Date().toISOString();
+        var message = Array.from(args).map(function (arg) {
+          if (typeof arg === "object") {
+            try { return JSON.stringify(arg); }
+            catch (e) { return String(arg); }
+          }
+          return String(arg);
+        }).join(" ");
+        consoleLogs.push("[" + timestamp + "] [" + type.toUpperCase() + "] " + message);
+      }
+
+      console.log = function () {
+        captureLog("log", arguments);
+        originalConsole.log.apply(console, arguments);
+      };
+      console.warn = function () {
+        captureLog("warn", arguments);
+        originalConsole.warn.apply(console, arguments);
+      };
+      console.error = function () {
+        captureLog("error", arguments);
+        originalConsole.error.apply(console, arguments);
+      };
+
+      var canvas = document.querySelector("#unity-canvas");
+      var container = document.querySelector("#unity-container");
+
+      var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ||
+        ("ontouchstart" in window);
+
+      var isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+      function unityShowBanner(msg, type) {
+        var warningBanner = document.querySelector("#unity-warning");
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? "block" : "none";
+        }
+        var div = document.createElement("div");
+        div.textContent = msg;
+        warningBanner.appendChild(div);
+        if (type !== "error") {
+          setTimeout(function () {
+            if (warningBanner.contains(div)) warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
+
+      var gameName = "ThePlacedApartment";
+      var gameVersion = "v1";
+
+      var versionDisplay = document.getElementById("version-display");
+      versionDisplay.textContent = gameVersion;
+      versionDisplay.addEventListener("click", function () {
+        var logText = consoleLogs.join("\n");
+        if (!logText) {
+          versionDisplay.textContent = "No logs";
+          setTimeout(function () { versionDisplay.textContent = gameVersion; }, 1000);
+          return;
+        }
+        navigator.clipboard.writeText(logText).then(function () {
+          versionDisplay.textContent = "Copied";
+          setTimeout(function () { versionDisplay.textContent = gameVersion; }, 1000);
+        }).catch(function () {
+          versionDisplay.textContent = "Copy failed";
+          setTimeout(function () { versionDisplay.textContent = gameVersion; }, 1000);
+        });
+      });
+
+      var buildUrl = gameVersion + "/" + gameName + "/Build/" + gameName;
+      var loaderUrl = buildUrl + ".loader.js?v=" + gameVersion;
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + ".data.unityweb?v=" + gameVersion,
+        frameworkUrl: buildUrl + ".framework.js.unityweb?v=" + gameVersion,
+        codeUrl: buildUrl + ".wasm.unityweb?v=" + gameVersion,
+        streamingAssetsUrl: gameVersion + "/" + gameName + "/StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "The Placed Apartment",
+        productVersion: gameVersion,
+        cacheControl: function (url) {
+          if (url.indexOf(".bundle") !== -1) return "immutable";
+          if (url.indexOf(".data") !== -1) return "must-revalidate";
+          return "no-store";
+        },
+        showBanner: unityShowBanner
+      };
+
+      if (isMobile) {
+        document.addEventListener("touchmove", function (e) {
+          if (e.target === canvas || e.target === container) e.preventDefault();
+        }, { passive: false });
+
+        window.addEventListener("scroll", function () {
+          window.scrollTo(0, 0);
+        }, { passive: true });
+      }
+
+      function resizeCanvas() {
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+        if (isMobile && window.visualViewport) {
+          width = window.visualViewport.width;
+          height = window.visualViewport.height;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+      }
+
+      window.addEventListener("resize", resizeCanvas);
+      if (isMobile && window.visualViewport) {
+        window.visualViewport.addEventListener("resize", resizeCanvas);
+      }
+      resizeCanvas();
+
+      var rotateOverlay = document.getElementById("rotate-overlay");
+
+      function checkOrientation() {
+        if (!isMobile) return;
+        var isPortrait = window.innerHeight > window.innerWidth;
+        rotateOverlay.classList.toggle("show", isPortrait);
+      }
+
+      if (isMobile) {
+        checkOrientation();
+        window.addEventListener("resize", checkOrientation);
+        window.addEventListener("orientationchange", checkOrientation);
+      }
+
+      function loadUnityGame() {
+        var script = document.createElement("script");
+        script.src = loaderUrl;
+        script.onload = function () {
+          createUnityInstance(canvas, config, function (progress) {
+            document.querySelector("#unity-progress-bar-full").style.width = (100 * progress) + "%";
+          }).then(function (unityInstance) {
+            document.querySelector("#unity-loading-bar").style.display = "none";
+            window.unityInstance = unityInstance;
+
+            if (!isIOS && container.requestFullscreen) {
+              container.requestFullscreen().catch(function () {});
+            }
+
+            if (!isMobile) {
+              canvas.addEventListener("click", function () {
+                if (document.pointerLockElement !== canvas && canvas.requestPointerLock) {
+                  canvas.requestPointerLock();
+                }
+              });
+            }
+          }).catch(function (message) {
+            unityShowBanner(String(message), "error");
+          });
+        };
+
+        script.onerror = function () {
+          unityShowBanner(
+            "The apartment build is not on this server yet. Export ThePlacedApartment as WebGL (.unityweb) into Game/v1/ThePlacedApartment/Build/.",
+            "error"
+          );
+        };
+
+        document.body.appendChild(script);
+      }
+
+      loadUnityGame();
+    </script>
+  </body>
+</html>
