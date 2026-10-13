@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#12100e" />
     <meta
       name="description"
-      content="The Place Department assigns the apartment. The lights were already on."
+      content="The Place is where things that should not exist are given an address."
     />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/manifest.webmanifest" />
@@ -31,15 +31,6 @@
           </svg>
           The Place Department
         </a>
-        <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="nav-links">
-          Menu
-        </button>
-        <nav class="nav-links" id="nav-links" aria-label="Primary">
-          <a href="./index.html" data-nav="home">Home</a>
-          <a href="./about.html" data-nav="about">About</a>
-          <a href="./characters.html" data-nav="characters">Characters</a>
-          <a class="nav-play-mobile" href="/Game/index.html">Play</a>
-        </nav>
         <div class="nav-tools">
           <a class="nav-play" href="/Game/index.html">Play</a>
         </div>
@@ -47,120 +38,19 @@
     </header>
 
     <main id="content">
-      <section class="hero" aria-label="Introduction">
+      <section class="hero hero-omen" aria-label="Introduction">
         <div class="stage" aria-hidden="true">
           <div class="stage-shot" id="shotA"></div>
           <div class="stage-shot" id="shotB"></div>
           <div class="stage-vignette"></div>
         </div>
         <div class="hero-copy">
-          <p class="eyebrow">Municipal assignment</p>
           <h1 class="display">The Place Department</h1>
-          <p class="lede">
-            A key. A file number. An apartment that was supposed to be empty. The lights were already on.
-          </p>
-          <div class="actions">
-            <a class="play-btn" href="/Game/index.html">Play now</a>
-            <a class="text-link" href="./about.html">About the game</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="band band-tight" aria-labelledby="film-title">
-        <div class="wrap-wide">
-          <p class="film-note" id="film-title">The apartment is a file the department has not closed.</p>
-        </div>
-      </section>
-
-      <section class="band" aria-labelledby="night-title">
-        <div class="wrap-wide">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">The night</p>
-              <h2 class="section-title" id="night-title">From the counter to the unit</h2>
-            </div>
-            <a class="text-link" href="./about.html">Read the story</a>
-          </div>
-          <div class="beats">
-            <a class="beat" href="./about.html#counter">
-              <div class="beat-media">
-                <img src="./assets/landing/counter.svg" alt="A department counter, a stamped folder, and a plate that reads Unit 4, vacant on paper." />
-              </div>
-              <div class="beat-body">
-                <p class="kicker">01 — The counter</p>
-                <h3>Sign the file</h3>
-                <p>The clerk stamps the assignment and slides a key across the wood. The drawer sticks on the way shut.</p>
-              </div>
-            </a>
-            <a class="beat" href="./about.html#apartment">
-              <div class="beat-media">
-                <img src="./assets/landing/apartment.svg" alt="A dark apartment interior, a lamp on, and a night city through a wide window." />
-              </div>
-              <div class="beat-body">
-                <p class="kicker">02 — The apartment</p>
-                <h3>Unit 4</h3>
-                <p>The floor plan matches. The rooms do not. Someone has already been living by the inventory.</p>
-              </div>
-            </a>
-            <a class="beat" href="./about.html#hours">
-              <div class="beat-media">
-                <img src="./assets/landing/hallway.svg" alt="A narrow hallway of closed doors, with one door ajar and light spilling out." />
-              </div>
-              <div class="beat-body">
-                <p class="kicker">03 — After hours</p>
-                <h3>The walk back</h3>
-                <p>The department closes at five. The building does not. Your file is still on the desk.</p>
-              </div>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <section class="band" aria-labelledby="cast-title">
-        <div class="wrap-wide">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">The building</p>
-              <h2 class="section-title" id="cast-title">Who keeps the file</h2>
-            </div>
-            <a class="text-link" href="./characters.html">The cast</a>
-          </div>
-          <div class="cast">
-            <a class="cast-card" href="./characters.html#resident">
-              <p class="kicker">Assigned</p>
-              <h3>The Resident</h3>
-              <p>Your name is on the file in a hand you do not remember practicing.</p>
-            </a>
-            <a class="cast-card" href="./characters.html#clerk">
-              <p class="kicker">The counter</p>
-              <h3>The Clerk</h3>
-              <p>Stamps the unit vacant. Does not explain why the lamp was warm.</p>
-            </a>
-            <a class="cast-card" href="./characters.html#neighbor">
-              <p class="kicker">Next door</p>
-              <h3>The Neighbor</h3>
-              <p>Has lived here longer than the building has had this address.</p>
-            </a>
-            <a class="cast-card" href="./characters.html#super">
-              <p class="kicker">The keys</p>
-              <h3>The Superintendent</h3>
-              <p>The ring is heavier than the doors in the hallway.</p>
-            </a>
-          </div>
+          <p class="omen">It's where it's at.</p>
+          <a class="play-btn" href="/Game/index.html">Play</a>
         </div>
       </section>
     </main>
-
-    <footer>
-      <div class="wrap-wide site-footer">
-        <span>The Place Department — file still open</span>
-        <nav aria-label="Footer">
-          <a href="./about.html">About</a>
-          <a href="./characters.html">Characters</a>
-          <a href="/Game/index.html">Play</a>
-        </nav>
-      </div>
-    </footer>
 
     <script src="./site/marketing.js" defer></script>
   </body>

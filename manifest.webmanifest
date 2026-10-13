@@ -5,7 +5,7 @@
   "display": "standalone",
   "background_color": "#12100e",
   "theme_color": "#12100e",
-  "description": "The Place Department assigns the apartment. The apartment keeps its own hours.",
+  "description": "The Place is where things that should not exist are given an address.",
   "icons": [
     {
       "src": "./favicon.svg",

@@ -40,9 +40,8 @@ const shotB = document.getElementById("shotB");
 
 if (shotA && shotB) {
   const BACKGROUNDS = [
-    "./assets/landing/apartment.svg",
-    "./assets/landing/counter.svg",
     "./assets/landing/hallway.svg",
+    "./assets/landing/apartment.svg",
   ];
   const HOLD_MS = 9000;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
