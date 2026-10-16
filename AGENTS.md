@@ -18,3 +18,12 @@ the API and AWS keys and runs the shared GPU fleet. This project never holds tho
 - **Art direction:** `hawkesgen/presets/theplacedepartment.json` (style line and named presets). Edit it there.
 - **Code:** copy `hawkesgen/clients/js/hawkesgen.mjs` into `tools/` and use `new HawkesGen({ project: 'theplacedepartment' })`.
 - GPU tools cost money while a server runs. Ask J before starting servers or running big batches.
+
+## Versions and What's new
+
+Every go live is a release, made by Hawkes Studio (`hawkesstudio/src/releases.ts`): a semver version bumped at
+go live (minor when players get something new, patch for fixes) plus the build (`Game/v<n>`), shown as
+"1.4.0 (build ...)" and tagged `v<version>` in git. Studio adds the release to `releases.json` at the repo root, in the go-live commit (website changes go to this repo's `beta`; the beta build lands on top of it) (newest first) with the
+player-facing notes J approved in the go-live plan. `whatsnew.html` ("Notices of change"), the front page's file revision and the game page's label (`Game/index.html`: "v1.0.0 · build 4") read it through `hawkes-release.js` (a copy of
+`hawkesstudio/clients/web/hawkes-release.js`: `[data-hawkes-version]`, `[data-hawkes-releases]`). Don't bump versions
+by hand; a typo in old notes can be fixed in the file on beta.

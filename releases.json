@@ -1,0 +1,18 @@
+{
+  "product": "theplacedepartment",
+  "name": "The Place Department",
+  "current": "1.0.0",
+  "releases": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-16",
+      "build": "4",
+      "title": "Now accepting addresses",
+      "notes": [
+        "Warrok, a bow-wielding brute, is assigned to defend a pirate pianist from waves of birds.",
+        "Hold the line wave after wave. The birds do not make appointments.",
+        "Playable in your browser. No forms required."
+      ]
+    }
+  ]
+}
