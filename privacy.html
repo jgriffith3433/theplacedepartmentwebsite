@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#12100e" />
+    <meta
+      name="description"
+      content="What The Place Department keeps on file: anonymous statistics, no cookies, no personal data, no IP addresses."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>Privacy · The Place Department</title>
+    <script src="https://gen.hawkesgen.com/sdk/analytics@1.js" data-product="theplacedepartment" data-hawkes-analytics="site" defer></script>
+    <script src="./site/analytics.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,520;0,9..144,560;1,9..144,520&family=Outfit:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./site/marketing.css" />
+  </head>
+  <body data-page="privacy">
+    <a class="skip" href="#content">Skip to content</a>
+
+    <header class="nav is-solid">
+      <div class="nav-inner">
+        <a class="brand" href="./index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="5" y="3" width="14" height="18" rx="1" fill="none" stroke="#e7d3b0" stroke-width="1.6" />
+            <circle cx="15.2" cy="12" r="1.1" fill="#f0b36a" />
+          </svg>
+          The Place Department
+        </a>
+        <div class="nav-tools">
+          <a class="nav-play" href="/Game/index.html">Play</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="content">
+      <section class="page-hero page-hero-short" aria-labelledby="privacy-title">
+        <div class="wrap">
+          <p class="eyebrow">Privacy</p>
+          <h1 class="page-title" id="privacy-title">What we keep on file</h1>
+        </div>
+      </section>
+
+      <section class="band band-tight">
+        <div class="wrap prose">
+          <p class="lede">The Place gives an address to things that should not exist. You are not one of them, so you don't get one.</p>
+
+          <h2>Anonymous statistics</h2>
+          <p>This site and the game count what happens on them: which pages are opened, when Play is pressed, how long the game takes to load, how far a run gets, and anything that breaks. That is how we find out what to fix.</p>
+
+          <h2>No cookies. No personal data.</h2>
+          <p>No names, no emails, no accounts. Your browser keeps a random number in its local storage (not a cookie) so two visits count as one visitor. It says nothing about who you are. Clearing this site's data removes it.</p>
+
+          <h2>No IP stored</h2>
+          <p>Your IP address gives a rough country and city, then it is thrown away. It is never written down.</p>
+
+          <h2>Kept in-house</h2>
+          <p>The statistics go to Hawkes Gen, our own service, and nowhere else: no advertisers, no third-party trackers. Raw events are kept for 13 months; after that only anonymous totals remain.</p>
+
+          <h2>Ratings</h2>
+          <p>If you rate a run when it ends, the stars and anything you type are kept with that run's statistics. Don't type anything you'd want back.</p>
+
+          <h2>Stop counting me</h2>
+          <p data-analytics-state></p>
+          <p><button class="analytics-toggle" type="button" data-analytics-toggle aria-pressed="false" hidden>Stop counting my visits</button></p>
+        </div>
+      </section>
+    </main>
+
+    <script src="./site/marketing.js" defer></script>
+  </body>
+</html>

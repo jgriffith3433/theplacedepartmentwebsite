@@ -6,6 +6,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <title>The Place Department</title>
+  <!-- Hawkes Analytics (Gen's SDK). The game's Unity bridge finds this tag (data-hawkes-analytics) and uses it rather
+       than loading the SDK a second time. -->
+  <script src="https://gen.hawkesgen.com/sdk/analytics@1.js" data-product="theplacedepartment" data-hawkes-analytics="page" defer></script>
+  <script src="../site/analytics.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -89,6 +93,8 @@
   <div id="version-display"></div>
   <script>
     var gameVersion = window.PLACE_BUILD;
+    // The build every event names: the Game/v<n> folder this page loads (set before the deferred SDK runs).
+    window.HAWKES_BUILD = { version: gameVersion };
     var gameName = "PlaceDepartment";
     document.getElementById("version-display").textContent = gameVersion;
 
@@ -140,6 +146,7 @@
 
       var loader = document.createElement("script");
       loader.src = buildUrl + ".loader.js?v=" + gameVersion;
+      if (window.placeAnalytics) window.placeAnalytics("loadStart", []);
       loader.onload = function () {
         createUnityInstance(canvas, config, function (progress) {
           progressBarFull.style.width = (100 * progress) + "%";
