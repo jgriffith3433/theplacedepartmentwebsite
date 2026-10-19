@@ -72,7 +72,6 @@
     }
   </style>
   <script>window.PLACE_BUILD = "v4";</script>
-  <script src="/site/hawkes-release.js" data-releases="/releases.json"></script>
 </head>
 <body>
   <div id="unity-container">
@@ -92,13 +91,6 @@
     var gameVersion = window.PLACE_BUILD;
     var gameName = "PlaceDepartment";
     document.getElementById("version-display").textContent = gameVersion;
-    // The release (releases.json, written at each go live) and the build running: "v1.0.0 · build 4".
-    if (window.hawkesRelease) window.hawkesRelease.then(function (r) {
-      var top = r && r.releases && r.releases[0];
-      if (!top || !gameVersion || gameVersion === "v0") return;
-      var beta = /\.hawkesgen\.com$/.test(location.hostname) || location.hostname === "localhost" || location.hostname === "127.0.0.1";
-      document.getElementById("version-display").textContent = "v" + top.version + (beta ? " beta" : "") + " \u00b7 build " + gameVersion.replace(/^v/, "");
-    });
 
     if (gameVersion === "v0") {
       document.getElementById("unity-loading-bar").style.display = "none";
