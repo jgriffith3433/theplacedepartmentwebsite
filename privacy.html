@@ -73,6 +73,60 @@
       </section>
     </main>
 
+    <!-- hawkes-footer: written by breakingthrough's WebGL deploy (Tools/Web/site-footer.html); edit it there, not here -->
+    <footer class="hawkes-footer" data-hawkes-footer>
+      <style>
+        .hawkes-footer {
+          border-top: 1px solid var(--line, rgba(231, 211, 176, 0.22));
+          color: var(--muted, #cbbdaa);
+          background: var(--bg, #12100e);
+          font-family: Outfit, Arial, Helvetica, sans-serif;
+          font-size: 12px;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+        }
+        .hawkes-footer-inner {
+          width: min(1120px, calc(100% - 40px));
+          margin-inline: auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px 18px;
+          flex-wrap: wrap;
+          padding: 28px 0 40px;
+        }
+        .hawkes-footer a {
+          color: inherit;
+          text-decoration: none;
+        }
+        .hawkes-footer a:hover,
+        .hawkes-footer a:focus-visible {
+          color: var(--gold, #e7d3b0);
+        }
+        .hawkes-footer .hawkes-gen {
+          margin-left: auto;
+        }
+        .hawkes-footer .hawkes-privacy {
+          flex-basis: 100%;
+          margin: 0;
+          font-size: 12px;
+          letter-spacing: 0.02em;
+          text-transform: none;
+          opacity: 0.8;
+        }
+        .hawkes-footer .hawkes-gen strong {
+          color: var(--gold, #e7d3b0);
+          font-weight: 600;
+          letter-spacing: 0.24em;
+        }
+      </style>
+      <div class="hawkes-footer-inner">
+        <a class="hawkes-gen" href="https://hawkesgen.com" data-hawkes-powered>Powered by <strong>HAWKES GEN</strong></a>
+        <p class="hawkes-privacy" data-hawkes-privacy>The Place Department collects anonymous gameplay statistics to improve the game: no cookies, no personal data, no IP stored.</p>
+      </div>
+    </footer>
+    <!-- /hawkes-footer -->
+
     <script src="./site/marketing.js" defer></script>
   </body>
 </html>
