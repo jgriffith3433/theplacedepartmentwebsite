@@ -1,8 +1,17 @@
 {
   "product": "theplacedepartment",
   "name": "The Place Department",
-  "current": "1.1.0",
+  "current": "1.2.0",
   "releases": [
+    {
+      "version": "1.2.0",
+      "date": "2026-10-20",
+      "build": "17",
+      "title": "Improvements and fixes",
+      "notes": [
+        "Improvements and fixes."
+      ]
+    },
     {
       "version": "1.1.0",
       "date": "2026-10-19",
