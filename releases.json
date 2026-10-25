@@ -1,8 +1,21 @@
 {
   "product": "theplacedepartment",
   "name": "The Place Department",
-  "current": "1.4.0",
+  "current": "1.5.0",
   "releases": [
+    {
+      "version": "1.5.0",
+      "date": "2026-10-25",
+      "build": "41",
+      "title": "Wallit talks, Slice guards, new menus",
+      "notes": [
+        "Wallit now has a moving mouth and his own voice.",
+        "Slice now stands guard around the circle instead of sitting at the piano, and she has more personality of her own.",
+        "Characters stop on a dime now instead of sliding across the ground.",
+        "Each run now has a clearer point to its story.",
+        "The main menu has been reworked again, with a more polished look and feel."
+      ]
+    },
     {
       "version": "1.4.0",
       "date": "2026-10-21",
