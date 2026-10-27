@@ -1,8 +1,17 @@
 {
   "product": "theplacedepartment",
   "name": "The Place Department",
-  "current": "1.6.0",
+  "current": "1.6.1",
   "releases": [
+    {
+      "version": "1.6.1",
+      "date": "2026-10-27",
+      "build": "42",
+      "title": "Smoother starts",
+      "notes": [
+        "The game no longer freezes while it loads, so you can get straight to Warrok and the birds."
+      ]
+    },
     {
       "version": "1.6.0",
       "date": "2026-10-27",
