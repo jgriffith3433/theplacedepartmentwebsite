@@ -8,7 +8,7 @@
   <title>The Place Department</title>
   <!-- Hawkes Analytics (Gen's SDK). The game's Unity bridge finds this tag (data-hawkes-analytics) and uses it rather
        than loading the SDK a second time. -->
-  <script src="https://gen.hawkesgen.com/sdk/analytics@1.js" data-product="theplacedepartment" data-hawkes-analytics="page" defer></script>
+  <script src="https://gen.hawkesgen.ai/sdk/analytics@1.js" data-product="theplacedepartment" data-hawkes-analytics="page" defer></script>
   <script src="../site/analytics.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -198,7 +198,7 @@
     if (window.hawkesRelease) window.hawkesRelease.then(function (r) {
       var top = r && r.releases && r.releases[0];
       if (!top) return;
-      var beta = /\.hawkesgen\.com$/.test(location.hostname) || location.hostname === "localhost" || location.hostname === "127.0.0.1";
+      var beta = /\.hawkesgen\.ai$/.test(location.hostname) || location.hostname === "localhost" || location.hostname === "127.0.0.1";
       show("v" + top.version + (beta ? " beta" : "") + " · build " + build.replace(/^v/, "") + " · What's new");
     });
   })();
