@@ -132,13 +132,15 @@
       window.addEventListener("resize", fitCanvas);
       fitCanvas();
 
-      var buildUrl = gameVersion + "/" + gameName + "/Build/" + gameName;
+      // Builds in R2 (hawkesstudio docs/unity-builds-storage.md): the cloud build sets HAWKES_BUILD_BASE; without it, from here.
+      var buildBase = (window.HAWKES_BUILD_BASE || "") + gameVersion + "/";
+      var buildUrl = buildBase + gameName + "/Build/" + gameName;
       var config = {
         arguments: [],
         dataUrl: buildUrl + ".data.unityweb?v=" + gameVersion,
         frameworkUrl: buildUrl + ".framework.js.unityweb?v=" + gameVersion,
         codeUrl: buildUrl + ".wasm.unityweb?v=" + gameVersion,
-        streamingAssetsUrl: gameVersion + "/" + gameName + "/StreamingAssets",
+        streamingAssetsUrl: buildBase + gameName + "/StreamingAssets",
         companyName: "The Place Department",
         productName: "PlaceDepartment",
         productVersion: gameVersion,
