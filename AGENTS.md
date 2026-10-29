@@ -1,5 +1,7 @@
 # The Place Department website — agent notes
 
+**Lanes, local dev and deploys:** `LANES.md` (branches dev -> beta -> main; `dev.bat`, `deploy-beta.bat`, `deploy-prod.bat`, `status.bat`, `links.bat`, `sync.bat`; beta and live links).
+
 The site for **The Place Department** (theplacedepartment.com), static on GitHub Pages. In the Hawkes
 Biomedical line it is sold as *HIPAA-compliant document storage*: "where things that should not exist are
 given an address". `Game/v<n>/` is the WebGL build from the Unity project `C:\Projects\breakingthrough`
