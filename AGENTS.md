@@ -24,7 +24,7 @@ the API and AWS keys and runs the shared GPU fleet. This project never holds tho
 ## Analytics: Hawkes Analytics only
 
 Every page loads Gen's SDK (hawkesgen `docs/analytics.md`), product `theplacedepartment`, and never any other tracker:
-`<script src="https://gen.hawkesgen.ai/sdk/analytics@1.js" data-product="theplacedepartment" data-hawkes-analytics="site" defer>`
+`<script src="https://hawkesgen.ai/sdk/analytics@1.js" data-product="theplacedepartment" data-hawkes-analytics="site" defer>`
 followed by `site/analytics.js` **without** `defer` (it runs before the SDK so it can switch on debug mode for
 playtest browsers; it adds `play_click` for `.nav-play`, `.play-btn` and `[data-play]`; the SDK does page views and
 outbound links). The game page uses `data-hawkes-analytics="page"`, which the Unity bridge finds instead of loading
