@@ -134,7 +134,10 @@
       fitCanvas();
 
       // Builds in R2 (hawkesstudio docs/unity-builds-storage.md): the cloud build sets HAWKES_BUILD_BASE; without it, from here.
-      var buildBase = (window.HAWKES_BUILD_BASE || "") + gameVersion + "/";
+      // Studio's cloud build (publish.page "site") puts window.HAWKES_BUILD_URL first in <head>: play that build.
+      var buildBase = window.HAWKES_BUILD_URL
+        ? String(window.HAWKES_BUILD_URL).replace(/\/?$/, "/")
+        : (window.HAWKES_BUILD_BASE || "") + gameVersion + "/";
       var buildUrl = buildBase + gameName + "/Build/" + gameName;
       var config = {
         arguments: [],
