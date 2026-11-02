@@ -9,11 +9,11 @@ Agents' fixes land on `beta` (pull requests Studio merges); `sync.bat` brings th
 | | Address |
 |---|---|
 | Local | [http://localhost:4173/](http://localhost:4173/), [http://localhost:4173/Game/](http://localhost:4173/Game/) |
-| Beta | [https://placedept.hawkesgen.ai/](https://placedept.hawkesgen.ai/) |
+| Beta | [https://sites.hawkesgen.ai/o/j-studio-4f12/the-place-department/](https://sites.hawkesgen.ai/o/j-studio-4f12/the-place-department/), [https://sites.hawkesgen.ai/o/j-studio-4f12/the-place-department/Game/](https://sites.hawkesgen.ai/o/j-studio-4f12/the-place-department/Game/) |
 | Live | [https://theplacedepartment.com/](https://theplacedepartment.com/) |
 | Deploys (GitHub Actions) | [github.com/jgriffith3433/theplacedepartmentwebsite/actions](https://github.com/jgriffith3433/theplacedepartmentwebsite/actions) |
 
-**How it deploys:** Builds arrive on beta from breakingthrough (build tags). Push main: GitHub Pages publishes it live (Studio does this when the game goes live).
+**How it deploys:** The game is never committed here. Each Studio build of breakingthrough stays at its own address (`sites.hawkesgen.ai/builds/o/j-studio-4f12/place-department-unity/b/web/<n>/`) and Studio commits only a pointer onto beta: `Game/build.json` and `window.HAWKES_BUILD_URL` in `Game/index.html`. Beta names the newest build, main names the one that went live, so they never share a changing file. Push main: GitHub Pages publishes it live (Studio does this when the game goes live).
 
 | Command (double-click, or run in a terminal here) | What it does |
 |---|---|
