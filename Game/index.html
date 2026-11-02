@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>window.HAWKES_BUILD_URL = "https://sites.hawkesgen.ai/builds/o/j-studio-4f12/place-department-unity/b/web/5/";</script>
+  <script>window.HAWKES_BUILD_URL = "https://sites.hawkesgen.ai/builds/o/j-studio-4f12/place-department-unity/b/web/7/";</script>
   <script>window.HAWKES_BUILD_BASE = "https://sites.hawkesgen.ai/builds/placedept/";</script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -77,7 +77,11 @@
       color: #8fd9b4;
     }
   </style>
-  <script>window.PLACE_BUILD = "v1";</script>
+  <script>
+    // The build number this page plays, from the address Studio points it at (.../b/web/<n>/): it names the build in the
+    // corner and in analytics, and busts the cache per build (a fixed "v1" kept every build under one cache key).
+    window.PLACE_BUILD = (function (u) { var m = /\/b\/[^\/]+\/(\d+)\/?$/.exec(u || ""); return m ? "v" + m[1] : "v1"; })(window.HAWKES_BUILD_URL);
+  </script>
   <script src="hawkes-sound.js?v=v1" data-hawkes-sound></script>
 </head>
 <body>
