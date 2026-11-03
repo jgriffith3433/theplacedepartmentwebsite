@@ -1,7 +1,7 @@
 {
-  "version": 7,
-  "base": "https://sites.hawkesgen.ai/builds/o/j-studio-4f12/place-department-unity/b/web/7/",
+  "version": 8,
+  "base": "https://sites.hawkesgen.ai/builds/o/j-studio-4f12/place-department-unity/b/web/8/",
   "build": "web",
-  "sha": "8dd1d52",
-  "at": "2026-11-02T00:35:01.047Z"
+  "sha": "650932e",
+  "at": "2026-11-03T22:30:27.729Z"
 }
