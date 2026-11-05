@@ -156,6 +156,14 @@
         showBanner: unityShowBanner,
       };
 
+      // Start the big downloads now, in parallel with the loader script, instead of after it runs (the data file is
+      // the long pole; Unity's own fetch of the same URL then reuses this one).
+      [config.dataUrl, config.codeUrl, config.frameworkUrl].forEach(function (u) {
+        var l = document.createElement("link");
+        l.rel = "preload"; l.as = "fetch"; l.crossOrigin = "anonymous"; l.href = u;
+        document.head.appendChild(l);
+      });
+
       var loader = document.createElement("script");
       loader.src = buildUrl + ".loader.js?v=" + gameVersion;
       if (window.placeAnalytics) window.placeAnalytics("loadStart", []);
