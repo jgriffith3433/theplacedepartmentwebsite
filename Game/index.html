@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>window.HAWKES_BUILD_URL = "https://sites.hawkesgen.ai/builds/o/j-studio-4f12/place-department-unity/b/web/13/";</script>
+  <script>window.HAWKES_BUILD_URL = "https://sites.hawkesgen.ai/builds/o/j-studio-4f12/place-department-unity/b/web/18/";</script>
   <script>window.HAWKES_BUILD_BASE = "https://sites.hawkesgen.ai/builds/placedept/";</script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -155,6 +155,14 @@
         productVersion: gameVersion,
         showBanner: unityShowBanner,
       };
+
+      // Start the big downloads now, in parallel with the loader script, instead of after it runs (the data file is
+      // the long pole; Unity's own fetch of the same URL then reuses this one).
+      [config.dataUrl, config.codeUrl, config.frameworkUrl].forEach(function (u) {
+        var l = document.createElement("link");
+        l.rel = "preload"; l.as = "fetch"; l.crossOrigin = "anonymous"; l.href = u;
+        document.head.appendChild(l);
+      });
 
       var loader = document.createElement("script");
       loader.src = buildUrl + ".loader.js?v=" + gameVersion;
