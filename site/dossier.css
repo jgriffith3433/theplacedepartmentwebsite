@@ -1,0 +1,141 @@
+/* Dossier visual identity: loaded LAST on every page (after marketing.css, lore.css and any page <style>).
+   Palette: dark archive room (--bg) with manila paper (--paper) and ink (--ink) for filed things.
+   Every pair used here is AA or better (ink on paper 13:1, soft ink 6.3:1, stamp red 5.1:1, green 4.8:1). */
+:root {
+  --paper: #e8dcc0;
+  --paper-shade: #d6c7a4;
+  --ink: #1d1710;
+  --ink-soft: #4a3d2b;
+  --stamp-red: #8f2616;
+  --stamp-green: #2f5a33;
+  --stamp-grey: #5a4c38;
+  --type: "Special Elite", "Courier New", Courier, monospace;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .9 0 0 0 0 .8 0 0 0 0 .6 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+html, body { overflow-x: clip; }
+body {
+  background-color: var(--bg);
+  background-image: var(--grain);
+  background-size: 220px 220px;
+  background-blend-mode: soft-light;
+}
+
+/* Typewriter headings: one family, one rhythm, on every page */
+body .display,
+body .page-title,
+body .section-title,
+body h1, body h2, body h3,
+body .lore-entry h3,
+body .lore .page-title,
+body .hawkes-release h3,
+body .prose h2,
+body .dossier h2,
+body .cast h2, body .cases h2,
+body .cast-body h3, body .cast-card h3, body .board-card h3, body .beat h3, body .level h3 {
+  font-family: var(--type);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.1;
+  overflow-wrap: break-word;
+  text-transform: none;
+}
+body .display { font-size: clamp(44px, 9vw, 104px); line-height: 1; }
+body .page-title, body .lore .page-title { font-size: clamp(36px, 7vw, 76px); line-height: 1.05; max-width: 16ch; }
+body .cast h2, body .cases h2 { font-size: clamp(30px, 5vw, 48px); }
+body .prose h2 { font-size: 26px; color: var(--gold); }
+body .lore-entry h3, body .hawkes-release h3, body .cast-body h3 { font-size: 26px; }
+body .dossier h3 { font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; }
+body .lore-when { font-family: var(--type); letter-spacing: 0.12em; }
+
+/* Eyebrows read like a filing line, and carry the page's stamp */
+body .eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; font-family: var(--type); font-weight: 400; letter-spacing: 0.22em; }
+body .kicker { font-family: var(--type); font-weight: 400; letter-spacing: 0.16em; }
+
+/* The stamp: one component for every page */
+body .stamp {
+  display: inline-block;
+  padding: 3px 10px 2px;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px currentColor;
+  font-family: var(--type);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: rotate(-4deg);
+  opacity: 0.95;
+}
+body .stamp-filed { color: var(--stamp); }
+body .stamp-open { color: var(--accent); }
+body .stamp-blank { color: var(--muted); }
+body .stamp-notice { color: var(--accent); }
+body .stamp-classified { color: #e08a7a; }
+
+/* Case files and lore entries are paper in the archive */
+body .dossier {
+  background: var(--paper);
+  background-image: var(--grain);
+  background-blend-mode: multiply;
+  color: var(--ink);
+  border: 1px solid var(--paper-shade);
+  border-top: 8px solid #b99a5b;
+  border-radius: 2px 14px 2px 2px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+}
+body .dossier h3 { color: var(--ink); }
+body .dossier .note { color: var(--ink-soft); }
+body .dossier li { color: var(--ink-soft); border-top-color: rgba(29, 23, 16, 0.35); }
+body .dossier li.done { color: var(--ink); }
+body .dossier li.now { color: var(--stamp-red); }
+body .dossier li span { opacity: 1; font-family: var(--type); }
+body .dossier .stamp-filed { color: var(--stamp-green); }
+body .dossier .stamp-open { color: var(--stamp-red); }
+body .dossier .stamp-blank { color: var(--stamp-grey); }
+
+body .lore-entry {
+  max-width: 68ch;
+  padding: 18px 22px 20px;
+  background: var(--paper);
+  background-image: var(--grain);
+  background-blend-mode: multiply;
+  color: var(--ink);
+  border-left: 6px solid #b99a5b;
+  border-radius: 2px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+body .lore-entry h3 { color: var(--ink); margin-bottom: 8px; }
+body .lore-entry p { color: var(--ink-soft); font-size: 17px; }
+body .lore-when { color: var(--gold); }
+
+body .hawkes-release { border-top: 2px dashed var(--line); }
+body .hawkes-release-date { font-family: var(--type); }
+
+body .cast-card { border-radius: 2px; background-image: var(--grain); background-blend-mode: soft-light; }
+body .nav-links a, body .nav-play, body .play-btn, body .nav-lore, body .brand { font-family: var(--type); font-weight: 400; }
+body .nav .nav-whatsnew { font-family: var(--type); font-weight: 400; }
+body .site-footer, body .hawkes-footer { font-family: var(--type); }
+
+/* 390px: nothing may push the page wider than the screen */
+@media (max-width: 560px) {
+  body .nav-inner { padding: 0 12px; gap: 8px; }
+  body .nav-tools { gap: 2px; }
+  body .brand { min-width: 0; flex: 1 1 auto; gap: 6px; font-size: 10px; letter-spacing: 0.06em; line-height: 1.2; }
+  body .nav-lore { padding: 0 6px; letter-spacing: 0.1em; }
+  body .nav .nav-whatsnew { padding: 0 4px; font-size: 11px; letter-spacing: 0.06em; }
+  body .nav-play { padding: 0 12px; letter-spacing: 0.1em; }
+  body .display { font-size: clamp(38px, 12vw, 56px); }
+  body .dossier { padding: 18px 16px 20px; }
+  body .lore-entry { padding: 16px 16px 18px; }
+  body .lore-entry h3, body .hawkes-release h3 { font-size: 22px; }
+  body .hawkes-release-date { margin-left: 0; }
+  body .page-title { max-width: none; }
+}
+@media (max-width: 400px) {
+  body .nav .nav-whatsnew { font-size: 10px; letter-spacing: 0.04em; }
+  body .nav-lore { font-size: 11px; }
+  body .dossier li span { min-width: 40px; }
+}
