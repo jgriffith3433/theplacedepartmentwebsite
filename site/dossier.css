@@ -152,5 +152,9 @@ body .site-footer, body .hawkes-footer { font-family: var(--type); }
 .proof .gallery figure { margin: 0; background: var(--paper); color: var(--ink); padding: 8px 8px 10px; }
 .proof .gallery img { width: 100%; height: auto; display: block; }
 .proof .gallery figcaption { font-family: var(--type); font-size: 14px; color: var(--ink-soft); padding-top: 8px; }
+.proof .share-card { margin: 28px 0 0; background: var(--paper); color: var(--ink); padding: 8px 8px 10px; max-width: 600px; }
+.proof .share-card img { width: 100%; height: auto; display: block; }
+.proof .share-card figcaption { font-family: var(--type); font-size: 14px; color: var(--ink-soft); padding-top: 8px; }
+.proof .share-copy { font: inherit; color: var(--stamp-red); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
 @media (max-width: 860px) { .proof .gallery { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 520px) { .proof .gallery { grid-template-columns: 1fr; } }
