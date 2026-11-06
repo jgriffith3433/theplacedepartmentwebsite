@@ -8,6 +8,21 @@
       name="description"
       content="The Place is where things that should not exist are given an address."
     />
+    <link rel="canonical" href="https://theplacedepartment.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="The Place Department" />
+    <meta property="og:title" content="The Place Department" />
+    <meta property="og:description" content="Where things that should not exist are given an address." />
+    <meta property="og:url" content="https://theplacedepartment.com/" />
+    <meta property="og:image" content="https://theplacedepartment.com/assets/og-card.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The Place Department: a filed stamp over a lantern-lit clearing." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The Place Department" />
+    <meta name="twitter:description" content="Where things that should not exist are given an address." />
+    <meta name="twitter:image" content="https://theplacedepartment.com/assets/og-card.jpg" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>The Place Department</title>
@@ -16,10 +31,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,520;0,9..144,560;1,9..144,520&family=Outfit:wght@500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,520;0,9..144,560;1,9..144,520&family=Outfit:wght@500;600;700&family=Special+Elite&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./site/marketing.css" />
+    <link rel="stylesheet" href="./site/lore.css" />
+    <link rel="stylesheet" href="./site/dossier.css" />
   </head>
   <body data-page="home">
     <a class="skip" href="#content">Skip to content</a>
@@ -34,6 +51,7 @@
           The Place Department
         </a>
         <div class="nav-tools">
+          <a class="nav-lore" href="./lore.html">Lore</a>
           <!-- hawkes-whatsnew: written by breakingthrough's WebGL deploy (Tools/Web/whatsnew-landing.html); edit it there, not here -->
           <a class="nav-whatsnew" href="./whatsnew.html" data-hawkes-whatsnew>What's new <span data-hawkes-version hidden></span></a>
           <style>
@@ -92,11 +110,106 @@
           <div class="stage-vignette"></div>
         </div>
         <div class="hero-copy">
+          <p class="eyebrow"><span class="stamp stamp-filed">Filed</span></p>
           <h1 class="display">The Place Department</h1>
           <p class="omen">It's where it's at.</p>
           <a class="play-btn" href="/Game/index.html" data-play="hero">Play</a>
         </div>
         <p class="fine-print">Anonymous statistics. No cookies. <a href="./privacy.html">Privacy</a></p>
+      </section>
+
+      <section class="cast" id="cast" aria-labelledby="cast-h">
+        <div class="wrap">
+          <p class="kicker">Personnel</p>
+          <h2 id="cast-h">The cast</h2>
+          <p class="lede">Everything the Department lost, everything it sent to find it.</p>
+          <div class="cast-grid">
+          <article class="cast-card" data-cast="wallit">
+            <div class="cast-art" role="img" aria-label="Wallit" style="background-image:url(./assets/cast/wallit.jpg);background-position:50% 50%;background-size:230%"></div>
+            <div class="cast-body">
+              <p class="kicker">The lost thing that fought back</p>
+              <h3>Wallit</h3>
+              <p>A brown leather wallet with a bat and a bad attitude. Filed under Money; answers to nobody. “Return to sender.”</p>
+            </div>
+          </article>
+          <article class="cast-card" data-cast="slice">
+            <div class="cast-art" role="img" aria-label="Slice" style="background-image:url(./assets/cast/slice.jpg);background-position:31% 13%;background-size:300%"></div>
+            <div class="cast-body">
+              <p class="kicker">The Department's tidiest knife</p>
+              <h3>Slice</h3>
+              <p>Pale, patient and dressed for a funeral. She stakes the ring, keeps count, and says “Noted.”</p>
+            </div>
+          </article>
+          <article class="cast-card" data-cast="yobot">
+            <div class="cast-art" role="img" aria-label="Yo Bot" style="background-image:url(./assets/cast/bots.jpg);background-position:31% 67%;background-size:333%"></div>
+            <div class="cast-body">
+              <p class="kicker">Clearing Crew, chirpy and cheap</p>
+              <h3>Yo Bot</h3>
+              <p>Stamped out by the batch, paid in bolts. Cheerful face, pincer claws, no questions asked.</p>
+            </div>
+          </article>
+          <article class="cast-card" data-cast="spider">
+            <div class="cast-art" role="img" aria-label="Spider Bot" style="background-image:url(./assets/cast/bots.jpg);background-position:73% 73%;background-size:333%"></div>
+            <div class="cast-body">
+              <p class="kicker">The process server with six legs</p>
+              <h3>Spider Bot</h3>
+              <p>Delivers paper, not mercy. If it holds out a folded notice, you have been served.</p>
+            </div>
+          </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="cases" id="case-files" aria-labelledby="cases-h">
+        <div class="wrap">
+          <p class="kicker">Records</p>
+          <h2 id="cases-h">The case files</h2>
+          <p class="lede">Three files, six chapters each. File them all.</p>
+          <div class="dossier-grid">
+          <article class="dossier" data-case-file="1">
+            <header><h3>Case File 01</h3><span class="stamp stamp-filed">FILED</span></header>
+            <p class="note">Address filed. Stamped, numbered, closed.</p>
+            <ol><li class="done"><span>Ch. 1</span> Return to Sender</li><li class="done"><span>Ch. 2</span> No Fixed Address</li><li class="done"><span>Ch. 3</span> The Clearing Floor</li><li class="done"><span>Ch. 4</span> The Process Servers</li><li class="done"><span>Ch. 5</span> Strike This Address</li><li class="done"><span>Ch. 6</span> Address Filed</li></ol>
+          </article>
+          <article class="dossier" data-case-file="2">
+            <header><h3>Case File 02</h3><span class="stamp stamp-open">OPEN</span></header>
+            <p class="note">In progress. The Clearing Floor is next.</p>
+            <ol><li class="done"><span>Ch. 1</span> Return to Sender</li><li class="done"><span>Ch. 2</span> No Fixed Address</li><li class="done"><span>Ch. 3</span> The Clearing Floor</li><li class="now"><span>Ch. 4</span> The Process Servers</li><li class=""><span>Ch. 5</span> Strike This Address</li><li class=""><span>Ch. 6</span> Address Filed</li></ol>
+          </article>
+          <article class="dossier" data-case-file="3">
+            <header><h3>Case File 03</h3><span class="stamp stamp-blank">BLANK</span></header>
+            <p class="note">Unopened. Wallit has not arrived yet.</p>
+            <ol><li class=""><span>Ch. 1</span> Return to Sender</li><li class=""><span>Ch. 2</span> No Fixed Address</li><li class=""><span>Ch. 3</span> The Clearing Floor</li><li class=""><span>Ch. 4</span> The Process Servers</li><li class=""><span>Ch. 5</span> Strike This Address</li><li class=""><span>Ch. 6</span> Address Filed</li></ol>
+          </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="proof" id="proof" aria-labelledby="proof-h">
+        <div class="wrap">
+          <p class="kicker">Evidence</p>
+          <h2 id="proof-h">Exhibits and footage</h2>
+          <p class="lede">Frames from the game, as played.</p>
+          <div class="trailer" data-trailer data-embed="" data-video="./site/hero-loop.mp4">
+            <button type="button" class="trailer-play" data-trailer-start aria-label="Load and play the gameplay reel">
+              <img src="./site/hero-loop.jpg" alt="" width="1280" height="720" loading="lazy" />
+              <span>Play the reel</span>
+            </button>
+          </div>
+          <p class="fine-print trailer-note">Nothing loads until you press play.</p>
+          <div class="gallery" data-gallery>
+            <figure><a href="./assets/shots/shot-1.jpg"><img src="./assets/shots/shot-1.jpg" alt="In-game: The Clearing, between waves" width="960" height="540" loading="lazy" /></a><figcaption>Exhibit A. The Clearing, between waves.</figcaption></figure>
+            <figure><a href="./assets/shots/shot-2.jpg"><img src="./assets/shots/shot-2.jpg" alt="In-game: Wave cleared, lanterns lit" width="960" height="540" loading="lazy" /></a><figcaption>Exhibit B. Wave cleared, lanterns lit.</figcaption></figure>
+            <figure><a href="./assets/shots/shot-3.jpg"><img src="./assets/shots/shot-3.jpg" alt="In-game: Slice walks the path" width="960" height="540" loading="lazy" /></a><figcaption>Exhibit C. Slice walks the path.</figcaption></figure>
+            <figure><a href="./assets/shots/shot-4.jpg"><img src="./assets/shots/shot-4.jpg" alt="In-game: Wave two: more Yo Bots" width="960" height="540" loading="lazy" /></a><figcaption>Exhibit D. Wave two: more Yo Bots.</figcaption></figure>
+            <figure><a href="./assets/shots/shot-5.jpg"><img src="./assets/shots/shot-5.jpg" alt="In-game: Wallit: Step up, pay up" width="960" height="540" loading="lazy" /></a><figcaption>Exhibit E. Wallit: Step up, pay up.</figcaption></figure>
+            <figure><a href="./assets/shots/shot-6.jpg"><img src="./assets/shots/shot-6.jpg" alt="In-game: The Clearing at night" width="960" height="540" loading="lazy" /></a><figcaption>Exhibit F. The Clearing at night.</figcaption></figure>
+          </div>
+          <figure class="share-card" data-share-card>
+            <img src="./assets/og-card.jpg" alt="The share card: a filed stamp over a lantern-lit clearing." width="1200" height="630" loading="lazy" />
+            <figcaption>The card a shared link shows. <button type="button" class="share-copy" data-share-copy>Copy the link</button> <span class="share-status" role="status"></span></figcaption>
+          </figure>
+        </div>
       </section>
     </main>
 
