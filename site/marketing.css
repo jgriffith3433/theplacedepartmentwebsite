@@ -814,6 +814,7 @@ a {
 /* Cast and case files */
 .cast,
 .cases {
+  display: block; /* .cast is also a legacy 4-col grid; the section must not be one */
   padding: 88px 0 24px;
   background: var(--bg);
 }
