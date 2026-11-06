@@ -25,33 +25,115 @@
     #unity-canvas { width: 100%; height: 100%; display: block; background: #111; }
     #unity-loading-bar {
       position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      color: white;
-      font-family: Arial, sans-serif;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 3;
+      background: radial-gradient(ellipse at 50% 40%, #1c1814 0%, #12100e 70%);
+      color: #f6f1e8;
+      font-family: Outfit, Arial, Helvetica, sans-serif;
+    }
+    #unity-loading-bar[hidden] { display: none; }
+    .dossier {
+      width: min(440px, 100%);
+      padding: 26px 28px 22px;
+      background: #1c1814;
+      border: 1px solid rgba(231, 211, 176, 0.22);
+      border-top: 6px solid #e7d3b0;
+      border-radius: 4px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+    }
+    .dossier-kicker {
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #cbbdaa;
+    }
+    .dossier h1 {
+      margin: 6px 0 2px;
+      font: 600 28px/1.15 Fraunces, Georgia, serif;
+      color: #f6f1e8;
+    }
+    .dossier-file {
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      color: #e7d3b0;
+      border-bottom: 1px dashed rgba(231, 211, 176, 0.3);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+    #load-line {
+      min-height: 3em;
+      font: italic 16px/1.5 Fraunces, Georgia, serif;
+      color: #efe2cc;
     }
     #unity-progress-bar-empty {
-      width: 280px;
-      height: 16px;
-      margin: 16px auto 0;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
+      height: 10px;
+      margin: 14px 0 8px;
+      background: rgba(231, 211, 176, 0.14);
+      border: 1px solid rgba(231, 211, 176, 0.22);
+      border-radius: 2px;
+      overflow: hidden;
     }
     #unity-progress-bar-full {
       width: 0%;
       height: 100%;
-      background: #2f9e6b;
-      border-radius: 8px;
+      background: #f0b36a;
+      transition: width 0.25s ease-out;
     }
+    .dossier-status {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #cbbdaa;
+    }
+    #load-percent { color: #e7d3b0; font-variant-numeric: tabular-nums; }
+    #load-error { display: none; }
+    #unity-loading-bar.failed #load-working { display: none; }
+    #unity-loading-bar.failed #load-error { display: block; }
+    #unity-loading-bar.failed .dossier { border-top-color: #b54a3c; }
+    .stamp {
+      display: inline-block;
+      transform: rotate(-3deg);
+      border: 2px solid #d9695a;
+      color: #d9695a;
+      padding: 2px 10px;
+      font: 700 14px/1.4 Outfit, Arial, sans-serif;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    #load-error p { margin: 12px 0 0; line-height: 1.5; color: #efe2cc; }
+    #load-detail {
+      font-size: 12px;
+      color: #cbbdaa;
+      word-break: break-all;
+      max-height: 4.5em;
+      overflow: hidden;
+    }
+    .load-actions { display: flex; gap: 12px; align-items: center; margin-top: 18px; }
+    #load-retry {
+      cursor: pointer;
+      border: 0;
+      border-radius: 3px;
+      padding: 10px 22px;
+      background: #f0b36a;
+      color: #12100e;
+      font: 700 14px/1 Outfit, Arial, sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    #load-retry:hover, #load-retry:focus-visible { background: #f6c58c; outline: 2px solid #e7d3b0; outline-offset: 2px; }
     #unity-warning {
       position: absolute;
       left: 50%;
       bottom: 16px;
       transform: translateX(-50%);
       max-width: 90%;
-      z-index: 2;
+      z-index: 4;
     }
     #version-display {
       position: absolute;
@@ -88,8 +170,25 @@
   <div id="unity-container">
     <canvas id="unity-canvas"></canvas>
     <div id="unity-loading-bar">
-      <div>The Place Department</div>
-      <div id="unity-progress-bar-empty"><div id="unity-progress-bar-full"></div></div>
+      <div class="dossier">
+        <div class="dossier-kicker">The Place Department &middot; Records</div>
+        <h1>Opening your file</h1>
+        <div class="dossier-file">FILE No. <span id="load-file">0000</span> &middot; CLEARANCE: PENDING</div>
+        <div id="load-working">
+          <div id="load-line" aria-live="polite">Retrieving the file from its address&hellip;</div>
+          <div id="unity-progress-bar-empty" role="progressbar" aria-label="Loading the game" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="unity-progress-bar-full"></div></div>
+          <div class="dossier-status"><span>Filing in progress</span><span id="load-percent">0%</span></div>
+        </div>
+        <div id="load-error" role="alert">
+          <span class="stamp">File not retrieved</span>
+          <p id="load-message">The file could not be opened. It was not lost: nothing here ever is.</p>
+          <p id="load-detail"></p>
+          <div class="load-actions">
+            <button type="button" id="load-retry">Retry</button>
+            <a class="home" href="../">Back home</a>
+          </div>
+        </div>
+      </div>
     </div>
     <div id="missing-build">
       <p>No game build has been published yet.</p>
@@ -164,22 +263,56 @@
         document.head.appendChild(l);
       });
 
+      // Dossier loading screen: progress, a Department line that follows the progress, and on failure a stamped
+      // notice with Retry (a reload: a Unity instance can't be started twice on one canvas).
+      var loadLines = [
+        "Retrieving the file from its address\u2026",
+        "Checking that this file should not exist\u2026",
+        "Stamping the paperwork in triplicate\u2026",
+        "The Department thanks you for your patience. It is not required.",
+        "Assigning you a desk. Please do not look at the other desks.",
+        "Almost filed. Everything is almost filed."
+      ];
+      var loadLine = document.getElementById("load-line");
+      var loadPercent = document.getElementById("load-percent");
+      var loadBar = document.getElementById("unity-progress-bar-empty");
+      document.getElementById("load-file").textContent = String(Math.floor(1000 + Math.random() * 9000));
+      function showProgress(progress) {
+        var pct = Math.max(0, Math.min(100, Math.round(100 * progress)));
+        progressBarFull.style.width = pct + "%";
+        loadPercent.textContent = pct + "%";
+        loadBar.setAttribute("aria-valuenow", String(pct));
+        var line = loadLines[Math.min(loadLines.length - 1, Math.floor(progress * loadLines.length))];
+        if (loadLine.textContent !== line) loadLine.textContent = line;
+      }
+      var loadFailed = false;
+      function showLoadError(detail) {
+        if (loadFailed) return;
+        loadFailed = true;
+        loadingBar.hidden = false;
+        loadingBar.style.display = "";
+        loadingBar.className = "failed";
+        document.getElementById("load-detail").textContent = detail ? String(detail).slice(0, 200) : "";
+        if (window.placeAnalytics) window.placeAnalytics("track", ["load_error", { detail: String(detail || "").slice(0, 120) }]);
+        document.getElementById("load-retry").focus();
+      }
+      document.getElementById("load-retry").addEventListener("click", function () { location.reload(); });
+      // Setup shortcut for playtests: ?loadfail=1 behaves as if the build could not be fetched.
+      var forceFail = /[?&]loadfail=1\b/.test(location.search);
+
       var loader = document.createElement("script");
-      loader.src = buildUrl + ".loader.js?v=" + gameVersion;
+      loader.src = forceFail ? buildBase + "loadfail-missing.js" : buildUrl + ".loader.js?v=" + gameVersion;
       if (window.placeAnalytics) window.placeAnalytics("loadStart", []);
       loader.onload = function () {
-        createUnityInstance(canvas, config, function (progress) {
-          progressBarFull.style.width = (100 * progress) + "%";
-        }).then(function () {
+        createUnityInstance(canvas, config, showProgress).then(function () {
+          showProgress(1);
           loadingBar.style.display = "none";
         }).catch(function (message) {
-          loadingBar.style.display = "none";
-          unityShowBanner(String(message), "error");
+          showLoadError(message);
         });
       };
       loader.onerror = function () {
-        loadingBar.style.display = "none";
-        unityShowBanner("Could not load " + loader.src, "error");
+        showLoadError("Could not load " + loader.src);
       };
       document.body.appendChild(loader);
     }
