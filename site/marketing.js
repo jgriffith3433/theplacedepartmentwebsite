@@ -92,3 +92,25 @@ if (shotA && shotB) {
 
   runCycle();
 }
+
+// Trailer slot: nothing loads until the click. A data-embed URL (https) becomes an iframe; otherwise the local reel plays.
+document.querySelectorAll("[data-trailer]").forEach((slot) => {
+  slot.querySelector("[data-trailer-start]")?.addEventListener("click", () => {
+    const embed = slot.dataset.embed;
+    let el;
+    if (embed && /^https:\/\//.test(embed)) {
+      el = document.createElement("iframe");
+      el.src = embed;
+      el.title = "The Place Department trailer";
+      el.allow = "autoplay; fullscreen";
+      el.allowFullscreen = true;
+    } else {
+      el = document.createElement("video");
+      el.src = slot.dataset.video;
+      el.controls = true;
+      el.autoplay = true;
+      el.playsInline = true;
+    }
+    slot.replaceChildren(el);
+  });
+});
