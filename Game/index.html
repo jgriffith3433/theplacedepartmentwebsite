@@ -255,12 +255,61 @@
         showBanner: unityShowBanner,
       };
 
-      // Start the big downloads now, in parallel with the loader script, instead of after it runs (the data file is
-      // the long pole; Unity's own fetch of the same URL then reuses this one).
-      [config.dataUrl, config.codeUrl, config.frameworkUrl].forEach(function (u) {
-        var l = document.createElement("link");
-        l.rel = "preload"; l.as = "fetch"; l.crossOrigin = "anonymous"; l.href = u;
-        document.head.appendChild(l);
+      // The build files are gzip ("UnityWeb Compressed Content") but the build host serves them as application/octet-stream
+      // with no Content-Encoding, so the browser can't decode them. Left alone, Unity unzips ~98 MB in JavaScript (a slow
+      // load: about 53 s on a cold run). So the page downloads all three in parallel (the data file is the long pole),
+      // unzips them with the browser's native DecompressionStream, and hands Unity plain blob: URLs it reads as-is.
+      // Anything that is not gzip (a host that starts sending Content-Encoding, so the browser already unzipped it) is
+      // passed through unchanged, and without DecompressionStream the original URL goes to Unity (its own slow path).
+      var prefetchLoaded = {}, prefetchTotal = {}, prefetchBlobs = [];
+      var prefetchProgress = function () {};
+      function reportPrefetch() {
+        var l = 0, t = 0;
+        for (var k in prefetchTotal) { l += prefetchLoaded[k] || 0; t += prefetchTotal[k]; }
+        if (t > 0) prefetchProgress(0.85 * Math.min(1, l / t));
+      }
+      function prefetchPlain(key, url) {
+        if (typeof DecompressionStream !== "function" || typeof fetch !== "function" || /[?&]loadfail=1\b/.test(location.search)) return Promise.resolve(url);
+        prefetchLoaded[key] = 0;
+        return fetch(url, { mode: "cors" }).then(function (res) {
+          if (!res.ok || !res.body) throw new Error("HTTP " + res.status);
+          prefetchTotal[key] = parseInt(res.headers.get("Content-Length"), 10) || 0;
+          var reader = res.body.getReader();
+          return reader.read().then(function (first) {
+            var gz = !first.done && first.value.length > 2 && first.value[0] === 0x1f && first.value[1] === 0x8b;
+            var pending = first;
+            var bytes = new ReadableStream({
+              pull: function (controller) {
+                var step = pending ? Promise.resolve(pending) : reader.read();
+                pending = null;
+                return step.then(function (r) {
+                  if (r.done) { controller.close(); return; }
+                  prefetchLoaded[key] += r.value.length;
+                  reportPrefetch();
+                  controller.enqueue(r.value);
+                });
+              },
+              cancel: function (why) { return reader.cancel(why); }
+            });
+            var out = gz ? bytes.pipeThrough(new DecompressionStream("gzip")) : bytes;
+            return new Response(out).blob();
+          });
+        }).then(function (blob) {
+          var blobUrl = URL.createObjectURL(blob);
+          prefetchBlobs.push(blobUrl);
+          return blobUrl;
+        }, function () {
+          return url; // could not prefetch: let Unity fetch (and unzip) it itself
+        });
+      }
+      var prefetch = Promise.all([
+        prefetchPlain("data", config.dataUrl),
+        prefetchPlain("code", config.codeUrl),
+        prefetchPlain("framework", config.frameworkUrl)
+      ]).then(function (urls) {
+        config.dataUrl = urls[0];
+        config.codeUrl = urls[1];
+        config.frameworkUrl = urls[2];
       });
 
       // Dossier loading screen: progress, a Department line that follows the progress, and on failure a stamped
@@ -277,7 +326,9 @@
       var loadPercent = document.getElementById("load-percent");
       var loadBar = document.getElementById("unity-progress-bar-empty");
       document.getElementById("load-file").textContent = String(Math.floor(1000 + Math.random() * 9000));
+      var shownProgress = 0;
       function showProgress(progress) {
+        progress = shownProgress = Math.max(shownProgress, progress);
         var pct = Math.max(0, Math.min(100, Math.round(100 * progress)));
         progressBarFull.style.width = pct + "%";
         loadPercent.textContent = pct + "%";
@@ -303,10 +354,16 @@
       var loader = document.createElement("script");
       loader.src = forceFail ? buildBase + "loadfail-missing.js" : buildUrl + ".loader.js?v=" + gameVersion;
       if (window.placeAnalytics) window.placeAnalytics("loadStart", []);
+      prefetchProgress = showProgress;
       loader.onload = function () {
-        createUnityInstance(canvas, config, showProgress).then(function () {
+        // Wait for the unzipped files, then start Unity (its own fetches of the blob: URLs are instant).
+        prefetch.then(function () {
+          return createUnityInstance(canvas, config, showProgress);
+        }).then(function (instance) {
           showProgress(1);
           loadingBar.style.display = "none";
+          prefetchBlobs.forEach(function (u) { URL.revokeObjectURL(u); });
+          prefetchBlobs = [];
         }).catch(function (message) {
           showLoadError(message);
         });
