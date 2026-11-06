@@ -1,0 +1,11 @@
+.lore { padding: calc(var(--nav-h) + 56px) 0 72px; }
+.lore .page-title { margin: 0 0 22px; font-size: clamp(44px, 7vw, 76px); }
+.lore .lede { margin-bottom: 20px; }
+.lore-note { max-width: 62ch; margin: 0 0 40px; color: var(--muted); font-size: 15px; line-height: 1.5; }
+.lore-group { padding: 28px 0 8px; border-top: 1px solid var(--line); }
+.lore-when { margin: 0 0 20px; color: var(--gold); font-size: 12px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; }
+.lore-entry { max-width: 68ch; margin: 0 0 28px; }
+.lore-entry h3 { margin: 0 0 8px; font-family: Fraunces, Georgia, serif; font-weight: 560; font-size: 28px; line-height: 1.1; letter-spacing: -0.01em; }
+.lore-entry p { margin: 0; color: var(--muted); font-size: 18px; line-height: 1.55; }
+.nav-lore { display: inline-flex; align-items: center; min-height: 42px; padding: 0 10px; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0.2em; text-decoration: none; text-transform: uppercase; }
+.nav-lore:hover, .nav-lore:focus-visible, .nav-lore[aria-current="page"] { color: var(--gold); }
