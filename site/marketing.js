@@ -93,6 +93,20 @@ if (shotA && shotB) {
   runCycle();
 }
 
+// Share card: copies this page's address on a click (no request is made).
+document.querySelectorAll("[data-share-copy]").forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    const status = btn.parentElement?.querySelector(".share-status");
+    const url = location.origin + location.pathname;
+    try {
+      await navigator.clipboard.writeText(url);
+      if (status) status.textContent = "Link copied.";
+    } catch {
+      if (status) status.textContent = url;
+    }
+  });
+});
+
 // Trailer slot: nothing loads until the click. A data-embed URL (https) becomes an iframe; otherwise the local reel plays.
 document.querySelectorAll("[data-trailer]").forEach((slot) => {
   slot.querySelector("[data-trailer-start]")?.addEventListener("click", () => {
