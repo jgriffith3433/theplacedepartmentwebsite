@@ -139,3 +139,18 @@ body .site-footer, body .hawkes-footer { font-family: var(--type); }
   body .nav-lore { font-size: 11px; }
   body .dossier li span { min-width: 40px; }
 }
+
+/* Proof: trailer slot and exhibit gallery */
+.proof .trailer { position: relative; aspect-ratio: 16 / 9; background: #000; border: 1px solid var(--line, rgba(231,211,176,.22)); margin: 24px 0 8px; }
+.proof .trailer video, .proof .trailer iframe { width: 100%; height: 100%; border: 0; display: block; }
+.proof .trailer-play { position: absolute; inset: 0; width: 100%; padding: 0; border: 0; background: none; cursor: pointer; color: var(--paper); }
+.proof .trailer-play img { width: 100%; height: 100%; object-fit: cover; opacity: .6; display: block; }
+.proof .trailer-play span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 14px 26px; background: var(--paper); color: var(--ink); font-family: var(--type); font-size: 20px; border: 2px solid var(--stamp-red); }
+.proof .trailer-play:hover span, .proof .trailer-play:focus-visible span { background: var(--paper-shade); }
+.proof .trailer-note { margin: 0 0 28px; }
+.proof .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.proof .gallery figure { margin: 0; background: var(--paper); color: var(--ink); padding: 8px 8px 10px; }
+.proof .gallery img { width: 100%; height: auto; display: block; }
+.proof .gallery figcaption { font-family: var(--type); font-size: 14px; color: var(--ink-soft); padding-top: 8px; }
+@media (max-width: 860px) { .proof .gallery { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .proof .gallery { grid-template-columns: 1fr; } }
