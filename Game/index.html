@@ -36,6 +36,10 @@
       font-family: Outfit, Arial, Helvetica, sans-serif;
     }
     #unity-loading-bar[hidden] { display: none; }
+    /* The Tap to play prompt (hawkes-sound.js, #hawkes-tap) is nearly opaque and sits over this card: while it is up,
+       hide the card so the two never show through each other. Loading goes on underneath; the card appears at the tap.
+       A load error stays visible. */
+    body:has(#hawkes-tap) #unity-loading-bar:not(.failed) { visibility: hidden; }
     .dossier {
       width: min(440px, 100%);
       padding: 26px 28px 22px;
