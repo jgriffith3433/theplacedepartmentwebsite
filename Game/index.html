@@ -20,16 +20,20 @@
       overflow: hidden;
       background: #111;
       touch-action: none;
+      overscroll-behavior: none;
     }
-    #unity-container { width: 100%; height: 100%; }
-    #unity-canvas { width: 100%; height: 100%; display: block; background: #111; }
+    /* No page scroll or rubber-band bounce on a phone: the page is exactly one screen, pinned in place. */
+    html, body { height: 100dvh; }
+    body { position: fixed; inset: 0; -webkit-text-size-adjust: 100%; }
+    #unity-container { position: fixed; inset: 0; width: 100%; height: 100%; overflow: hidden; }
+    #unity-canvas { width: 100%; height: 100%; display: block; background: #111; touch-action: none; }
     #unity-loading-bar {
       position: absolute;
       inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
       z-index: 3;
       background: radial-gradient(ellipse at 50% 40%, #1c1814 0%, #12100e 70%);
       color: #f6f1e8;
@@ -40,6 +44,12 @@
        hide the card so the two never show through each other. Loading goes on underneath; the card appears at the tap.
        A load error stays visible. */
     body:has(#hawkes-tap) #unity-loading-bar:not(.failed) { visibility: hidden; }
+    /* Keep the Tap to play content out of the notch and home bar (its own style is injected later, so out-rank it). */
+    body #hawkes-tap {
+      padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+      overflow: hidden;
+    }
+    .dossier { max-height: 100%; overflow: hidden; }
     .dossier {
       width: min(440px, 100%);
       padding: 26px 28px 22px;
@@ -134,15 +144,15 @@
     #unity-warning {
       position: absolute;
       left: 50%;
-      bottom: 16px;
+      bottom: max(16px, env(safe-area-inset-bottom));
       transform: translateX(-50%);
       max-width: 90%;
       z-index: 4;
     }
     #version-display {
       position: absolute;
-      right: 12px;
-      bottom: 8px;
+      right: max(12px, env(safe-area-inset-right));
+      bottom: max(8px, env(safe-area-inset-bottom));
       color: rgba(255, 255, 255, 0.55);
       font-family: Arial, sans-serif;
       font-size: 12px;
@@ -161,6 +171,58 @@
     }
     a.home {
       color: #8fd9b4;
+    }
+    /* Phone controls: Fullscreen (top right, only where the browser has it) and a rotate hint (top, dismissible).
+       Above Tap to play (z 1000) but small and at the edges, so neither covers its text; only they take taps. */
+    #fs-button {
+      position: fixed;
+      top: max(10px, env(safe-area-inset-top));
+      right: max(10px, env(safe-area-inset-right));
+      z-index: 1002;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0 14px;
+      cursor: pointer;
+      border: 1px solid rgba(231, 211, 176, 0.35);
+      border-radius: 3px;
+      background: rgba(18, 16, 14, 0.82);
+      color: #efe2cc;
+      font: 600 12px/1 Outfit, Arial, sans-serif;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      touch-action: manipulation;
+    }
+    #fs-button[hidden], #rotate-hint[hidden] { display: none; }
+    #fs-button:hover, #fs-button:focus-visible { border-color: #e7d3b0; outline: 2px solid #e7d3b0; outline-offset: 2px; }
+    #rotate-hint {
+      position: fixed;
+      top: max(10px, env(safe-area-inset-top));
+      left: max(10px, env(safe-area-inset-left));
+      right: calc(max(10px, env(safe-area-inset-right)) + 150px);
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 4px 6px 12px;
+      min-height: 44px;
+      background: rgba(28, 24, 20, 0.92);
+      border: 1px solid rgba(231, 211, 176, 0.3);
+      border-left: 4px solid #e7d3b0;
+      border-radius: 3px;
+      color: #efe2cc;
+      font: italic 14px/1.35 Fraunces, Georgia, serif;
+    }
+    #rotate-hint span { flex: 1; }
+    #rotate-dismiss {
+      flex: none;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      border: 0;
+      background: transparent;
+      color: #e7d3b0;
+      font: 700 20px/1 Arial, sans-serif;
+      touch-action: manipulation;
     }
   </style>
   <script>
@@ -200,6 +262,8 @@
     </div>
     <div id="unity-warning"></div>
   </div>
+  <button type="button" id="fs-button" hidden aria-label="Enter fullscreen">Fullscreen</button>
+  <div id="rotate-hint" role="note" hidden><span>This file reads better sideways. Turn your phone to landscape.</span><button type="button" id="rotate-dismiss" aria-label="Dismiss the rotate hint">&times;</button></div>
   <div id="version-display"></div>
   <script>
     var gameVersion = window.PLACE_BUILD;
@@ -239,6 +303,12 @@
         canvas.style.height = height + "px";
       }
       window.addEventListener("resize", fitCanvas);
+      window.addEventListener("orientationchange", fitCanvas);
+      document.addEventListener("fullscreenchange", fitCanvas);
+      document.addEventListener("webkitfullscreenchange", fitCanvas);
+      if (window.visualViewport) window.visualViewport.addEventListener("resize", fitCanvas);
+      // Keep the page itself from scrolling or bouncing (iOS ignores overflow:hidden on some gestures).
+      document.addEventListener("touchmove", function (e) { e.preventDefault(); }, { passive: false });
       fitCanvas();
 
       // Builds in R2 (hawkesstudio docs/unity-builds-storage.md): the cloud build sets HAWKES_BUILD_BASE; without it, from here.
@@ -377,6 +447,48 @@
       };
       document.body.appendChild(loader);
     }
+  </script>
+  <script>
+    // Phone controls (static, event driven: no timers or polling). Fullscreen where the browser has it (iPhone Safari
+    // has none for pages, so no button there); a rotate hint while a narrow portrait screen is showing, dismissed for
+    // the visit with its x. Neither blocks the game: only the two small controls take taps.
+    (function () {
+      var root = document.documentElement;
+      var fsButton = document.getElementById("fs-button");
+      var hint = document.getElementById("rotate-hint");
+      var request = root.requestFullscreen || root.webkitRequestFullscreen;
+      var supported = !!request && (document.fullscreenEnabled || document.webkitFullscreenEnabled);
+      function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement; }
+      function syncFs() {
+        fsButton.hidden = !supported;
+        var on = !!fsElement();
+        fsButton.textContent = on ? "Exit fullscreen" : "Fullscreen";
+        fsButton.setAttribute("aria-label", on ? "Exit fullscreen" : "Enter fullscreen");
+      }
+      fsButton.addEventListener("click", function () {
+        var exit = document.exitFullscreen || document.webkitExitFullscreen;
+        try {
+          var p = fsElement() ? exit.call(document) : request.call(root);
+          if (p && p.catch) p.catch(function () {});
+        } catch (e) {}
+      });
+      document.addEventListener("fullscreenchange", syncFs);
+      document.addEventListener("webkitfullscreenchange", syncFs);
+      syncFs();
+
+      var dismissed = false;
+      try { dismissed = sessionStorage.getItem("place-rotate-hint") === "1"; } catch (e) {}
+      var portraitPhone = window.matchMedia("(orientation: portrait) and (max-width: 820px)");
+      function syncHint() { hint.hidden = dismissed || !portraitPhone.matches; }
+      document.getElementById("rotate-dismiss").addEventListener("click", function () {
+        dismissed = true;
+        try { sessionStorage.setItem("place-rotate-hint", "1"); } catch (e) {}
+        syncHint();
+      });
+      if (portraitPhone.addEventListener) portraitPhone.addEventListener("change", syncHint);
+      else portraitPhone.addListener(syncHint);
+      syncHint();
+    })();
   </script>
 <!-- hawkes-whatsnew: written by breakingthrough's WebGL deploy (Tools/Web/whatsnew-game.html); edit it there, not here -->
 <style>
