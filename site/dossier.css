@@ -158,3 +158,31 @@ body .site-footer, body .hawkes-footer { font-family: var(--type); }
 .proof .share-copy { font: inherit; color: var(--stamp-red); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
 @media (max-width: 860px) { .proof .gallery { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 520px) { .proof .gallery { grid-template-columns: 1fr; } }
+
+/* Campaign path: staggered on desktop, horizontal swipe on phones */
+.campaign { padding: 56px 0; }
+.campaign .path { list-style: none; margin: 28px auto 0; padding: 0 24px; max-width: 1120px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 24px; position: relative; }
+.campaign .chapter:nth-child(3n+2) { transform: translateY(28px); }
+.campaign .chapter { position: relative; background: var(--paper); background-image: var(--grain); background-blend-mode: multiply; color: var(--ink); padding: 14px 14px 16px; border-left: 6px solid #b99a5b; border-radius: 2px; box-shadow: 0 8px 20px rgba(0,0,0,.35); min-width: 0; }
+.campaign .chapter h3 { color: var(--ink); font-size: 22px; margin: 2px 0 10px; }
+.campaign .c-num { font-family: var(--type); font-size: 13px; letter-spacing: .16em; color: var(--ink-soft); text-transform: uppercase; }
+.campaign .c-body { position: relative; }
+.campaign .c-shot { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+.campaign .c-boss { position: absolute; right: 8px; top: 38%; width: 34%; max-width: 110px; }
+.campaign .c-boss img { width: 100%; height: auto; display: block; filter: drop-shadow(0 4px 6px rgba(0,0,0,.5)); }
+.campaign .c-line { font-family: var(--type); font-size: 16px; color: var(--ink-soft); margin: 62px 0 0; }
+.campaign .c-seal { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; width: 100%; aspect-ratio: 16 / 9; min-height: 44px; border: 2px dashed var(--ink-soft); background: var(--paper-shade); color: var(--ink); cursor: pointer; font-family: var(--type); }
+.campaign .c-seal:hover, .campaign .c-seal:focus-visible { background: #cdbd96; outline: 2px solid var(--stamp-red); outline-offset: 2px; }
+.campaign .c-seal .stamp { font-size: 22px; transform: rotate(-6deg); }
+.campaign .c-tap { font-size: 14px; color: var(--ink-soft); }
+.campaign .c-seal[hidden] { display: none; }
+.reveal-on .campaign .chapter { opacity: 0; translate: 0 24px; transition: opacity .6s ease, translate .6s ease; }
+.reveal-on .campaign .chapter.in { opacity: 1; translate: 0 0; }
+@media (max-width: 860px) {
+  .campaign .path { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; gap: 14px; padding: 8px 24px 24px; scroll-padding: 0 24px; }
+  .campaign .chapter, .campaign .chapter:nth-child(3n+2) { flex: 0 0 78%; scroll-snap-align: center; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .campaign .path { scroll-behavior: auto; }
+  .campaign .chapter { transition: none; }
+}
