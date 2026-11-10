@@ -8,6 +8,8 @@
     <meta name="description" content="What's new at The Place Department, newest first." />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="manifest.webmanifest" />
+    <script src="https://hawkesgen.ai/sdk/analytics@1.js" data-product="theplacedepartment" data-hawkes-analytics="site" defer></script>
+    <script src="./site/analytics.js"></script>
     <title>What's new - The Place Department</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -79,10 +81,22 @@
       .whatsnew .filing {
         color: var(--muted);
       }
+      .update-feed { display: grid; gap: 28px; max-width: 68ch; }
+      .update-card { background: var(--bg-raise); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+      .update-card.is-new { border-color: var(--accent); }
+      .update-media { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #000; }
+      .update-body { padding: 18px 20px 22px; }
+      .update-meta { display: flex; gap: 12px; align-items: center; margin: 0 0 8px; color: var(--muted); font: 600 12px Outfit, Arial, sans-serif; letter-spacing: 0.18em; text-transform: uppercase; }
+      .update-new { color: #12100e; background: var(--accent); padding: 2px 8px; border-radius: 2px; }
+      .update-body h2 { margin: 0 0 8px; font: 560 26px/1.15 Fraunces, Georgia, serif; }
+      .update-line { margin: 4px 0 0; color: var(--muted); font-size: 17px; line-height: 1.5; }
+      .release-log { max-width: 68ch; margin-top: 40px; color: var(--muted); }
+      .release-log summary { cursor: pointer; font: 600 12px Outfit, Arial, sans-serif; letter-spacing: 0.18em; text-transform: uppercase; }
+      @media (max-width: 480px) { .update-body h2 { font-size: 22px; } .update-body { padding: 14px 14px 18px; } }
     </style>
     <link rel="stylesheet" href="./site/dossier.css" />
   </head>
-  <body data-page="whatsnew">
+  <body data-page="whatsnew" data-whatsnew-page>
     <a class="skip" href="#content">Skip to content</a>
 
     <header class="nav is-solid">
@@ -108,7 +122,8 @@
           Where things that should not exist are given an address. Everything that has moved in, newest first.
           <span data-hawkes-version hidden></span>
         </p>
-        <div data-hawkes-releases><p class="filing">Filing&hellip;</p></div>
+        <div class="update-feed" data-updates><p class="filing">Filing&hellip;</p></div>
+        <details class="release-log"><summary>Version history</summary><div data-hawkes-releases></div></details>
       </div>
     </main>
 
@@ -166,6 +181,7 @@
     </footer>
     <!-- /hawkes-footer -->
 
+    <script src="./site/updates.js" defer></script>
     <script src="./js/hawkes-release.js" data-releases="./releases.json" defer></script>
   </body>
 </html>
