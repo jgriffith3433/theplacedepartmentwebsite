@@ -107,10 +107,18 @@ document.querySelectorAll("[data-share-copy]").forEach((btn) => {
   });
 });
 
-// Trailer slot: nothing loads until the click. A data-embed URL (https) becomes an iframe; otherwise the local reel plays.
+// Trailer slot: nothing loads until the click. The click opens an overlay player; Escape, the close button or a tap outside closes it.
 document.querySelectorAll("[data-trailer]").forEach((slot) => {
-  slot.querySelector("[data-trailer-start]")?.addEventListener("click", () => {
+  const opener = slot.querySelector("[data-trailer-start]");
+  opener?.addEventListener("click", () => {
     const embed = slot.dataset.embed;
+    const overlay = document.createElement("div");
+    overlay.className = "trailer-overlay";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-label", "The Place Department trailer");
+    const box = document.createElement("div");
+    box.className = "trailer-box";
     let el;
     if (embed && /^https:\/\//.test(embed)) {
       el = document.createElement("iframe");
@@ -121,10 +129,32 @@ document.querySelectorAll("[data-trailer]").forEach((slot) => {
     } else {
       el = document.createElement("video");
       el.src = slot.dataset.video;
+      el.poster = slot.dataset.poster || "";
       el.controls = true;
       el.autoplay = true;
       el.playsInline = true;
     }
-    slot.replaceChildren(el);
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "trailer-close";
+    close.setAttribute("aria-label", "Close the trailer");
+    close.textContent = "\u00d7";
+    box.append(el);
+    overlay.append(box, close);
+    const done = () => {
+      document.removeEventListener("keydown", onKey);
+      el.pause?.();
+      overlay.remove();
+      document.documentElement.classList.remove("trailer-open");
+      opener.focus();
+    };
+    const onKey = (e) => { if (e.key === "Escape") done(); };
+    overlay.addEventListener("click", (e) => { if (!box.contains(e.target)) done(); });
+    close.addEventListener("click", done);
+    document.addEventListener("keydown", onKey);
+    document.documentElement.classList.add("trailer-open");
+    document.body.append(overlay);
+    close.focus();
+    window.dispatchEvent(new CustomEvent("trailer:open"));
   });
 });
