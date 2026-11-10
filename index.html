@@ -269,5 +269,44 @@
     <!-- /hawkes-footer -->
 
     <script src="./site/marketing.js" defer></script>
+    <script>
+      // Playtest bridge: Studio opens the site root; game scenarios live on Game/index.html.
+      (function () {
+        if (window.hawkesPlaytest) return;
+        var scenarios = [
+          { id: "smoke", title: "Load the Game page through to Tap to play", seconds: 180, tags: ["smoke"] },
+          { id: "loading", title: "Honest loading card: stall Retry, MB, 10/60/done", seconds: 240, tags: ["full"] }
+        ];
+        function go(id, options) {
+          var u = new URL("Game/index.html", location.href);
+          u.searchParams.set("playtest", id || "smoke");
+          if (options && options.seed != null) u.searchParams.set("seed", String(options.seed));
+          if (options && options.speed != null) u.searchParams.set("speed", String(options.speed));
+          if (options && options.at) u.searchParams.set("at", String(options.at));
+          if (id === "loading") {
+            u.searchParams.set("stall", "1");
+            u.searchParams.set("stallms", "500");
+          }
+          location.replace(u.toString());
+        }
+        window.hawkesPlaytest = {
+          version: 1,
+          product: "theplacedepartment",
+          scenarios: function () { return scenarios.map(function (s) { return Object.assign({}, s); }); },
+          start: function (id, options) {
+            go(id, options || {});
+            return new Promise(function () {});
+          },
+          stop: function () {},
+          state: function () { return { ready: true, status: "running", progress: 0, scene: "Home", note: "opening Game page" }; },
+          report: function () { return null; }
+        };
+        var q = new URLSearchParams(location.search);
+        var auto = q.get("playtest");
+        if (auto === "smoke" || auto === "loading") {
+          go(auto, { seed: Number(q.get("seed") || 1) || 1, speed: Number(q.get("speed") || 1) || 1, at: q.get("at") || undefined });
+        }
+      })();
+    </script>
   </body>
 </html>
