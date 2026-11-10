@@ -318,8 +318,8 @@ a {
 /* Over the gameplay loop the vignette is lighter, so the game shows through */
 .stage-loop ~ .stage-vignette {
   background:
-    radial-gradient(ellipse at center, rgba(8, 6, 5, 0.25) 0%, rgba(8, 6, 5, 0.5) 50%, rgba(8, 6, 5, 0.8) 100%),
-    linear-gradient(180deg, rgba(8, 6, 5, 0.55), rgba(8, 6, 5, 0.1) 40%, rgba(8, 6, 5, 0.75));
+    radial-gradient(ellipse at center, rgba(8, 6, 5, 0.5) 0%, rgba(8, 6, 5, 0.68) 50%, rgba(8, 6, 5, 0.85) 100%),
+    linear-gradient(180deg, rgba(8, 6, 5, 0.6), rgba(8, 6, 5, 0.35) 40%, rgba(8, 6, 5, 0.8));
 }
 
 .stage-vignette {
