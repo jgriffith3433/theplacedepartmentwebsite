@@ -23,10 +23,14 @@
       overscroll-behavior: none;
     }
     /* No page scroll or rubber-band bounce on a phone: the page is exactly one screen, pinned in place. */
-    html, body { height: 100dvh; }
+    html, body { height: 100vh; height: 100svh; height: 100dvh; }
     body { position: fixed; inset: 0; -webkit-text-size-adjust: 100%; }
-    #unity-container { position: fixed; inset: 0; width: 100%; height: 100%; overflow: hidden; }
-    #unity-canvas { width: 100%; height: 100%; display: block; background: #111; touch-action: none; }
+    /* The container is the visual viewport minus the notch and home bar; the canvas fills what is left of it. */
+    #unity-container {
+      position: fixed; inset: 0; width: 100%; height: 100%; overflow: hidden;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    #unity-canvas { position: relative; width: 100%; height: 100%; display: block; background: #111; touch-action: none; }
     #unity-loading-bar {
       position: absolute;
       inset: 0;
@@ -235,7 +239,7 @@
       font: italic 14px/1.35 Fraunces, Georgia, serif;
     }
     #rotate-hint span { flex: 1; font-size: 13px; }
-    body.rotate-bar #unity-container { top: 44px; height: calc(100% - 44px); }
+    body.rotate-bar #unity-container { top: 44px; height: calc(100% - 44px); padding-top: 0; }
     body.rotate-bar #fs-button { top: 0; min-height: 44px; border-radius: 0; z-index: 1002; }
     #rotate-dismiss {
       flex: none;
@@ -324,21 +328,26 @@
         }
       }
 
+      // Size the drawing buffer to the canvas's laid-out box at a capped devicePixelRatio (sharp, but light on phones).
+      // Event driven only: resize, orientation, visual viewport, tab return and fullscreen changes; no timers.
       function fitCanvas() {
-        var width = window.visualViewport ? window.visualViewport.width : window.innerWidth;
-        var height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-        if (document.body.classList.contains("rotate-bar")) height -= 44;
-        canvas.width = width;
-        canvas.height = height;
-        canvas.style.width = width + "px";
-        canvas.style.height = height + "px";
+        var box = canvas.getBoundingClientRect();
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var w = Math.max(1, Math.round(box.width * dpr));
+        var h = Math.max(1, Math.round(box.height * dpr));
+        if (canvas.width !== w) canvas.width = w;
+        if (canvas.height !== h) canvas.height = h;
       }
-      window.addEventListener("resize", fitCanvas);
-      window.addEventListener("orientationchange", fitCanvas);
-      window.placeFitCanvas = fitCanvas;
-      document.addEventListener("fullscreenchange", fitCanvas);
-      document.addEventListener("webkitfullscreenchange", fitCanvas);
-      if (window.visualViewport) window.visualViewport.addEventListener("resize", fitCanvas);
+      // Browsers settle the new size a frame after an orientation change or a tab return: refit once then too.
+      function fitSoon() { fitCanvas(); requestAnimationFrame(fitCanvas); }
+      window.addEventListener("resize", fitSoon);
+      window.addEventListener("orientationchange", fitSoon);
+      window.placeFitCanvas = fitSoon;
+      document.addEventListener("fullscreenchange", fitSoon);
+      document.addEventListener("webkitfullscreenchange", fitSoon);
+      document.addEventListener("visibilitychange", function () { if (!document.hidden) fitSoon(); });
+      window.addEventListener("pageshow", fitSoon);
+      if (window.visualViewport) window.visualViewport.addEventListener("resize", fitSoon);
       // Keep the page itself from scrolling or bouncing (iOS ignores overflow:hidden on some gestures).
       document.addEventListener("touchmove", function (e) { e.preventDefault(); }, { passive: false });
       fitCanvas();
@@ -359,6 +368,7 @@
         productName: "PlaceDepartment",
         productVersion: gameVersion,
         showBanner: unityShowBanner,
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
       };
 
       // The build files are gzip ("UnityWeb Compressed Content") but the build host serves them as application/octet-stream
