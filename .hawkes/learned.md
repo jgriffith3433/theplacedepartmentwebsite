@@ -1,4 +1,0 @@
-- convention: Gallery rebuild — `tools/make-gallery.py` pulls HUD-free frames from breakingthrough `Assets/Resources/Cinematics/Art` (or GitHub raw) via ffmpeg; do not re-grab the old HUD hero-loop.
-- convention: Share cards per page — home `assets/og-card.jpg`, lore `assets/og-lore.jpg`, Game `assets/og-game.jpg`; tags point at theplacedepartment.com until main publishes.
-- lesson: Gallery playtest must wait for `load` — `site/marketing.js` is defer, so `?playtest=gallery` must not open the lightbox before that script installs it.
-- canon: Exhibit set — nine stills map hub doors, Ch.1 stamp, Ch.2 lantern road, Ch.3 lamp floor, Ch.4 process server with paper, Ch.5 Registrar/ledger, Ch.6 Order at the filed door, Courier boss, Wallit return-to-sender.
