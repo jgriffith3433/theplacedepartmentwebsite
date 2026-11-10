@@ -309,6 +309,10 @@
       text-transform: uppercase;
       touch-action: manipulation;
     }
+    /* Landscape: the game's top-right HUD (This wave / Yo Bot, about 70px tall) owns the corner, so the button sits under it. */
+    @media (orientation: landscape) {
+      #fs-button { top: max(76px, calc(env(safe-area-inset-top) + 66px)); }
+    }
     #fs-button[hidden], #rotate-hint[hidden] { display: none; }
     #fs-button:hover, #fs-button:focus-visible { border-color: #e7d3b0; outline: 2px solid #e7d3b0; outline-offset: 2px; }
     #rotate-card[hidden] { display: none; }
