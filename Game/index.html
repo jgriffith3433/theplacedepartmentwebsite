@@ -44,72 +44,140 @@
       font-family: Outfit, Arial, Helvetica, sans-serif;
     }
     #unity-loading-bar[hidden] { display: none; }
-    /* The Tap to play prompt (hawkes-sound.js, #hawkes-tap) is nearly opaque and sits over this card: while it is up,
-       hide the card so the two never show through each other. Loading goes on underneath; the card appears at the tap.
-       A load error stays visible. */
-    body:has(#hawkes-tap) #unity-loading-bar:not(.failed) { visibility: hidden; }
+    /* Show the branded loading card first; reveal Tap to play (#hawkes-tap, injected by hawkes-sound.js) only once
+       the build has finished loading (body.game-loaded). On a load error, keep #hawkes-tap hidden so Retry works. */
+    body:not(.game-loaded) #hawkes-tap { display: none !important; }
     /* Keep the Tap to play content out of the notch and home bar (its own style is injected later, so out-rank it). */
     body #hawkes-tap {
       padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
       overflow: hidden;
     }
-    .dossier { max-height: 100%; overflow: hidden; }
     .dossier {
       width: min(440px, 100%);
-      padding: 26px 28px 22px;
+      max-height: 100%;
+      overflow-y: auto;
+      padding: 24px 26px 22px;
       background: #1c1814;
-      border: 1px solid rgba(231, 211, 176, 0.22);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .9 0 0 0 0 .8 0 0 0 .6 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+      border: 1px solid rgba(231, 211, 176, 0.24);
       border-top: 6px solid #e7d3b0;
-      border-radius: 4px;
+      border-radius: 2px 12px 3px 3px;
       box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
     }
+    .dossier-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
     .dossier-kicker {
+      min-width: 0;
       font-size: 11px;
-      letter-spacing: 0.22em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: #cbbdaa;
     }
+    .dossier-stamp {
+      flex: none;
+      display: inline-block;
+      padding: 2px 7px 1px;
+      border: 1.5px solid rgba(231, 211, 176, 0.75);
+      border-radius: 2px;
+      color: #e7d3b0;
+      font: 700 10px/1.3 "Courier New", Courier, monospace;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      transform: rotate(-3deg);
+    }
     .dossier h1 {
-      margin: 6px 0 2px;
-      font: 600 28px/1.15 Fraunces, Georgia, serif;
+      margin: 6px 0 4px;
+      font: 600 27px/1.15 Fraunces, Georgia, serif;
       color: #f6f1e8;
     }
     .dossier-file {
-      font-size: 12px;
-      letter-spacing: 0.12em;
+      font: 12px/1.4 "Courier New", Courier, monospace;
+      letter-spacing: 0.08em;
       color: #e7d3b0;
       border-bottom: 1px dashed rgba(231, 211, 176, 0.3);
-      padding-bottom: 14px;
-      margin-bottom: 18px;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
     }
     #load-line {
-      min-height: 3em;
-      font: italic 16px/1.5 Fraunces, Georgia, serif;
+      min-height: 2.9em;
+      font: italic 16px/1.45 Fraunces, Georgia, serif;
       color: #efe2cc;
+      transition: opacity 0.18s ease;
     }
+    #load-line.is-fading { opacity: 0.18; }
+    .dossier-status {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 12px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #cbbdaa;
+    }
+    #load-stage { color: #e7d3b0; font-weight: 600; }
+    #load-percent { color: #f6f1e8; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
     #unity-progress-bar-empty {
       height: 10px;
-      margin: 14px 0 8px;
+      margin: 7px 0 8px;
       background: rgba(231, 211, 176, 0.14);
-      border: 1px solid rgba(231, 211, 176, 0.22);
+      border: 1px solid rgba(231, 211, 176, 0.24);
       border-radius: 2px;
       overflow: hidden;
     }
     #unity-progress-bar-full {
       width: 0%;
       height: 100%;
-      background: #f0b36a;
-      transition: width 0.25s ease-out;
+      background: linear-gradient(90deg, #df9c4f, #f0b36a);
+      transition: width 0.18s ease-out;
     }
-    .dossier-status {
+    .dossier-meta {
       display: flex;
+      align-items: baseline;
       justify-content: space-between;
-      font-size: 12px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      gap: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+    #load-bytes {
+      font: 12px/1.35 "Courier New", Courier, monospace;
+      letter-spacing: 0.03em;
       color: #cbbdaa;
     }
-    #load-percent { color: #e7d3b0; font-variant-numeric: tabular-nums; }
+    #load-stall[hidden] { display: none; }
+    #load-stall {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 14px;
+      padding: 10px 12px;
+      background: rgba(240, 179, 106, 0.09);
+      border: 1px solid rgba(240, 179, 106, 0.35);
+      border-radius: 3px;
+      color: #efe2cc;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    #load-stall-retry {
+      flex: none;
+      cursor: pointer;
+      min-height: 44px;
+      border: 0;
+      border-radius: 3px;
+      padding: 0 16px;
+      background: #f0b36a;
+      color: #12100e;
+      font: 700 12px/1 Outfit, Arial, sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      touch-action: manipulation;
+    }
+    #load-stall-retry:hover, #load-stall-retry:focus-visible { background: #f6c58c; outline: 2px solid #e7d3b0; outline-offset: 2px; }
     #load-error { display: none; }
     #unity-loading-bar.failed #load-working { display: none; }
     #unity-loading-bar.failed #load-error { display: block; }
@@ -135,16 +203,35 @@
     .load-actions { display: flex; gap: 12px; align-items: center; margin-top: 18px; }
     #load-retry {
       cursor: pointer;
+      min-height: 44px;
       border: 0;
       border-radius: 3px;
-      padding: 10px 22px;
+      padding: 0 22px;
       background: #f0b36a;
       color: #12100e;
       font: 700 14px/1 Outfit, Arial, sans-serif;
       letter-spacing: 0.12em;
       text-transform: uppercase;
+      touch-action: manipulation;
     }
     #load-retry:hover, #load-retry:focus-visible { background: #f6c58c; outline: 2px solid #e7d3b0; outline-offset: 2px; }
+    @media (max-width: 420px) {
+      .dossier { padding: 20px 18px 18px; }
+      .dossier-kicker { letter-spacing: 0.12em; font-size: 10px; }
+      .dossier h1 { font-size: 24px; }
+      #load-line { font-size: 15px; }
+    }
+    @media (max-height: 440px) {
+      .dossier { padding: 14px 20px 14px; }
+      .dossier h1 { font-size: 22px; margin-top: 4px; }
+      .dossier-file { padding-bottom: 8px; margin-bottom: 10px; }
+      #load-line { min-height: 2.6em; font-size: 14px; }
+      .dossier-status { margin-top: 8px; }
+      #load-stall { margin-top: 10px; padding: 8px 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #unity-progress-bar-full, #load-line { transition: none; }
+    }
     #unity-warning {
       position: absolute;
       left: 50%;
@@ -263,15 +350,28 @@
 <body>
   <div id="unity-container">
     <canvas id="unity-canvas"></canvas>
-    <div id="unity-loading-bar">
+    <div id="unity-loading-bar" data-stage="downloading">
       <div class="dossier">
-        <div class="dossier-kicker">The Place Department &middot; Records</div>
+        <div class="dossier-head">
+          <div class="dossier-kicker">The Place Department &middot; Records</div>
+          <span class="dossier-stamp" aria-hidden="true">Dossier</span>
+        </div>
         <h1>Opening your file</h1>
         <div class="dossier-file">FILE No. <span id="load-file">0000</span> &middot; CLEARANCE: PENDING</div>
         <div id="load-working">
-          <div id="load-line" aria-live="polite">Retrieving the file from its address&hellip;</div>
+          <div id="load-line">Retrieving your case file from its address&hellip;</div>
+          <div class="dossier-status">
+            <span id="load-stage" aria-live="polite">Downloading</span>
+            <span id="load-percent">0%</span>
+          </div>
           <div id="unity-progress-bar-empty" role="progressbar" aria-label="Loading the game" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="unity-progress-bar-full"></div></div>
-          <div class="dossier-status"><span>Filing in progress</span><span id="load-percent">0%</span></div>
+          <div class="dossier-meta">
+            <span id="load-bytes">0.0 of ~90 MB</span>
+          </div>
+          <div id="load-stall" role="status" aria-live="polite" hidden>
+            <span>Slow connection &mdash; taking longer than usual to retrieve this file.</span>
+            <button type="button" id="load-stall-retry">Retry</button>
+          </div>
         </div>
         <div id="load-error" role="alert">
           <span class="stamp">File not retrieved</span>
@@ -352,159 +452,552 @@
       document.addEventListener("touchmove", function (e) { e.preventDefault(); }, { passive: false });
       fitCanvas();
 
-      // Builds in R2 (hawkesstudio docs/unity-builds-storage.md): the cloud build sets HAWKES_BUILD_BASE; without it, from here.
-      // Studio's cloud build (publish.page "site") puts window.HAWKES_BUILD_URL first in <head>: play that build.
-      var buildBase = window.HAWKES_BUILD_URL
-        ? String(window.HAWKES_BUILD_URL).replace(/\/?$/, "/")
-        : (window.HAWKES_BUILD_BASE || "") + gameVersion + "/";
-      var buildUrl = buildBase + gameName + "/Build/" + gameName;
-      var config = {
-        arguments: [],
-        dataUrl: buildUrl + ".data.unityweb?v=" + gameVersion,
-        frameworkUrl: buildUrl + ".framework.js.unityweb?v=" + gameVersion,
-        codeUrl: buildUrl + ".wasm.unityweb?v=" + gameVersion,
-        streamingAssetsUrl: buildBase + gameName + "/StreamingAssets",
-        companyName: "The Place Department",
-        productName: "PlaceDepartment",
-        productVersion: gameVersion,
-        showBanner: unityShowBanner,
-        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+      // Dossier loading card: event-driven progress from streaming download + createUnityInstance's callback,
+      // MB counter from Content-Length at the Game/build.json base, stage labels (Downloading / Unpacking / Starting),
+      // 6 rotating Department lines, a >20s slow-connection note with Retry, and stamped error + Retry.
+      var FILE_KEYS = ["data", "code", "framework"];
+      var APPROX_TOTAL_BYTES = 90 * 1000000;
+      var LINE_ROTATE_MS = 3500;
+      var stallMatch = /[?&]stallms=(\d+)\b/.exec(location.search);
+      var STALL_MS = stallMatch ? Math.max(250, parseInt(stallMatch[1], 10)) : 20000;
+
+      var loadLines = [
+        "Retrieving your case file from its address\u2026",
+        "Confirming this file should not exist\u2026",
+        "Cross-checking the Moonlit Hollow ledger\u2026",
+        "Inking the RETURN TO SENDER stamp\u2026",
+        "Counting bolts owed to the Clearing Crew\u2026",
+        "The Department does not rush. It only files."
+      ];
+      var STAGE_LABELS = {
+        downloading: "Downloading",
+        unpacking: "Unpacking",
+        starting: "Starting"
       };
 
-      // The build files are gzip ("UnityWeb Compressed Content") but the build host serves them as application/octet-stream
-      // with no Content-Encoding, so the browser can't decode them. Left alone, Unity unzips ~98 MB in JavaScript (a slow
-      // load: about 53 s on a cold run). So the page downloads all three in parallel (the data file is the long pole),
-      // unzips them with the browser's native DecompressionStream, and hands Unity plain blob: URLs it reads as-is.
-      // Anything that is not gzip (a host that starts sending Content-Encoding, so the browser already unzipped it) is
-      // passed through unchanged, and without DecompressionStream the original URL goes to Unity (its own slow path).
-      var prefetchLoaded = {}, prefetchTotal = {}, prefetchBlobs = [];
-      var prefetchProgress = function () {};
-      function reportPrefetch() {
-        var l = 0, t = 0;
-        for (var k in prefetchTotal) { l += prefetchLoaded[k] || 0; t += prefetchTotal[k]; }
-        if (t > 0) prefetchProgress(0.85 * Math.min(1, l / t));
-      }
-      function prefetchPlain(key, url) {
-        if (typeof DecompressionStream !== "function" || typeof fetch !== "function" || /[?&]loadfail=1\b/.test(location.search)) return Promise.resolve(url);
-        prefetchLoaded[key] = 0;
-        return fetch(url, { mode: "cors" }).then(function (res) {
-          if (!res.ok || !res.body) throw new Error("HTTP " + res.status);
-          prefetchTotal[key] = parseInt(res.headers.get("Content-Length"), 10) || 0;
-          var reader = res.body.getReader();
-          return reader.read().then(function (first) {
-            var gz = !first.done && first.value.length > 2 && first.value[0] === 0x1f && first.value[1] === 0x8b;
-            var pending = first;
-            var bytes = new ReadableStream({
-              pull: function (controller) {
-                var step = pending ? Promise.resolve(pending) : reader.read();
-                pending = null;
-                return step.then(function (r) {
-                  if (r.done) { controller.close(); return; }
-                  prefetchLoaded[key] += r.value.length;
-                  reportPrefetch();
-                  controller.enqueue(r.value);
-                });
-              },
-              cancel: function (why) { return reader.cancel(why); }
-            });
-            var out = gz ? bytes.pipeThrough(new DecompressionStream("gzip")) : bytes;
-            return new Response(out).blob();
-          });
-        }).then(function (blob) {
-          var blobUrl = URL.createObjectURL(blob);
-          prefetchBlobs.push(blobUrl);
-          return blobUrl;
-        }, function () {
-          return url; // could not prefetch: let Unity fetch (and unzip) it itself
-        });
-      }
-      var prefetch = Promise.all([
-        prefetchPlain("data", config.dataUrl),
-        prefetchPlain("code", config.codeUrl),
-        prefetchPlain("framework", config.frameworkUrl)
-      ]).then(function (urls) {
-        config.dataUrl = urls[0];
-        config.codeUrl = urls[1];
-        config.frameworkUrl = urls[2];
-      });
-
-      // Dossier loading screen: progress, a Department line that follows the progress, and on failure a stamped
-      // notice with Retry (a reload: a Unity instance can't be started twice on one canvas).
-      var loadLines = [
-        "Retrieving the file from its address\u2026",
-        "Checking that this file should not exist\u2026",
-        "Stamping the paperwork in triplicate\u2026",
-        "The Department thanks you for your patience. It is not required.",
-        "Assigning you a desk. Please do not look at the other desks.",
-        "Almost filed. Everything is almost filed."
-      ];
-      var loadLine = document.getElementById("load-line");
-      var loadPercent = document.getElementById("load-percent");
-      var loadBar = document.getElementById("unity-progress-bar-empty");
+      var loadLineEl = document.getElementById("load-line");
+      var loadStageEl = document.getElementById("load-stage");
+      var loadPercentEl = document.getElementById("load-percent");
+      var loadBytesEl = document.getElementById("load-bytes");
+      var loadBarEl = document.getElementById("unity-progress-bar-empty");
+      var loadStallEl = document.getElementById("load-stall");
+      var loadStallRetryBtn = document.getElementById("load-stall-retry");
+      var loadRetryBtn = document.getElementById("load-retry");
       document.getElementById("load-file").textContent = String(Math.floor(1000 + Math.random() * 9000));
-      var shownProgress = 0;
-      function showProgress(progress) {
-        progress = shownProgress = Math.max(shownProgress, progress);
-        var pct = Math.max(0, Math.min(100, Math.round(100 * progress)));
-        progressBarFull.style.width = pct + "%";
-        loadPercent.textContent = pct + "%";
-        loadBar.setAttribute("aria-valuenow", String(pct));
-        var line = loadLines[Math.min(loadLines.length - 1, Math.floor(progress * loadLines.length))];
-        if (loadLine.textContent !== line) loadLine.textContent = line;
-      }
+
+      var initialHeadUrl = window.HAWKES_BUILD_URL;
+      var loadAttempt = 0;
+      var hasRetried = false;
+      var unityStarted = false;
       var loadFailed = false;
-      function showLoadError(detail) {
+      var currentAbort = null;
+      var prefetchBlobs = [];
+      var lineIndex = 0;
+      var lineTimer = null;
+      var fadeTimer = null;
+      var stallTimer = null;
+
+      var shownProgress = 0;
+      var loadedBytes = 0;
+      var totalBytes = 0;
+      var headersKnown = false;
+      var currentStage = "downloading";
+      var lastStallBytes = 0;
+      var lastStallProgress = 0;
+
+      function formatMB(bytes) {
+        return (Math.max(0, bytes) / 1000000).toFixed(1);
+      }
+
+      function renderCard() {
+        if (loadFailed) return;
+        var clamped = Math.max(0, Math.min(1, shownProgress));
+        var pct = Math.round(100 * clamped);
+        var widthPct = (100 * clamped).toFixed(1) + "%";
+        if (progressBarFull.style.width !== widthPct) progressBarFull.style.width = widthPct;
+        var pctText = pct + "%";
+        if (loadPercentEl.textContent !== pctText) loadPercentEl.textContent = pctText;
+        loadBarEl.setAttribute("aria-valuenow", String(pct));
+
+        var stageLabel = STAGE_LABELS[currentStage] || "Downloading";
+        if (loadStageEl.textContent !== stageLabel) loadStageEl.textContent = stageLabel;
+        if (loadingBar.getAttribute("data-stage") !== currentStage) {
+          loadingBar.setAttribute("data-stage", currentStage);
+        }
+
+        var bytesText;
+        if (headersKnown) {
+          var shownBytes = Math.min(loadedBytes, totalBytes);
+          bytesText = formatMB(shownBytes) + " of " + formatMB(totalBytes) + " MB";
+        } else if (currentStage !== "downloading" && loadedBytes > 0) {
+          bytesText = formatMB(loadedBytes) + " of " + formatMB(loadedBytes) + " MB";
+        } else {
+          var approxDenom = loadedBytes >= 85000000
+            ? Math.ceil((loadedBytes * 1.15) / 10000000) * 10000000
+            : APPROX_TOTAL_BYTES;
+          bytesText = formatMB(loadedBytes) + " of ~" + Math.round(approxDenom / 1000000) + " MB";
+        }
+        if (loadBytesEl.textContent !== bytesText) loadBytesEl.textContent = bytesText;
+      }
+
+      function setStage(stage) {
+        if (loadFailed || window.placeGameReady) return;
+        if (currentStage === stage) return;
+        currentStage = stage;
+        renderCard();
+      }
+
+      function hideStall() {
+        if (!loadStallEl.hidden) loadStallEl.hidden = true;
+        loadingBar.removeAttribute("data-stalled");
+      }
+
+      function showStall() {
+        if (loadFailed || window.placeGameReady) return;
+        loadStallEl.hidden = false;
+        loadingBar.setAttribute("data-stalled", "true");
+        window.dispatchEvent(new CustomEvent("place-load-stall", { detail: { progress: shownProgress, loadedBytes: loadedBytes, totalBytes: totalBytes } }));
+      }
+
+      function resetStallTimer() {
+        if (stallTimer) clearTimeout(stallTimer);
+        stallTimer = null;
+        if (loadFailed || window.placeGameReady) return;
+        stallTimer = setTimeout(showStall, STALL_MS);
+      }
+
+      function stopTimers() {
+        if (lineTimer) { clearInterval(lineTimer); lineTimer = null; }
+        if (fadeTimer) { clearTimeout(fadeTimer); fadeTimer = null; }
+        if (stallTimer) { clearTimeout(stallTimer); stallTimer = null; }
+        loadLineEl.classList.remove("is-fading");
+      }
+
+      function startLineRotation() {
+        if (lineTimer) clearInterval(lineTimer);
+        lineTimer = setInterval(function () {
+          if (loadFailed || window.placeGameReady || document.hidden) return;
+          lineIndex = (lineIndex + 1) % loadLines.length;
+          var nextLine = loadLines[lineIndex];
+          var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          if (reduced) {
+            loadLineEl.textContent = nextLine;
+            return;
+          }
+          loadLineEl.classList.add("is-fading");
+          if (fadeTimer) clearTimeout(fadeTimer);
+          fadeTimer = setTimeout(function () {
+            loadLineEl.textContent = nextLine;
+            loadLineEl.classList.remove("is-fading");
+          }, 170);
+        }, LINE_ROTATE_MS);
+      }
+
+      function recordProgress(progress) {
+        if (loadFailed || window.placeGameReady) return;
+        var next = Math.max(shownProgress, Math.max(0, Math.min(1, progress)));
+        var moved = next > lastStallProgress + 0.0005 || loadedBytes > lastStallBytes;
+        shownProgress = next;
+        if (moved) {
+          lastStallProgress = shownProgress;
+          lastStallBytes = loadedBytes;
+          hideStall();
+          resetStallTimer();
+        }
+        renderCard();
+        window.dispatchEvent(new CustomEvent("place-load-progress", {
+          detail: { progress: shownProgress, stage: currentStage, loadedBytes: loadedBytes, totalBytes: totalBytes }
+        }));
+      }
+
+      function revokeBlobs() {
+        for (var i = 0; i < prefetchBlobs.length; i++) {
+          try { URL.revokeObjectURL(prefetchBlobs[i]); } catch (e) {}
+        }
+        prefetchBlobs = [];
+      }
+
+      function showLoadError(detail, attempt) {
+        if (attempt !== undefined && attempt !== loadAttempt) return;
         if (loadFailed) return;
         loadFailed = true;
+        if (currentAbort) {
+          try { currentAbort.abort(); } catch (e) {}
+          currentAbort = null;
+        }
+        revokeBlobs();
+        stopTimers();
+        hideStall();
         loadingBar.hidden = false;
         loadingBar.style.display = "";
         loadingBar.className = "failed";
+        loadingBar.setAttribute("data-stage", "error");
         document.getElementById("load-detail").textContent = detail ? String(detail).slice(0, 200) : "";
         if (window.placeAnalytics) window.placeAnalytics("track", ["load_error", { detail: String(detail || "").slice(0, 120) }]);
-        document.getElementById("load-retry").focus();
+        try { loadRetryBtn.focus(); } catch (e) {}
       }
-      document.getElementById("load-retry").addEventListener("click", function () { location.reload(); });
-      // Setup shortcut for playtests: ?loadfail=1 behaves as if the build could not be fetched.
-      var forceFail = /[?&]loadfail=1\b/.test(location.search);
 
-      var loader = document.createElement("script");
-      loader.src = forceFail ? buildBase + "loadfail-missing.js" : buildUrl + ".loader.js?v=" + gameVersion;
-      if (window.placeAnalytics) window.placeAnalytics("loadStart", []);
-      prefetchProgress = showProgress;
-      loader.onload = function () {
-        // Wait for the unzipped files, then start Unity (its own fetches of the blob: URLs are instant).
-        prefetch.then(function () {
-          return createUnityInstance(canvas, config, showProgress);
-        }).then(function (instance) {
-          showProgress(1);
-          window.placeGameReady = true;
-          window.dispatchEvent(new Event("placegameready"));
-          loadingBar.style.display = "none";
-          prefetchBlobs.forEach(function (u) { URL.revokeObjectURL(u); });
-          prefetchBlobs = [];
-        }).catch(function (message) {
-          showLoadError(message);
+      function resolveBuildBase(signal) {
+        if (typeof fetch !== "function") {
+          var direct = window.HAWKES_BUILD_URL || ((window.HAWKES_BUILD_BASE || "") + gameVersion + "/");
+          return Promise.resolve(String(direct).replace(/\/?$/, "/"));
+        }
+        return fetch("build.json", signal ? { signal: signal } : undefined).then(function (r) {
+          return r.ok ? r.json() : null;
+        }).catch(function () {
+          return null;
+        }).then(function (info) {
+          var overrideUrl = window.HAWKES_BUILD_URL !== initialHeadUrl ? window.HAWKES_BUILD_URL : null;
+          var picked = overrideUrl || (info && info.base) || window.HAWKES_BUILD_URL || ((window.HAWKES_BUILD_BASE || "") + gameVersion + "/");
+          return String(picked).replace(/\/?$/, "/");
         });
-      };
-      loader.onerror = function () {
-        showLoadError("Could not load " + loader.src);
-      };
-      document.body.appendChild(loader);
+      }
+
+      var activeLoaderScript = null;
+      function loadScriptOnce(src, forceFail) {
+        if (!forceFail && typeof window.createUnityInstance === "function") {
+          return Promise.resolve();
+        }
+        if (activeLoaderScript && activeLoaderScript.parentNode) {
+          activeLoaderScript.parentNode.removeChild(activeLoaderScript);
+          activeLoaderScript = null;
+        }
+        return new Promise(function (resolve, reject) {
+          var s = document.createElement("script");
+          activeLoaderScript = s;
+          s.src = src;
+          s.onload = function () {
+            if (activeLoaderScript === s) activeLoaderScript = null;
+            resolve();
+          };
+          s.onerror = function () {
+            if (activeLoaderScript === s) activeLoaderScript = null;
+            if (s.parentNode) s.parentNode.removeChild(s);
+            reject(new Error("Could not load " + src));
+          };
+          document.body.appendChild(s);
+        });
+      }
+
+      function startLoad() {
+        var attempt = ++loadAttempt;
+        if (currentAbort) {
+          try { currentAbort.abort(); } catch (e) {}
+        }
+        currentAbort = typeof AbortController === "function" ? new AbortController() : null;
+        var signal = currentAbort ? currentAbort.signal : undefined;
+        revokeBlobs();
+
+        loadFailed = false;
+        shownProgress = 0;
+        loadedBytes = 0;
+        totalBytes = 0;
+        headersKnown = false;
+        currentStage = "downloading";
+        lastStallBytes = 0;
+        lastStallProgress = 0;
+
+        loadingBar.hidden = false;
+        loadingBar.style.display = "";
+        loadingBar.className = "";
+        hideStall();
+        renderCard();
+        startLineRotation();
+        resetStallTimer();
+
+        // Named playtest shortcuts: ?loadfail=1 simulates a failed fetch; ?stall=1 simulates a stalled transfer.
+        // Both clear on Retry (hasRetried) so Retry can recover and finish loading.
+        var forceFail = !hasRetried && /[?&]loadfail=1\b/.test(location.search);
+        var forceStall = !hasRetried && /[?&]stall=1\b/.test(location.search);
+
+        if (window.placeAnalytics && attempt === 1) window.placeAnalytics("loadStart", []);
+
+        resolveBuildBase(signal).then(function (buildBase) {
+          if (attempt !== loadAttempt) return;
+          if (forceStall) {
+            // Hold open with no byte progress so the >20s stall watchdog fires cleanly; Retry aborts and proceeds.
+            return new Promise(function () {});
+          }
+
+          var buildUrl = buildBase + gameName + "/Build/" + gameName;
+          var config = {
+            arguments: [],
+            dataUrl: buildUrl + ".data.unityweb?v=" + gameVersion,
+            frameworkUrl: buildUrl + ".framework.js.unityweb?v=" + gameVersion,
+            codeUrl: buildUrl + ".wasm.unityweb?v=" + gameVersion,
+            streamingAssetsUrl: buildBase + gameName + "/StreamingAssets",
+            companyName: "The Place Department",
+            productName: "PlaceDepartment",
+            productVersion: gameVersion,
+            showBanner: unityShowBanner,
+            devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+          };
+
+          var rawUrls = {
+            data: config.dataUrl,
+            code: config.codeUrl,
+            framework: config.frameworkUrl
+          };
+          var fileState = {
+            data: { headerDone: false, loaded: 0, total: 0, done: false, blobbed: false },
+            code: { headerDone: false, loaded: 0, total: 0, done: false, blobbed: false },
+            framework: { headerDone: false, loaded: 0, total: 0, done: false, blobbed: false }
+          };
+
+          function syncStreamProgress() {
+            if (attempt !== loadAttempt || loadFailed || window.placeGameReady) return;
+            var sumLoaded = 0, sumTotal = 0, allPositiveTotals = true, allDone = true;
+            for (var i = 0; i < FILE_KEYS.length; i++) {
+              var st = fileState[FILE_KEYS[i]];
+              sumLoaded += st.loaded;
+              sumTotal += st.total;
+              if (!st.headerDone || st.total <= 0) allPositiveTotals = false;
+              if (!st.done) allDone = false;
+            }
+            loadedBytes = Math.max(loadedBytes, sumLoaded);
+            // Require a positive Content-Length on all three files so a small file (framework.js ~95 KB)
+            // never divides by its own size alone when data.unityweb is pending or lacks Content-Length.
+            if (allPositiveTotals && sumTotal > 0) {
+              totalBytes = sumTotal;
+              headersKnown = true;
+            }
+            var ratio;
+            if (headersKnown) {
+              ratio = Math.min(1, loadedBytes / totalBytes);
+            } else {
+              // Smooth asymptotic curve when Content-Length is absent so the bar never freezes or jumps.
+              ratio = loadedBytes / (loadedBytes + 45000000);
+            }
+            if (allDone) {
+              setStage("unpacking");
+              recordProgress(0.84);
+            } else {
+              setStage("downloading");
+              recordProgress(0.82 * ratio);
+            }
+          }
+
+          // Measure Content-Length via HEAD on original HTTP URLs when native DecompressionStream prefetch isn't used.
+          function measureHeadsFallback() {
+            if (typeof fetch !== "function" || headersKnown) return;
+            FILE_KEYS.forEach(function (key) {
+              if (fileState[key].headerDone && fileState[key].total > 0) return;
+              var targetUrl = rawUrls[key];
+              if (!targetUrl || /^blob:/i.test(targetUrl)) return;
+              fetch(targetUrl, { method: "HEAD", mode: "cors", signal: signal }).then(function (res) {
+                if (attempt !== loadAttempt || loadFailed || window.placeGameReady) return;
+                fileState[key].total = parseInt(res.headers.get("Content-Length"), 10) || 0;
+                fileState[key].headerDone = true;
+                var sum = 0, allPositive = true;
+                for (var i = 0; i < FILE_KEYS.length; i++) {
+                  var st = fileState[FILE_KEYS[i]];
+                  sum += st.total;
+                  if (!st.headerDone || st.total <= 0) allPositive = false;
+                }
+                if (allPositive && sum > 0) {
+                  totalBytes = sum;
+                  headersKnown = true;
+                  if (currentStage === "downloading") {
+                    loadedBytes = Math.max(loadedBytes, Math.round(Math.min(1, shownProgress / 0.9) * totalBytes));
+                  } else {
+                    loadedBytes = totalBytes;
+                  }
+                  renderCard();
+                }
+              }).catch(function () {});
+            });
+          }
+
+          // The build files are gzip ("UnityWeb Compressed Content") served as application/octet-stream with no
+          // Content-Encoding. Downloading all three in parallel and piping through native DecompressionStream
+          // avoids Unity's ~53 s JS inflate while streaming exact network byte counts from Content-Length.
+          var canStreamUnzip = typeof DecompressionStream === "function" && typeof fetch === "function" && !forceFail;
+          function prefetchPlain(key, url) {
+            if (!canStreamUnzip) return Promise.resolve(url);
+            var gotResponse = false;
+            return fetch(url, { mode: "cors", signal: signal }).then(function (res) {
+              if (!res.ok || !res.body) throw new Error("HTTP " + res.status + " for " + key);
+              gotResponse = true;
+              fileState[key].total = parseInt(res.headers.get("Content-Length"), 10) || 0;
+              fileState[key].headerDone = true;
+              syncStreamProgress();
+              var reader = res.body.getReader();
+              return reader.read().then(function (first) {
+                var gz = !first.done && first.value && first.value.length > 2 && first.value[0] === 0x1f && first.value[1] === 0x8b;
+                var pending = first;
+                var bytes = new ReadableStream({
+                  pull: function (controller) {
+                    var step = pending ? Promise.resolve(pending) : reader.read();
+                    pending = null;
+                    return step.then(function (r) {
+                      if (attempt !== loadAttempt || loadFailed) { controller.close(); return; }
+                      if (r.done) {
+                        fileState[key].done = true;
+                        syncStreamProgress();
+                        controller.close();
+                        return;
+                      }
+                      fileState[key].loaded += r.value.length;
+                      syncStreamProgress();
+                      controller.enqueue(r.value);
+                    });
+                  },
+                  cancel: function (why) { return reader.cancel(why); }
+                });
+                var out = gz ? bytes.pipeThrough(new DecompressionStream("gzip")) : bytes;
+                return new Response(out).blob();
+              });
+            }).then(function (blob) {
+              if (attempt !== loadAttempt || loadFailed) return url;
+              fileState[key].done = true;
+              fileState[key].blobbed = true;
+              syncStreamProgress();
+              var blobUrl = URL.createObjectURL(blob);
+              prefetchBlobs.push(blobUrl);
+              return blobUrl;
+            }, function (err) {
+              if (signal && signal.aborted) throw err;
+              // Propagate network/CORS/HTTP failures before unityStarted so #load-error + in-page Retry handle them.
+              if (!gotResponse) throw err;
+              return url; // mid-stream DecompressionStream issue: fall back to Unity's own unpacker
+            });
+          }
+
+          if (!canStreamUnzip && !forceFail) {
+            measureHeadsFallback();
+          }
+
+          var loaderSrc = forceFail
+            ? buildBase + "loadfail-missing.js"
+            : buildUrl + ".loader.js?v=" + gameVersion + (attempt > 1 ? "&r=" + attempt : "");
+          var prefetchPromise = forceFail
+            ? Promise.resolve(null)
+            : Promise.all([
+                prefetchPlain("data", config.dataUrl),
+                prefetchPlain("code", config.codeUrl),
+                prefetchPlain("framework", config.frameworkUrl)
+              ]);
+
+          return Promise.all([loadScriptOnce(loaderSrc, forceFail), prefetchPromise]).then(function (res) {
+            if (attempt !== loadAttempt || loadFailed) return;
+            var urls = res[1];
+            var allPrefetched = false;
+            if (urls) {
+              config.dataUrl = urls[0];
+              config.codeUrl = urls[1];
+              config.frameworkUrl = urls[2];
+              allPrefetched = fileState.data.blobbed && fileState.code.blobbed && fileState.framework.blobbed;
+            }
+            if (!allPrefetched) {
+              measureHeadsFallback();
+            } else {
+              setStage("unpacking");
+              recordProgress(0.84);
+            }
+
+            unityStarted = true;
+            return createUnityInstance(canvas, config, function (unityProgress) {
+              if (attempt !== loadAttempt || loadFailed) return;
+              var u = Math.max(0, Math.min(1, Number(unityProgress) || 0));
+              if (allPrefetched) {
+                if (headersKnown) loadedBytes = totalBytes;
+                if (u < 0.9) {
+                  setStage("unpacking");
+                  recordProgress(0.84 + (u / 0.9) * 0.10);
+                } else if (u < 1) {
+                  setStage("starting");
+                  recordProgress(0.96);
+                } else {
+                  setStage("starting");
+                  recordProgress(1);
+                }
+              } else {
+                var baseBytes = headersKnown ? totalBytes : APPROX_TOTAL_BYTES;
+                if (u < 0.895) {
+                  setStage("downloading");
+                  loadedBytes = Math.max(loadedBytes, Math.round(Math.min(1, u / 0.9) * baseBytes));
+                  recordProgress(u);
+                } else if (u < 1) {
+                  loadedBytes = Math.max(loadedBytes, baseBytes);
+                  setStage(u >= 0.95 ? "starting" : "unpacking");
+                  recordProgress(Math.max(0.9, u));
+                } else {
+                  loadedBytes = Math.max(loadedBytes, baseBytes);
+                  setStage("starting");
+                  recordProgress(1);
+                }
+              }
+            });
+          }).then(function (instance) {
+            if (attempt !== loadAttempt || loadFailed || !instance) return;
+            loadedBytes = Math.max(loadedBytes, headersKnown ? totalBytes : APPROX_TOTAL_BYTES);
+            setStage("starting");
+            recordProgress(1);
+            stopTimers();
+            hideStall();
+            window.placeGameReady = true;
+            document.body.classList.add("game-loaded");
+            loadingBar.setAttribute("data-stage", "done");
+            loadingBar.hidden = true;
+            loadingBar.style.display = "none";
+            window.dispatchEvent(new Event("placegameready"));
+            var tapPrompt = document.getElementById("hawkes-tap");
+            if (tapPrompt) {
+              try { tapPrompt.focus(); } catch (e) {}
+            }
+            revokeBlobs();
+          });
+        }).catch(function (err) {
+          if (attempt !== loadAttempt) return;
+          if (signal && signal.aborted) return;
+          showLoadError(err && err.message ? err.message : err, attempt);
+        });
+      }
+
+      function retryLoad() {
+        hasRetried = true;
+        if (unityStarted) {
+          // Once createUnityInstance has bound to #unity-canvas, only a fresh navigation can restart cleanly.
+          var clean = location.href;
+          try {
+            var parsed = new URL(location.href);
+            parsed.searchParams.delete("loadfail");
+            parsed.searchParams.delete("stall");
+            parsed.searchParams.delete("stallms");
+            clean = parsed.toString();
+          } catch (e) {}
+          if (clean !== location.href) location.replace(clean);
+          else location.reload();
+          return;
+        }
+        startLoad();
+      }
+
+      loadRetryBtn.addEventListener("click", retryLoad);
+      loadStallRetryBtn.addEventListener("click", retryLoad);
+      startLoad();
     }
   </script>
   <script>
     // Phone controls (static, event driven: no timers or polling). Fullscreen where the browser has it (iPhone Safari
     // has none for pages, so no button there); a rotate hint while a narrow portrait screen is showing, dismissed for
-    // the visit with its x. Neither blocks the game: only the two small controls take taps.
+    // the visit with its x. Neither covers the loading card or Tap to play: they appear once play begins.
     (function () {
       var root = document.documentElement;
       var fsButton = document.getElementById("fs-button");
       var hint = document.getElementById("rotate-hint");
+      var card = document.getElementById("rotate-card");
       var request = root.requestFullscreen || root.webkitRequestFullscreen;
       var supported = !!request && (document.fullscreenEnabled || document.webkitFullscreenEnabled);
+      var dismissed = false, chosen = false;
+      try { dismissed = sessionStorage.getItem("place-rotate-hint") === "1"; } catch (e) {}
+      var portraitPhone = window.matchMedia("(orientation: portrait) and (max-width: 820px)");
+
       function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement; }
+      function isReadyToPlay() { return !!window.placeGameReady && !document.getElementById("hawkes-tap"); }
+
       function syncFs() {
-        fsButton.hidden = !supported;
+        fsButton.hidden = !supported || !isReadyToPlay();
         var on = !!fsElement();
         fsButton.textContent = on ? "Exit fullscreen" : "Fullscreen";
         fsButton.setAttribute("aria-label", on ? "Exit fullscreen" : "Enter fullscreen");
@@ -518,18 +1011,15 @@
       });
       document.addEventListener("fullscreenchange", syncFs);
       document.addEventListener("webkitfullscreenchange", syncFs);
-      syncFs();
 
-      var card = document.getElementById("rotate-card");
-      var dismissed = false, chosen = false;
-      try { dismissed = sessionStorage.getItem("place-rotate-hint") === "1"; } catch (e) {}
-      var portraitPhone = window.matchMedia("(orientation: portrait) and (max-width: 820px)");
-      // Landscape (or desktop) removes both at once; portrait shows the card until the player chooses, then a slim bar.
+      // Show the loading card first, then Tap to play; once tapped in portrait, show the rotate card until the player
+      // rotates to landscape or chooses portrait (which switches to the slim bar above the canvas).
       function syncHint() {
         var portrait = portraitPhone.matches;
-        var started = chosen || !!window.placeGameReady;
-        card.hidden = !(portrait && !started);
-        hint.hidden = !(portrait && started && !dismissed);
+        var readyToPlay = isReadyToPlay();
+        syncFs();
+        card.hidden = !(portrait && readyToPlay && !chosen);
+        hint.hidden = !(portrait && readyToPlay && chosen && !dismissed);
         var bar = !hint.hidden;
         if (document.body.classList.contains("rotate-bar") !== bar) {
           document.body.classList.toggle("rotate-bar", bar);
@@ -545,6 +1035,17 @@
         try { sessionStorage.setItem("place-rotate-hint", "1"); } catch (e) {}
         syncHint();
       });
+      if (window.hawkesSound && typeof window.hawkesSound.tap === "function") {
+        var origTap = window.hawkesSound.tap;
+        window.hawkesSound.tap = function () {
+          var res = origTap.apply(this, arguments);
+          syncHint();
+          return res;
+        };
+      }
+      window.addEventListener("pointerup", syncHint);
+      window.addEventListener("touchend", syncHint, { passive: true });
+      window.addEventListener("click", syncHint);
       window.addEventListener("placegameready", syncHint);
       window.addEventListener("orientationchange", syncHint);
       window.addEventListener("resize", syncHint);
