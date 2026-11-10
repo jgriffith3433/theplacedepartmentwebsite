@@ -469,7 +469,8 @@
       var APPROX_TOTAL_BYTES = 90 * 1000000;
       var LINE_ROTATE_MS = 3500;
       var stallMatch = /[?&]stallms=(\d+)\b/.exec(location.search);
-      var STALL_MS = stallMatch ? Math.max(250, parseInt(stallMatch[1], 10)) : 20000;
+      var loadingPlaytest = /[?&]playtest=loading\b/.test(location.search);
+      var STALL_MS = stallMatch ? Math.max(250, parseInt(stallMatch[1], 10)) : (loadingPlaytest ? 500 : 20000);
 
       var loadLines = [
         "Retrieving your case file from its address\u2026",
@@ -724,7 +725,7 @@
         // Named playtest shortcuts: ?loadfail=1 simulates a failed fetch; ?stall=1 simulates a stalled transfer.
         // Both clear on Retry (hasRetried) so Retry can recover and finish loading.
         var forceFail = !hasRetried && /[?&]loadfail=1\b/.test(location.search);
-        var forceStall = !hasRetried && /[?&]stall=1\b/.test(location.search);
+        var forceStall = !hasRetried && (loadingPlaytest || /[?&]stall=1\b/.test(location.search));
 
         if (window.placeAnalytics && attempt === 1) window.placeAnalytics("loadStart", []);
 
@@ -1207,7 +1208,7 @@
     async function playLoading(tr) {
       tr.scene("LoadingCard");
       // Arm a short stall so the slow-connection note + Retry are visible, then continue a real download.
-      if (!/[?&]stall=1\b/.test(location.search)) {
+      if (!/[?&]stall=1\b/.test(location.search) && !/[?&]playtest=loading\b/.test(location.search)) {
         try { sessionStorage.setItem("place-pt-loading", "1"); } catch (e) {}
         var u = new URL(location.href);
         u.searchParams.set("playtest", "loading");
@@ -1224,6 +1225,7 @@
       tr.event("load-stalled", bytesText());
       tr.metric("load.stalled", 1);
       if (!cardClean()) tr.problem("polish", "loading card overlaps at stall");
+      await tr.wait(1500);
       realClick(document.getElementById("load-stall-retry"));
       tr.event("load-stall-retry");
       tr.progress(0.15);
