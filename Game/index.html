@@ -1109,5 +1109,223 @@
   })();
 </script>
 <!-- /hawkes-whatsnew -->
+<script>
+  // Minimal playtest contract for the branded loading card (this site has no Unity bridge contract).
+  // Scenarios: smoke (reach Tap to play), loading (stall Retry + 10%/60%/done progress with MB + stage).
+  (function () {
+    if (window.hawkesPlaytest) return;
+    var run = null;
+    var stallSeconds = 120;
+    function now() { return run ? (performance.now() - run.t0) / 1000 : 0; }
+    function round(n) { return Math.round(n * 10) / 10; }
+    function t() {
+      return {
+        scene: function (name) { if (run && run.state.scene !== name) { run.state.scene = name; this.event("scene", name); } },
+        progress: function (p) { if (run) { run.state.progress = Math.max(0, Math.min(1, p)); run.moved = performance.now(); } },
+        note: function (text) { if (run) run.state.note = String(text); },
+        metric: function (name, value) { if (run) run.metrics[name] = value; },
+        event: function (type, detail) {
+          if (!run) return;
+          run.events.push({ t: round(now()), type: type, detail: detail === undefined ? undefined : String(detail) });
+          if (run.events.length > 2000) run.events.splice(0, run.events.length - 2000);
+          run.moved = performance.now();
+        },
+        problem: function (severity, message) {
+          if (!run) return;
+          if (run.problems.some(function (p) { return p.message === message; })) return;
+          run.problems.push({ severity: severity, message: String(message) });
+          this.event("problem", severity + ": " + message);
+        },
+        log: function (line) { if (run) { run.log.push(round(now()) + "s " + line); if (run.log.length > 200) run.log.shift(); } },
+        finish: function (outcome) {
+          if (!run || run.done) return;
+          run.done = true;
+          run.state.status = outcome || "done";
+          run.seconds = now();
+          this.event("finish", run.state.status);
+        },
+        wait: function (ms) {
+          var r = run;
+          return new Promise(function (resolve, reject) {
+            setTimeout(function () { r && r === run && !r.done ? resolve() : reject(new Error("playtest stopped")); }, ms);
+          });
+        },
+        until: function (test, timeoutMs, what) {
+          var r = run;
+          var t0 = performance.now();
+          var limit = timeoutMs == null ? 30000 : timeoutMs;
+          return new Promise(function (resolve, reject) {
+            function tick() {
+              if (!r || r !== run || r.done) return reject(new Error("playtest stopped"));
+              var ok = false;
+              try { ok = !!test(); } catch (e) {}
+              if (ok) return resolve();
+              if (performance.now() - t0 > limit) return reject(new Error("timed out waiting for " + (what || "condition")));
+              setTimeout(tick, 50);
+            }
+            tick();
+          });
+        },
+        get at() { var a = run && run.options && run.options.at; return a == null || a === "" ? null : String(a); }
+      };
+    }
+    function cardClean() {
+      var bar = document.getElementById("unity-loading-bar");
+      var dossier = document.querySelector(".dossier");
+      if (!bar || !dossier || bar.hidden) return true;
+      var vb = { w: window.innerWidth || 0, h: window.innerHeight || 0 };
+      var box = dossier.getBoundingClientRect();
+      if (box.width > vb.w + 1 || box.height > vb.h + 1) return false;
+      if (box.left < -1 || box.top < -1) return false;
+      var stall = document.getElementById("load-stall");
+      var retry = document.getElementById("load-stall-retry");
+      if (stall && !stall.hidden && retry) {
+        var s = stall.getBoundingClientRect();
+        var r = retry.getBoundingClientRect();
+        if (r.bottom > s.bottom + 2 || r.right > s.right + 2) return false;
+      }
+      return true;
+    }
+    function realClick(el) {
+      if (!el) return;
+      var opts = { bubbles: true, cancelable: true, view: window };
+      try {
+        el.dispatchEvent(new PointerEvent("pointerdown", opts));
+        el.dispatchEvent(new PointerEvent("pointerup", opts));
+      } catch (e) {}
+      el.dispatchEvent(new MouseEvent("click", opts));
+    }
+    function bucketOf() {
+      return (document.getElementById("unity-loading-bar") || {}).getAttribute("data-progress") || "start";
+    }
+    function bytesText() {
+      return (document.getElementById("load-bytes") || {}).textContent || "";
+    }
+    function stageText() {
+      return (document.getElementById("load-stage") || {}).textContent || "";
+    }
+    async function playLoading(tr) {
+      tr.scene("LoadingCard");
+      // Arm a short stall so the slow-connection note + Retry are visible, then continue a real download.
+      if (!/[?&]stall=1\b/.test(location.search)) {
+        try { sessionStorage.setItem("place-pt-loading", "1"); } catch (e) {}
+        var u = new URL(location.href);
+        u.searchParams.set("playtest", "loading");
+        u.searchParams.set("stall", "1");
+        u.searchParams.set("stallms", "500");
+        location.replace(u.toString());
+        return new Promise(function () {});
+      }
+      tr.note("waiting for slow-connection note");
+      await tr.until(function () {
+        var el = document.getElementById("load-stall");
+        return el && !el.hidden;
+      }, 15000, "slow-connection note");
+      tr.event("load-stalled", bytesText());
+      tr.metric("load.stalled", 1);
+      if (!cardClean()) tr.problem("polish", "loading card overlaps at stall");
+      realClick(document.getElementById("load-stall-retry"));
+      tr.event("load-stall-retry");
+      tr.progress(0.15);
+
+      await tr.until(function () { return bucketOf() === "10" || bucketOf() === "60" || bucketOf() === "done" || !!window.placeGameReady; }, 180000, "progress past 10%");
+      tr.event("load-progress-10", bytesText() + " · " + stageText());
+      tr.metric("load.mbShown", parseFloat(bytesText()) || 0);
+      tr.progress(0.35);
+      if (!/MB/i.test(bytesText())) tr.problem("bug", "MB counter missing on loading card");
+      if (!cardClean()) tr.problem("polish", "loading card overlaps near 10%");
+
+      await tr.until(function () { return bucketOf() === "60" || bucketOf() === "done" || !!window.placeGameReady; }, 180000, "progress past 60%");
+      tr.event("load-progress-60", bytesText() + " · " + stageText());
+      tr.progress(0.7);
+      if (!cardClean()) tr.problem("polish", "loading card overlaps near 60%");
+
+      await tr.until(function () { return bucketOf() === "done" || !!window.placeGameReady || document.body.classList.contains("game-loaded"); }, 180000, "load done");
+      tr.event("load-progress-done", stageText());
+      tr.scene("TapToPlay");
+      tr.progress(1);
+      if (!cardClean() && !document.getElementById("unity-loading-bar").hidden) {
+        tr.problem("polish", "loading card overlaps when done");
+      }
+      try { sessionStorage.removeItem("place-pt-loading"); } catch (e) {}
+      tr.finish("done");
+    }
+    async function playSmoke(tr) {
+      tr.scene("LoadingCard");
+      await tr.until(function () { return !!window.placeGameReady || document.body.classList.contains("game-loaded"); }, 240000, "game loaded");
+      tr.event("game-loaded");
+      tr.scene("TapToPlay");
+      tr.progress(1);
+      tr.finish("done");
+    }
+    var scenarios = [
+      { id: "smoke", title: "Load the Game page through to Tap to play", seconds: 180, tags: ["smoke"] },
+      { id: "loading", title: "Honest loading card: stall Retry, MB, 10/60/done", seconds: 240, tags: ["full"] }
+    ];
+    var api = {
+      version: 1,
+      product: "theplacedepartment",
+      scenarios: function () { return scenarios.map(function (s) { return Object.assign({}, s); }); },
+      start: function (id, options) {
+        var sc = scenarios.filter(function (s) { return s.id === id; })[0];
+        if (!sc) throw new Error('no playtest scenario "' + id + '"');
+        if (run && !run.done) api.stop();
+        run = {
+          id: id,
+          options: Object.assign({ seed: 1, speed: 1 }, options || {}),
+          t0: performance.now(),
+          moved: performance.now(),
+          done: false,
+          state: { ready: true, status: "running", progress: 0 },
+          metrics: {},
+          events: [],
+          problems: [],
+          log: []
+        };
+        var mine = run;
+        var tr = t();
+        tr.event("start", id);
+        var play = id === "loading" ? playLoading(tr) : playSmoke(tr);
+        return Promise.resolve(play).then(function () {
+          if (mine === run && !mine.done) tr.finish("done");
+        }, function (err) {
+          if (mine !== run || mine.done) return;
+          tr.problem("bug", "bot error: " + (err && err.message ? err.message : err));
+          tr.log(String(err && err.stack ? err.stack : err));
+          tr.finish(/timed out/.test(String(err && err.message)) ? "stuck" : "error");
+        });
+      },
+      stop: function () { if (run && !run.done) t().finish("done"); },
+      state: function () {
+        if (!run) return { ready: true, status: "idle" };
+        if (!run.done && performance.now() - run.moved > stallSeconds * 1000) {
+          t().problem("bug", "no progress for " + stallSeconds + " s (softlock?)");
+          t().finish("stuck");
+        }
+        return Object.assign({}, run.state, { ready: true, metrics: Object.assign({}, run.metrics) });
+      },
+      report: function () {
+        if (!run) return null;
+        return {
+          scenario: run.id,
+          outcome: run.done ? run.state.status : "stuck",
+          seconds: round(run.seconds != null ? run.seconds : now()),
+          metrics: Object.assign({}, run.metrics),
+          events: run.events.slice(),
+          problems: run.problems.slice(),
+          log: run.log.slice()
+        };
+      }
+    };
+    window.hawkesPlaytest = api;
+    var q = new URLSearchParams(location.search);
+    var auto = q.get("playtest");
+    if (auto) {
+      var go = function () { api.start(auto, { seed: Number(q.get("seed") || 1) || 1, speed: Number(q.get("speed") || 1) || 1, at: q.get("at") || undefined }); };
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(go, 0); });
+      else setTimeout(go, 0);
+    }
+  })();
+</script>
 </body>
 </html>
