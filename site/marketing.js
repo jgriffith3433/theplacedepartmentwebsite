@@ -107,6 +107,108 @@ document.querySelectorAll("[data-share-copy]").forEach((btn) => {
   });
 });
 
+// Exhibit gallery lightbox: arrows on desktop, swipe on phones, Escape / backdrop / close to leave.
+(() => {
+  const gallery = document.querySelector("[data-gallery]");
+  if (!gallery) return;
+
+  const items = [...gallery.querySelectorAll("[data-gallery-open]")].map((btn, i) => {
+    const img = btn.querySelector("img");
+    const cap = btn.parentElement?.querySelector("figcaption")?.textContent?.trim() || "";
+    const full = (img?.getAttribute("srcset") || "")
+      .split(",")
+      .map((part) => part.trim().split(/\s+/)[0])
+      .filter(Boolean)
+      .pop() || img?.currentSrc || img?.src || "";
+    return { full, alt: img?.alt || "", cap, opener: btn, index: i };
+  });
+  if (!items.length) return;
+
+  let index = 0;
+  let overlay = null;
+  let startX = 0;
+
+  const show = (i) => {
+    index = (i + items.length) % items.length;
+    const item = items[index];
+    const picture = overlay?.querySelector("[data-lightbox-img]");
+    const caption = overlay?.querySelector("[data-lightbox-cap]");
+    const counter = overlay?.querySelector("[data-lightbox-count]");
+    if (picture) {
+      picture.src = item.full;
+      picture.alt = item.alt;
+    }
+    if (caption) caption.textContent = item.cap;
+    if (counter) counter.textContent = `${index + 1} / ${items.length}`;
+  };
+
+  const close = () => {
+    if (!overlay) return;
+    document.removeEventListener("keydown", onKey);
+    overlay.remove();
+    overlay = null;
+    document.documentElement.classList.remove("lightbox-open");
+    items[index]?.opener?.focus();
+    window.dispatchEvent(new CustomEvent("lightbox:close"));
+  };
+
+  const onKey = (e) => {
+    if (e.key === "Escape") close();
+    else if (e.key === "ArrowRight") show(index + 1);
+    else if (e.key === "ArrowLeft") show(index - 1);
+  };
+
+  const open = (i) => {
+    if (overlay) close();
+    overlay = document.createElement("div");
+    overlay.className = "lightbox";
+    overlay.setAttribute("data-lightbox", "");
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-label", "Exhibit gallery");
+    overlay.innerHTML = `
+      <button type="button" class="lightbox-close" data-lightbox-close aria-label="Close">\u00d7</button>
+      <button type="button" class="lightbox-nav lightbox-prev" data-lightbox-prev aria-label="Previous exhibit">\u2039</button>
+      <div class="lightbox-frame" data-lightbox-track>
+        <img data-lightbox-img alt="" width="1280" height="720" decoding="async" />
+        <p class="lightbox-cap" data-lightbox-cap></p>
+        <p class="lightbox-count" data-lightbox-count></p>
+      </div>
+      <button type="button" class="lightbox-nav lightbox-next" data-lightbox-next aria-label="Next exhibit">\u203a</button>
+    `;
+    document.body.append(overlay);
+    document.documentElement.classList.add("lightbox-open");
+    document.addEventListener("keydown", onKey);
+    overlay.querySelector("[data-lightbox-close]")?.addEventListener("click", close);
+    overlay.querySelector("[data-lightbox-prev]")?.addEventListener("click", () => show(index - 1));
+    overlay.querySelector("[data-lightbox-next]")?.addEventListener("click", () => show(index + 1));
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) close();
+    });
+    const track = overlay.querySelector("[data-lightbox-track]");
+    track?.addEventListener("pointerdown", (e) => {
+      startX = e.clientX;
+      track.setPointerCapture?.(e.pointerId);
+    });
+    track?.addEventListener("pointerup", (e) => {
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) < 40) return;
+      if (dx < 0) show(index + 1);
+      else show(index - 1);
+    });
+    show(i);
+    overlay.querySelector("[data-lightbox-close]")?.focus();
+    window.dispatchEvent(new CustomEvent("lightbox:open", { detail: { index } }));
+  };
+
+  gallery.querySelectorAll("[data-gallery-open]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const i = Number(btn.dataset.index || "0") || 0;
+      open(i);
+    });
+  });
+})();
+
 // Trailer slot: nothing loads until the click. The click opens an overlay player; Escape, the close button or a tap outside closes it.
 document.querySelectorAll("[data-trailer]").forEach((slot) => {
   const opener = slot.querySelector("[data-trailer-start]");
