@@ -160,6 +160,43 @@
         </div>
       </section>
 
+      <section class="campaign" id="campaign" aria-labelledby="campaign-h">
+        <div class="wrap">
+          <p class="kicker">Route</p>
+          <h2 id="campaign-h">The campaign</h2>
+          <p class="lede">Six chapters. The last three are sealed.</p>
+        </div>
+        <ol class="path" data-campaign tabindex="0" aria-label="Campaign chapters, swipe sideways">
+          <li class="chapter" data-chapter="1">
+            <span class="c-num">Ch. 1</span><h3>Return to Sender</h3>
+            <div class="c-body"><img class="c-shot" src="./assets/campaign/ch1.jpg" alt="Chapter 1 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-1.png" alt="Boss silhouette, chapter 1" width="256" height="256" loading="lazy" /></div><p class="c-line">Wallit wakes under a stamp.</p></div>
+          </li>
+          <li class="chapter" data-chapter="2">
+            <span class="c-num">Ch. 2</span><h3>No Fixed Address</h3>
+            <div class="c-body"><img class="c-shot" src="./assets/campaign/ch2.jpg" alt="Chapter 2 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-2.png" alt="Boss silhouette, chapter 2" width="256" height="256" loading="lazy" /></div><p class="c-line">One lantern, one road, no return.</p></div>
+          </li>
+          <li class="chapter" data-chapter="3">
+            <span class="c-num">Ch. 3</span><h3>The Clearing Floor</h3>
+            <div class="c-body"><img class="c-shot" src="./assets/campaign/ch3.jpg" alt="Chapter 3 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-3.png" alt="Boss silhouette, chapter 3" width="256" height="256" loading="lazy" /></div><p class="c-line">The lamps are lit. Nobody lives here.</p></div>
+          </li>
+          <li class="chapter sealed" data-chapter="4" data-sealed="true">
+            <span class="c-num">Ch. 4</span><h3>The Process Servers</h3>
+            <div class="c-body" id="c-body-4" hidden><img class="c-shot" src="./assets/campaign/ch4.jpg" alt="Chapter 4 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-4.png" alt="Boss silhouette, chapter 4" width="256" height="256" loading="lazy" /></div><p class="c-line">Served in person.</p></div>
+            <button class="c-seal" type="button" aria-expanded="false" aria-controls="c-body-4"><span class="stamp stamp-open">Sealed</span><span class="c-tap">Tap to unseal</span></button>
+          </li>
+          <li class="chapter sealed" data-chapter="5" data-sealed="true">
+            <span class="c-num">Ch. 5</span><h3>Strike This Address</h3>
+            <div class="c-body" id="c-body-5" hidden><img class="c-shot" src="./assets/campaign/ch5.jpg" alt="Chapter 5 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-5.png" alt="Boss silhouette, chapter 5" width="256" height="256" loading="lazy" /></div><p class="c-line">Every shelf has a name on it.</p></div>
+            <button class="c-seal" type="button" aria-expanded="false" aria-controls="c-body-5"><span class="stamp stamp-open">Sealed</span><span class="c-tap">Tap to unseal</span></button>
+          </li>
+          <li class="chapter sealed" data-chapter="6" data-sealed="true">
+            <span class="c-num">Ch. 6</span><h3>Address Filed</h3>
+            <div class="c-body" id="c-body-6" hidden><img class="c-shot" src="./assets/campaign/ch6.jpg" alt="Chapter 6 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-6.png" alt="Boss silhouette, chapter 6" width="256" height="256" loading="lazy" /></div><p class="c-line">The last drawer closes.</p></div>
+            <button class="c-seal" type="button" aria-expanded="false" aria-controls="c-body-6"><span class="stamp stamp-open">Sealed</span><span class="c-tap">Tap to unseal</span></button>
+          </li>
+        </ol>
+      </section>
+
       <section class="cases" id="case-files" aria-labelledby="cases-h">
         <div class="wrap">
           <p class="kicker">Records</p>
@@ -269,6 +306,7 @@
     <!-- /hawkes-footer -->
 
     <script src="./site/marketing.js" defer></script>
+    <script src="./site/campaign.js" defer></script>
     <script>
       // Playtest bridge: Studio opens the site root; game scenarios live on Game/index.html.
       (function () {
