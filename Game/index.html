@@ -245,11 +245,90 @@
       touch-action: manipulation;
     }
     #load-retry:hover, #load-retry:focus-visible { background: #f6c58c; outline: 2px solid #e7d3b0; outline-offset: 2px; }
+    .shift-pick {
+      margin: 0 0 14px;
+      padding: 0 0 12px;
+      border-bottom: 1px dashed rgba(231, 211, 176, 0.28);
+    }
+    .shift-pick-label {
+      margin: 0 0 8px;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #cbbdaa;
+    }
+    .shift-pick-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .shift-pick-card {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+      min-height: 44px;
+      padding: 0 0 10px;
+      overflow: hidden;
+      text-decoration: none;
+      color: #efe2cc;
+      background: rgba(231, 211, 176, 0.06);
+      border: 1px solid rgba(231, 211, 176, 0.28);
+      border-radius: 3px;
+      touch-action: manipulation;
+    }
+    .shift-pick-card img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      display: block;
+      background: #0b0a09;
+    }
+    .shift-pick-card strong,
+    .shift-pick-card span { padding-left: 12px; padding-right: 12px; }
+    .shift-pick-card strong { padding-top: 8px; }
+    .shift-pick-card:hover,
+    .shift-pick-card:focus-visible {
+      border-color: #e7d3b0;
+      outline: 2px solid #e7d3b0;
+      outline-offset: 2px;
+    }
+    .shift-pick-card.is-active {
+      border-color: #f0b36a;
+      background: rgba(240, 179, 106, 0.12);
+      box-shadow: inset 3px 0 0 #f0b36a;
+    }
+    .shift-pick-card strong {
+      font: 700 13px/1.2 Outfit, Arial, sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #f6f1e8;
+    }
+    .shift-pick-card span {
+      font: italic 13px/1.35 Fraunces, Georgia, serif;
+      color: #cbbdaa;
+    }
+    .shift-pick-card .shift-play {
+      margin-top: 6px;
+      font: 700 11px/1 Outfit, Arial, sans-serif;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #f0b36a;
+    }
+    #load-mode[hidden] { display: none; }
+    #load-mode {
+      margin: 0 0 8px;
+      font: 700 11px/1.3 Outfit, Arial, sans-serif;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #f0b36a;
+    }
     @media (max-width: 420px) {
       .dossier { padding: 20px 18px 18px; }
       .dossier-kicker { letter-spacing: 0.12em; font-size: 10px; }
       .dossier h1 { font-size: 24px; }
       #load-line { font-size: 15px; }
+      .shift-pick-grid { grid-template-columns: 1fr; }
       /* Stack the slow-connection note above Retry so nothing overlaps at 390px portrait. */
       #load-stall {
         flex-direction: column;
@@ -265,6 +344,11 @@
       #load-line { min-height: 2.6em; font-size: 14px; }
       .dossier-status { margin-top: 8px; }
       #load-stall { margin-top: 10px; padding: 8px 10px; }
+      .shift-pick-card img { display: none; }
+      .shift-pick-card { padding: 10px 12px; }
+      .shift-pick-card strong,
+      .shift-pick-card span { padding-left: 0; padding-right: 0; }
+      .shift-pick-card strong { padding-top: 0; }
     }
     @media (prefers-reduced-motion: reduce) {
       #unity-progress-bar-full, #load-line { transition: none; }
@@ -394,7 +478,25 @@
           <div class="dossier-kicker">The Place Department &middot; Records</div>
           <span class="dossier-stamp" aria-hidden="true">Dossier</span>
         </div>
-        <h1>Opening your file</h1>
+        <div class="shift-pick" id="shift-pick" data-shift-pick>
+          <p class="shift-pick-label">Choose your shift</p>
+          <div class="shift-pick-grid">
+            <a class="shift-pick-card" data-shift="campaign" href="?mode=campaign" data-play="load-campaign">
+              <img src="../assets/campaign/ch1.jpg" alt="" width="480" height="270" loading="lazy" decoding="async" />
+              <strong>Campaign</strong>
+              <span>Story in six chapters. Progress stays filed.</span>
+              <span class="shift-play">Play</span>
+            </a>
+            <a class="shift-pick-card" data-shift="arcade" href="?mode=arcade" data-play="load-arcade">
+              <img src="../assets/shots/shot-1-640.jpg" alt="" width="640" height="360" loading="lazy" decoding="async" />
+              <strong>Arcade</strong>
+              <span>Endless Hollow. Bosses at waves 10, 20 and 30.</span>
+              <span class="shift-play">Play</span>
+            </a>
+          </div>
+        </div>
+        <p id="load-mode" hidden></p>
+        <h1 id="load-title">Opening your file</h1>
         <div class="dossier-file">FILE No. <span id="load-file">0000</span> &middot; CLEARANCE: PENDING</div>
         <div id="load-working">
           <div id="load-line">Retrieving your case file from its address&hellip;</div>
@@ -443,6 +545,60 @@
     window.HAWKES_BUILD = { version: gameVersion };
     var gameName = "PlaceDepartment";
     document.getElementById("version-display").textContent = gameVersion;
+
+    // Shift from the landing (or this card): ?mode=campaign|arcade. The loading card names it; Unity does not
+    // read the param yet (note for a breakingthrough task). Preserve other query keys on the pick links.
+    (function () {
+      var MODES = {
+        campaign: {
+          label: "Campaign",
+          title: "Opening Campaign",
+          file: "SHIFT: CAMPAIGN · SIX CHAPTERS",
+          line: "Retrieving your case file from its address\u2026"
+        },
+        arcade: {
+          label: "Arcade",
+          title: "Opening Arcade",
+          file: "SHIFT: ARCADE · ENDLESS HOLLOW",
+          line: "Opening the endless Hollow ledger\u2026"
+        }
+      };
+      var params = new URLSearchParams(location.search);
+      var raw = String(params.get("mode") || "").toLowerCase();
+      var mode = MODES[raw] ? raw : "";
+      window.PLACE_MODE = mode || null;
+      var bar = document.getElementById("unity-loading-bar");
+      if (bar) {
+        if (mode) bar.setAttribute("data-mode", mode);
+        else bar.removeAttribute("data-mode");
+      }
+      var titleEl = document.getElementById("load-title");
+      var modeEl = document.getElementById("load-mode");
+      var fileEl = document.querySelector(".dossier-file");
+      var lineEl = document.getElementById("load-line");
+      if (mode && MODES[mode]) {
+        var info = MODES[mode];
+        if (titleEl) titleEl.textContent = info.title;
+        if (modeEl) {
+          modeEl.hidden = false;
+          modeEl.textContent = "Shift · " + info.label;
+        }
+        if (fileEl) {
+          fileEl.innerHTML = info.file + " &middot; FILE No. <span id=\"load-file\">0000</span>";
+        }
+        if (lineEl) lineEl.textContent = info.line;
+        document.title = info.label + " — The Place Department";
+      }
+      document.querySelectorAll("[data-shift-pick] [data-shift]").forEach(function (card) {
+        var key = card.getAttribute("data-shift");
+        var next = new URL(location.href);
+        next.searchParams.set("mode", key);
+        card.setAttribute("href", next.pathname + next.search + next.hash);
+        card.classList.toggle("is-active", key === mode);
+        if (key === mode) card.setAttribute("aria-current", "true");
+        else card.removeAttribute("aria-current");
+      });
+    })();
 
     if (gameVersion === "v0") {
       document.getElementById("unity-loading-bar").style.display = "none";
@@ -1288,9 +1444,62 @@
       tr.progress(1);
       tr.finish("done");
     }
+    async function playChooseShift(tr) {
+      var SHIFT_KEY = "placeChooseShift";
+      var phase = "campaign";
+      try { phase = sessionStorage.getItem(SHIFT_KEY) || "campaign"; } catch (e) {}
+      tr.scene("LoadingCard");
+      await tr.wait(80);
+      var pick = document.getElementById("shift-pick");
+      if (!pick) tr.problem("bug", "Choose your shift block missing on loading card");
+      else tr.event("shift-pick", "present");
+      var modeAttr = (document.getElementById("unity-loading-bar") || {}).getAttribute("data-mode") || "";
+      var title = (document.getElementById("load-title") || {}).textContent || "";
+      var modeLine = (document.getElementById("load-mode") || {}).textContent || "";
+      var fileLine = (document.querySelector(".dossier-file") || {}).textContent || "";
+      var named = function (want) {
+        var blob = (title + " " + modeLine + " " + fileLine + " " + modeAttr).toLowerCase();
+        return blob.indexOf(want) >= 0;
+      };
+      if (phase === "arcade" || modeAttr === "arcade") {
+        if (!named("arcade")) tr.problem("bug", "loading card does not name Arcade");
+        else tr.event("mode-named", "arcade");
+        tr.metric("mode.arcade", 1);
+        tr.progress(1);
+        try { sessionStorage.removeItem(SHIFT_KEY); } catch (e) {}
+        tr.finish("done");
+        return;
+      }
+      if (!named("campaign") && modeAttr !== "campaign") {
+        // Arrived without mode: click Campaign on the pre-load card.
+        var camp = document.querySelector('[data-shift="campaign"]');
+        if (!camp) { tr.problem("bug", "Campaign pick missing"); tr.finish("error"); return; }
+        try { sessionStorage.setItem(SHIFT_KEY, "campaign"); } catch (e) {}
+        var u = new URL(camp.href, location.href);
+        u.searchParams.set("playtest", "choose-shift");
+        tr.event("pick-campaign", u.search);
+        location.replace(u.toString());
+        return new Promise(function () {});
+      }
+      if (!named("campaign")) tr.problem("bug", "loading card does not name Campaign");
+      else tr.event("mode-named", "campaign");
+      tr.metric("mode.campaign", 1);
+      tr.progress(0.55);
+      await tr.wait(600);
+      var arcade = document.querySelector('[data-shift="arcade"]');
+      if (!arcade) { tr.problem("bug", "Arcade pick missing"); tr.finish("error"); return; }
+      try { sessionStorage.setItem(SHIFT_KEY, "arcade"); } catch (e) {}
+      var next = new URL(arcade.href, location.href);
+      next.searchParams.set("mode", "arcade");
+      next.searchParams.set("playtest", "choose-shift");
+      tr.event("pick-arcade", next.search);
+      location.replace(next.toString());
+      return new Promise(function () {});
+    }
     var scenarios = [
       { id: "smoke", title: "Load the Game page through to Tap to play", seconds: 180, tags: ["smoke"] },
-      { id: "loading", title: "Honest loading card: stall Retry, MB, 10/60/done", seconds: 240, tags: ["full"] }
+      { id: "loading", title: "Honest loading card: stall Retry, MB, 10/60/done", seconds: 240, tags: ["full"] },
+      { id: "choose-shift", title: "Loading card names Campaign then Arcade from shift picks", seconds: 90, tags: ["full", "site"] }
     ];
     var api = {
       version: 1,
@@ -1315,7 +1524,7 @@
         var mine = run;
         var tr = t();
         tr.event("start", id);
-        var play = id === "loading" ? playLoading(tr) : playSmoke(tr);
+        var play = id === "loading" ? playLoading(tr) : id === "choose-shift" ? playChooseShift(tr) : playSmoke(tr);
         return Promise.resolve(play).then(function () {
           if (mine === run && !mine.done) tr.finish("done");
         }, function (err) {

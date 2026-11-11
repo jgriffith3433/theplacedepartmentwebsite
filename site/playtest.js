@@ -22,7 +22,8 @@
     { id: "smoke", title: "Home loads, hero video plays, PLAY reaches Game", seconds: 15, tags: ["smoke"] },
     { id: "pages", title: "Visit every nav page through its link: status, console errors, sideways scroll, broken images", seconds: 30, tags: ["full"] },
     { id: "phone-nav", title: "Open and close the menu (at 390px)", seconds: 10, tags: ["menus"] },
-    { id: "install-hint", title: "PWA: manifest, icons, shell worker, second-visit A2HS hint at 390px", seconds: 45, tags: ["full", "phone", "pwa"] }
+    { id: "install-hint", title: "PWA: manifest, icons, shell worker, second-visit A2HS hint at 390px", seconds: 45, tags: ["full", "phone", "pwa"] },
+    { id: "choose-shift", title: "Choose your shift: Campaign and Arcade cards, Play reaches Game with mode named", seconds: 90, tags: ["full", "site"] }
   ];
 
   var run = null;
@@ -332,6 +333,57 @@
     finish(bugs.length ? "error" : "done");
   }
 
+  async function runChooseShift() {
+    await loaded();
+    await wait(200);
+    event("viewport", window.innerWidth + "x" + window.innerHeight);
+    var section = document.getElementById("shift") || document.querySelector("[data-shift], .shift");
+    if (!section) { problem("bug", "Choose your shift block missing on home"); finish("error"); return; }
+    section.scrollIntoView({ behavior: "instant", block: "center" });
+    await wait(300);
+    var campaign = document.querySelector('[data-shift="campaign"]');
+    var arcade = document.querySelector('[data-shift="arcade"]');
+    if (!campaign || !arcade) { problem("bug", "Campaign or Arcade card missing"); finish("error"); return; }
+    var cLine = (campaign.querySelector(".shift-line") || {}).textContent || "";
+    var aLine = (arcade.querySelector(".shift-line") || {}).textContent || "";
+    if (!/six chapters/i.test(cLine)) problem("bug", "Campaign one-liner missing");
+    else event("campaign-line", cLine.trim());
+    if (!/endless hollow/i.test(aLine)) problem("bug", "Arcade one-liner missing");
+    else event("arcade-line", aLine.trim());
+    var cPlay = campaign.querySelector("[data-play], .play-btn, a[href*='mode=campaign']");
+    var aPlay = arcade.querySelector("[data-play], .play-btn, a[href*='mode=arcade']");
+    if (!cPlay || !/mode=campaign/.test(cPlay.getAttribute("href") || "")) problem("bug", "Campaign Play href missing ?mode=campaign");
+    if (!aPlay || !/mode=arcade/.test(aPlay.getAttribute("href") || "")) problem("bug", "Arcade Play href missing ?mode=arcade");
+    var cBox = campaign.getBoundingClientRect();
+    var aBox = arcade.getBoundingClientRect();
+    var sideBySide = Math.abs(cBox.top - aBox.top) < 48 && aBox.left > cBox.right - 8;
+    var stacked = aBox.top >= cBox.bottom - 8;
+    run.metrics.shiftSideBySide = sideBySide ? 1 : 0;
+    run.metrics.shiftStacked = stacked ? 1 : 0;
+    run.metrics.width = window.innerWidth;
+    if (window.innerWidth >= 720 && !sideBySide) problem("bug", "shift cards should sit side by side on desktop");
+    if (window.innerWidth <= 400 && !stacked) problem("bug", "shift cards should stack on a 390px phone");
+    event("shift-layout", sideBySide ? "side-by-side" : stacked ? "stacked" : "other");
+    var heroPlay = document.querySelector('.play-btn[data-play="hero"], .hero .play-btn');
+    if (!heroPlay) problem("bug", "hero PLAY missing");
+    else {
+      var heroHref = new URL(heroPlay.href, location.href);
+      if (/mode=/.test(heroHref.search)) problem("bug", "hero PLAY should stay mode-free");
+      else event("hero-play", heroHref.pathname);
+      run.metrics.heroPlayOk = /\/Game\//.test(heroHref.pathname) && !/mode=/.test(heroHref.search) ? 1 : 0;
+    }
+    run.progress = 0.35;
+    save();
+    if (!cPlay) { finish("error"); return; }
+    // Hand off to Game with playtest kept so the loading card can name Campaign, then Arcade.
+    var dest = new URL(cPlay.href, location.href);
+    dest.searchParams.set("playtest", "choose-shift");
+    if (run.options && run.options.seed != null) dest.searchParams.set("seed", String(run.options.seed));
+    event("play-campaign", dest.pathname + dest.search);
+    try { sessionStorage.removeItem(KEY); } catch (e) {}
+    location.href = dest.toString();
+  }
+
   function begin(id, options) {
     run = { id: id, t0: Date.now(), moved: Date.now(), status: "running", progress: 0, done: false, events: [], problems: [], metrics: {}, options: options || {}, log: [] };
     save();
@@ -339,7 +391,7 @@
   }
   function resume() {
     if (!run || run.done) return Promise.resolve();
-    var fn = run.id === "pages" ? stepPages : run.id === "smoke" ? runSmoke : run.id === "phone-nav" ? runPhoneNav : run.id === "install-hint" ? runInstallHint : null;
+    var fn = run.id === "pages" ? stepPages : run.id === "smoke" ? runSmoke : run.id === "phone-nav" ? runPhoneNav : run.id === "install-hint" ? runInstallHint : run.id === "choose-shift" ? runChooseShift : null;
     if (!fn) { problem("bug", "unknown scenario " + run.id); finish("error"); return Promise.resolve(); }
     return fn().catch(function (e) { problem("bug", "scenario threw: " + e); finish("error"); });
   }
