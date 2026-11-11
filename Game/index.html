@@ -389,11 +389,10 @@
     a.home {
       color: #8fd9b4;
     }
-    /* Phone controls: Fullscreen (bottom right, only where the browser has it) and a rotate hint (top, dismissible).
-       Above Tap to play (z 1000) but small and at the edges, so neither covers its text; only they take taps. */
+    /* Fullscreen lives on the Tap to play card, in its top-right corner, and goes away once play begins. */
     #fs-button {
       position: fixed;
-      bottom: max(10px, env(safe-area-inset-bottom));
+      top: max(10px, env(safe-area-inset-top));
       right: max(10px, env(safe-area-inset-right));
       z-index: 1002;
       min-width: 44px;
@@ -409,8 +408,7 @@
       text-transform: uppercase;
       touch-action: manipulation;
     }
-    /* The top corners belong to the game's HUD (This wave / Yo Bot), so the button lives in the bottom-right corner in every orientation. */
-    #fs-button[hidden], #rotate-hint[hidden] { display: none; }
+    #fs-button[hidden] { display: none; }
     #fs-button:hover, #fs-button:focus-visible { border-color: #e7d3b0; outline: 2px solid #e7d3b0; outline-offset: 2px; }
     #rotate-card[hidden] { display: none; }
     #rotate-card {
@@ -435,37 +433,10 @@
       min-height: 44px; padding: 0 8px; cursor: pointer; border: 0; background: transparent;
       color: #8fd9b4; text-decoration: underline; font: 15px/1 Outfit, Arial, sans-serif; touch-action: manipulation;
     }
-    /* Mid-game in portrait the hint is a slim bar above the game: the canvas shrinks below it, nothing sits on the canvas. */
-    #rotate-hint {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 130px;
-      height: 44px;
-      z-index: 1001;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 0 0 0 12px;
-      background: #1c1814;
-      border-left: 4px solid #e7d3b0;
-      color: #efe2cc;
-      font: italic 14px/1.35 Fraunces, Georgia, serif;
-    }
-    #rotate-hint span { flex: 1; font-size: 13px; }
-    body.rotate-bar #unity-container { top: 44px; height: calc(100% - 44px); padding-top: 0; }
-    body.rotate-bar #fs-button { top: 0; min-height: 44px; border-radius: 0; z-index: 1002; }
-    #rotate-dismiss {
-      flex: none;
-      width: 44px;
-      height: 44px;
-      cursor: pointer;
-      border: 0;
-      background: transparent;
-      color: #e7d3b0;
-      font: 700 20px/1 Arial, sans-serif;
-      touch-action: manipulation;
-    }
+    /* Layout contract: once Tap to play is pressed the page draws nothing over #unity-canvas. The only page elements
+       that may cover it are the Tap to play card (before play) and the portrait pause card (#rotate-card, a full-screen
+       pause, never a banner). Everything else is hidden while body.game-playing. */
+    body.game-playing #version-display, body.game-playing #unity-warning, body.game-playing #fs-button { display: none !important; }
   </style>
   <script>
     // The build number this page plays, from the address Studio points it at (.../b/web/<n>/): it names the build in the
@@ -542,7 +513,6 @@
     <p>Turn your phone to landscape and the Department will carry on.</p>
     <button type="button" id="rotate-anyway">Play in portrait anyway</button>
   </div>
-  <div id="rotate-hint" role="note" hidden><span>This file reads better sideways. Turn your phone to landscape.</span><button type="button" id="rotate-dismiss" aria-label="Dismiss the rotate hint">&times;</button></div>
   <div id="version-display"></div>
   <script>
     var gameVersion = window.PLACE_BUILD;
@@ -1136,6 +1106,7 @@
             });
           }).then(function (instance) {
             if (attempt !== loadAttempt || loadFailed || !instance) return;
+            window.placeUnity = instance;
             loadedBytes = Math.max(loadedBytes, headersKnown ? totalBytes : APPROX_TOTAL_BYTES);
             setStage("starting");
             recordProgress(1);
@@ -1185,25 +1156,33 @@
     }
   </script>
   <script>
-    // Phone controls (static, event driven: no timers or polling). Fullscreen where the browser has it (iPhone Safari
-    // has none for pages, so no button there); a rotate hint while a narrow portrait screen is showing, dismissed for
-    // the visit with its x. Neither covers the loading card or Tap to play: they appear once play begins.
+    // Phone controls (static, event driven: no timers or polling). Fullscreen sits on the Tap to play card, in its
+    // top-right corner (where the browser has it; iPhone Safari has none for pages). Once play begins the page draws
+    // nothing over the canvas (body.game-playing). In portrait, until the player chooses to stay, a full-screen
+    // pause card asks for landscape; there is no banner over a running game.
     (function () {
       var root = document.documentElement;
       var fsButton = document.getElementById("fs-button");
-      var hint = document.getElementById("rotate-hint");
       var card = document.getElementById("rotate-card");
       var request = root.requestFullscreen || root.webkitRequestFullscreen;
       var supported = !!request && (document.fullscreenEnabled || document.webkitFullscreenEnabled);
-      var dismissed = false, chosen = false;
-      try { dismissed = sessionStorage.getItem("place-rotate-hint") === "1"; } catch (e) {}
+      var chosen = false, paused = false;
       var portraitPhone = window.matchMedia("(orientation: portrait) and (max-width: 820px)");
 
       function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement; }
-      function isReadyToPlay() { return !!window.placeGameReady && !document.getElementById("hawkes-tap"); }
+      function tapShowing() { return !!document.getElementById("hawkes-tap"); }
+      function isPlaying() { return !!window.placeGameReady && !tapShowing(); }
 
+      function setPaused(on) {
+        if (on === paused) return;
+        paused = on;
+        try {
+          var m = window.placeUnity && window.placeUnity.Module;
+          if (m) { if (on && m.pauseMainLoop) m.pauseMainLoop(); else if (!on && m.resumeMainLoop) m.resumeMainLoop(); }
+        } catch (e) {}
+      }
       function syncFs() {
-        fsButton.hidden = !supported || !isReadyToPlay();
+        fsButton.hidden = !supported || !window.placeGameReady || !tapShowing();
         var on = !!fsElement();
         fsButton.textContent = on ? "Exit fullscreen" : "Fullscreen";
         fsButton.setAttribute("aria-label", on ? "Exit fullscreen" : "Enter fullscreen");
@@ -1218,27 +1197,17 @@
       document.addEventListener("fullscreenchange", syncFs);
       document.addEventListener("webkitfullscreenchange", syncFs);
 
-      // Show the loading card first, then Tap to play; once tapped in portrait, show the rotate card until the player
-      // rotates to landscape or chooses portrait (which switches to the slim bar above the canvas).
       function syncHint() {
-        var portrait = portraitPhone.matches;
-        var readyToPlay = isReadyToPlay();
+        var playing = isPlaying();
+        document.body.classList.toggle("game-playing", playing);
         syncFs();
-        card.hidden = !(portrait && readyToPlay && !chosen);
-        hint.hidden = !(portrait && readyToPlay && chosen && !dismissed);
-        var bar = !hint.hidden;
-        if (document.body.classList.contains("rotate-bar") !== bar) {
-          document.body.classList.toggle("rotate-bar", bar);
-          if (window.placeFitCanvas) window.placeFitCanvas();
-        }
+        var showCard = playing && portraitPhone.matches && !chosen;
+        card.hidden = !showCard;
+        setPaused(showCard);
+        if (window.placeFitCanvas) window.placeFitCanvas();
       }
       document.getElementById("rotate-anyway").addEventListener("click", function () {
         chosen = true;
-        syncHint();
-      });
-      document.getElementById("rotate-dismiss").addEventListener("click", function () {
-        dismissed = true;
-        try { sessionStorage.setItem("place-rotate-hint", "1"); } catch (e) {}
         syncHint();
       });
       if (window.hawkesSound && typeof window.hawkesSound.tap === "function") {
@@ -1447,6 +1416,72 @@
       try { sessionStorage.removeItem("place-pt-loading"); } catch (e) {}
       tr.finish("done");
     }
+    // Every visible page element whose box intersects the Unity canvas (ancestors and the canvas itself excluded).
+    function canvasOverlaps() {
+      var cv = document.getElementById("unity-canvas");
+      if (!cv) return [];
+      var c = cv.getBoundingClientRect();
+      var out = [];
+      Array.prototype.forEach.call(document.body.querySelectorAll("*"), function (el) {
+        if (el === cv || el.contains(cv) || cv.contains(el)) return;
+        if (/^(SCRIPT|STYLE|LINK|META|NOSCRIPT)$/.test(el.tagName)) return;
+        var cs = getComputedStyle(el);
+        if (cs.display === "none" || cs.visibility === "hidden" || parseFloat(cs.opacity) === 0) return;
+        var r = el.getBoundingClientRect();
+        if (r.width < 1 || r.height < 1) return;
+        if (r.right <= c.left || r.left >= c.right || r.bottom <= c.top || r.top >= c.bottom) return;
+        // Children of a visible element are reported through it only when they are the ones drawing (skip empty wrappers).
+        out.push(el.id ? "#" + el.id : el.tagName.toLowerCase() + (el.className && typeof el.className === "string" ? "." + el.className.split(" ")[0] : ""));
+      });
+      return out;
+    }
+    async function playPhoneLayout(tr) {
+      tr.scene("LoadingCard");
+      await tr.until(function () { return !!window.placeGameReady && !!document.getElementById("hawkes-tap"); }, 240000, "Tap to play");
+      tr.scene("TapToPlay");
+      var portrait = window.innerHeight > window.innerWidth;
+      var fs = document.getElementById("fs-button");
+      tr.metric("layout.portrait", portrait ? 1 : 0);
+      // The fullscreen control belongs on the tap card, in a corner, outside the canvas box once play begins.
+      if (fs && !fs.hidden) {
+        var fb = fs.getBoundingClientRect();
+        var corner = fb.top < window.innerHeight * 0.25 && fb.right > window.innerWidth * 0.5;
+        tr.event("fullscreen-on-tap-card", Math.round(fb.left) + "," + Math.round(fb.top));
+        if (!corner) tr.problem("polish", "fullscreen control is not in a corner of the tap card");
+      } else tr.event("fullscreen-unavailable", "no browser fullscreen here");
+      realClick(document.getElementById("hawkes-tap"));
+      tr.event("tapped-to-play");
+      await tr.until(function () { return !document.getElementById("hawkes-tap"); }, 5000, "tap card gone");
+      await tr.wait(400);
+      var card = document.getElementById("rotate-card");
+      if (portrait) {
+        if (!card || card.hidden) tr.problem("bug", "portrait: no full-screen pause card after Tap to play");
+        else {
+          var cb = card.getBoundingClientRect();
+          if (cb.width < window.innerWidth - 1 || cb.height < window.innerHeight - 1) tr.problem("bug", "rotate card is not full-screen");
+          tr.event("portrait-pause-card", "full-screen");
+        }
+        if (document.getElementById("rotate-hint")) tr.problem("bug", "rotate hint banner still exists");
+        realClick(document.getElementById("rotate-anyway"));
+        tr.event("stay-in-portrait");
+        await tr.wait(400);
+      } else if (card && !card.hidden) tr.problem("bug", "rotate card shown in landscape");
+      var hits = canvasOverlaps();
+      tr.metric("layout.canvasOverlaps", hits.length);
+      tr.event("canvas-overlaps", hits.length + (hits.length ? ": " + hits.join(", ") : ""));
+      if (hits.length) tr.problem("bug", "page elements over the running canvas: " + hits.join(", "));
+      // The HUD top (wave counter, Slice bar) is the canvas's top strip: nothing but the canvas may be hit there.
+      var cv = document.getElementById("unity-canvas").getBoundingClientRect();
+      [0.1, 0.5, 0.9].forEach(function (f) {
+        var el = document.elementFromPoint(cv.left + cv.width * f, cv.top + Math.min(40, cv.height * 0.05));
+        if (el && el.id !== "unity-canvas") tr.problem("bug", "HUD top covered by " + (el.id || el.tagName));
+      });
+      var box = { w: Math.round(cv.width), h: Math.round(cv.height), vw: window.innerWidth, vh: window.innerHeight };
+      tr.event("canvas-box", JSON.stringify(box));
+      if (cv.width < window.innerWidth * 0.9 || cv.height < window.innerHeight * 0.9) tr.problem("polish", "canvas does not fill the safe area");
+      tr.progress(1);
+      tr.finish("done");
+    }
     async function playSmoke(tr) {
       tr.scene("LoadingCard");
       await tr.until(function () { return !!window.placeGameReady || document.body.classList.contains("game-loaded"); }, 240000, "game loaded");
@@ -1510,6 +1545,7 @@
     var scenarios = [
       { id: "smoke", title: "Load the Game page through to Tap to play", seconds: 180, tags: ["smoke"] },
       { id: "loading", title: "Honest loading card: stall Retry, MB, 10/60/done", seconds: 240, tags: ["full"] },
+      { id: "phone-layout", title: "Phone: after Tap to play nothing from the page covers the canvas (lists overlaps)", seconds: 240, tags: ["full", "phone"] },
       { id: "choose-shift", title: "Loading card names Campaign then Arcade from shift picks", seconds: 90, tags: ["full", "site"] }
     ];
     var api = {
@@ -1535,7 +1571,7 @@
         var mine = run;
         var tr = t();
         tr.event("start", id);
-        var play = id === "loading" ? playLoading(tr) : id === "choose-shift" ? playChooseShift(tr) : playSmoke(tr);
+        var play = id === "loading" ? playLoading(tr) : id === "choose-shift" ? playChooseShift(tr) : id === "phone-layout" ? playPhoneLayout(tr) : playSmoke(tr);
         return Promise.resolve(play).then(function () {
           if (mine === run && !mine.done) tr.finish("done");
         }, function (err) {
