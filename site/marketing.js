@@ -209,6 +209,98 @@ document.querySelectorAll("[data-share-copy]").forEach((btn) => {
   });
 })();
 
+// Cast cards: one in-character line per card, only on tap; exclusive playback; caption while speaking.
+(() => {
+  const cards = [...document.querySelectorAll(".cast-card[data-cast]")];
+  if (!cards.length) return;
+
+  let active = null;
+
+  const stopCard = (card) => {
+    if (!card) return;
+    const audio = card.querySelector("[data-cast-audio]");
+    const caption = card.querySelector("[data-cast-caption]");
+    const btn = card.querySelector("[data-cast-play]");
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+    card.classList.remove("is-speaking");
+    if (caption) {
+      caption.textContent = "";
+      caption.hidden = true;
+    }
+    if (btn) btn.setAttribute("aria-pressed", "false");
+    if (active === card) active = null;
+  };
+
+  const stopAll = () => {
+    cards.forEach(stopCard);
+  };
+
+  const playCard = async (card) => {
+    const audio = card.querySelector("[data-cast-audio]");
+    const caption = card.querySelector("[data-cast-caption]");
+    const btn = card.querySelector("[data-cast-play]");
+    const line = card.getAttribute("data-line") || "";
+    if (!audio) return;
+    if (active === card && !audio.paused) {
+      stopCard(card);
+      window.dispatchEvent(new CustomEvent("cast:stop", { detail: { id: card.dataset.cast } }));
+      return;
+    }
+    if (active && active !== card) stopCard(active);
+    if (caption) {
+      caption.textContent = line;
+      caption.hidden = false;
+    }
+    card.classList.add("is-speaking");
+    if (btn) btn.setAttribute("aria-pressed", "true");
+    active = card;
+    try {
+      await audio.play();
+      window.dispatchEvent(
+        new CustomEvent("cast:play", { detail: { id: card.dataset.cast, line } }),
+      );
+    } catch (err) {
+      stopCard(card);
+      window.dispatchEvent(
+        new CustomEvent("cast:error", { detail: { id: card.dataset.cast, message: String(err) } }),
+      );
+    }
+  };
+
+  cards.forEach((card) => {
+    const art = card.querySelector(".cast-art");
+    if (art && !art.querySelector(".cast-wave")) {
+      const wave = document.createElement("div");
+      wave.className = "cast-wave";
+      wave.setAttribute("aria-hidden", "true");
+      wave.innerHTML = "<span></span><span></span><span></span><span></span>";
+      art.append(wave);
+    }
+    const audio = card.querySelector("[data-cast-audio]");
+    const btn = card.querySelector("[data-cast-play]");
+    btn?.setAttribute("aria-pressed", "false");
+    audio?.addEventListener("ended", () => {
+      stopCard(card);
+      window.dispatchEvent(new CustomEvent("cast:ended", { detail: { id: card.dataset.cast } }));
+    });
+    // Whole card is tappable (lede: "Tap a card"); the play button is the named control.
+    card.addEventListener("click", (event) => {
+      if (event.target.closest("a")) return;
+      event.preventDefault();
+      playCard(card);
+    });
+  });
+
+  window.__placeCast = {
+    stopAll,
+    playing: () => (active ? active.dataset.cast : null),
+    cards: () => cards.map((c) => c.dataset.cast),
+  };
+})();
+
 // Trailer slot: nothing loads until the click. The click opens an overlay player; Escape, the close button or a tap outside closes it.
 document.querySelectorAll("[data-trailer]").forEach((slot) => {
   const opener = slot.querySelector("[data-trailer-start]");
