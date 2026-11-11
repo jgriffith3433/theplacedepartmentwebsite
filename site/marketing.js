@@ -6,27 +6,7 @@ document.querySelectorAll("[data-nav]").forEach((link) => {
 });
 
 const nav = document.querySelector(".nav");
-const navLinks = document.getElementById("nav-links");
-const navToggle = document.getElementById("navToggle");
-
-const setMenu = (open) => {
-  if (!navLinks || !navToggle) return;
-  navLinks.classList.toggle("is-open", open);
-  navToggle.setAttribute("aria-expanded", open ? "true" : "false");
-  navToggle.textContent = open ? "Close" : "Menu";
-};
-
-navToggle?.addEventListener("click", () => {
-  setMenu(!navLinks.classList.contains("is-open"));
-});
-
-navLinks?.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => setMenu(false));
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") setMenu(false);
-});
+// The menu drawer lives in nav.js
 
 const onScroll = () => {
   nav?.classList.toggle("is-scrolled", window.scrollY > 8);

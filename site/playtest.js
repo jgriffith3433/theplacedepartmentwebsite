@@ -20,8 +20,8 @@
 
   var SCENARIOS = [
     { id: "smoke", title: "Home loads, hero video plays, PLAY reaches Game", seconds: 15, tags: ["smoke"] },
-    { id: "pages", title: "Visit every nav page through its link: status, console errors, sideways scroll, broken images", seconds: 30, tags: ["full"] },
-    { id: "phone-nav", title: "Open and close the menu (at 390px)", seconds: 10, tags: ["menus"] },
+    { id: "pages", title: "Visit every nav page through its link (opening the drawer on phones): status, console errors, sideways scroll, broken images", seconds: 30, tags: ["full"] },
+    { id: "phone-nav", title: "Open the menu drawer, close it by tapping outside and by Escape (at 390px)", seconds: 10, tags: ["menus"] },
     { id: "install-hint", title: "PWA: manifest, icons, shell worker, second-visit A2HS hint at 390px", seconds: 45, tags: ["full", "phone", "pwa"] },
     { id: "cast-voice", title: "Cast cards: tap two lines, exclusive playback, no autoplay, portraits at 390px", seconds: 45, tags: ["full", "content", "audio", "phone"] },
     { id: "choose-shift", title: "Choose your shift: Campaign and Arcade cards, Play reaches Game with mode named", seconds: 90, tags: ["full", "site"] },
@@ -110,6 +110,8 @@
     run.metrics.width = r.width;
     // The Play link goes to Game/, which has its own contract: only its status is read (no second page load).
     if (first) {
+      var t0 = openMenu();
+      if (t0 && t0.offsetParent !== null) { run.metrics.width = window.innerWidth; await checkDrawer(t0); save(); }
       var play = document.querySelector(".nav-play");
       if (play) {
         try {
@@ -132,6 +134,9 @@
       location.href = next;
       return;
     }
+    // At phone width the links live in the drawer: open it with the menu button first, as a visitor would.
+    var tg = openMenu();
+    if (tg && tg.offsetParent !== null) { tg.click(); await wait(350); event("menu-open", "drawer opened to follow " + next); }
     link.click();
   }
 
@@ -161,6 +166,42 @@
     play.click();
   }
 
+  // Drawer check (phone width): open, lists every page, focus inside, closes on tap outside and on Escape.
+  async function checkDrawer(toggle) {
+    var panel = document.getElementById("nav-links");
+    var expected = navLinks().length;
+    var drawerLinks = panel.querySelectorAll("a[href]").length;
+    run.metrics.drawerLinks = drawerLinks;
+    function inView() { var b = panel.getBoundingClientRect(); return b.width > 0 && b.right <= window.innerWidth + 1 && b.left >= 0 && b.bottom <= window.innerHeight + 1; }
+    function isOpenNow() { return toggle.getAttribute("aria-expanded") === "true"; }
+    async function open() { toggle.click(); await wait(400); }
+    await open();
+    var opened = isOpenNow() && inView();
+    event("menu-open", opened ? "drawer open with " + drawerLinks + " links, fits the screen" : "did not open or does not fit");
+    if (!opened) problem("bug", "menu did not open a drawer that fits the screen");
+    if (drawerLinks < expected) problem("bug", "drawer lists " + drawerLinks + " links, nav has " + expected);
+    var inside = panel.contains(document.activeElement);
+    run.metrics.focusInside = inside ? 1 : 0;
+    if (!inside) problem("bug", "focus is not inside the open drawer");
+    // Tap outside: the backdrop to the left of the panel.
+    var backdrop = document.querySelector("[data-nav-backdrop]");
+    if (backdrop) backdrop.click(); else problem("bug", "no backdrop to tap outside the drawer");
+    await wait(400);
+    var closedOutside = !isOpenNow();
+    event("menu-close", closedOutside ? "closed by tapping outside" : "did not close on tap outside");
+    if (!closedOutside) problem("bug", "tap outside did not close the drawer");
+    await open();
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    await wait(400);
+    var closedEsc = !isOpenNow();
+    event("menu-close", closedEsc ? "closed by Escape" : "did not close on Escape");
+    if (!closedEsc) problem("bug", "Escape did not close the drawer");
+    var over = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth;
+    run.metrics.overflow = over;
+    if (over > 1) problem("bug", "page scrolls sideways by " + over + "px");
+    return opened && closedOutside && closedEsc;
+  }
+
   async function runPhoneNav() {
     await loaded();
     run.metrics.width = window.innerWidth;
@@ -179,18 +220,15 @@
       return;
     }
     run.metrics.hasMenu = 1;
-    toggle.click();
-    await wait(300);
-    var opened = toggle.getAttribute("aria-expanded") === "true";
-    event("menu-open", opened ? "open" : "did not open");
-    if (!opened) problem("bug", "menu did not open");
-    toggle.click();
-    await wait(300);
-    var closed = toggle.getAttribute("aria-expanded") !== "true";
-    event("menu-close", closed ? "closed" : "did not close");
-    if (!closed) problem("bug", "menu did not close");
+    if (toggle.offsetParent === null) {
+      event("wide", "menu button hidden at " + window.innerWidth + "px; links shown inline");
+      run.progress = 1;
+      finish("done");
+      return;
+    }
+    var ok = await checkDrawer(toggle);
     run.progress = 1;
-    finish(opened && closed ? "done" : "error");
+    finish(ok ? "done" : "error");
   }
 
   async function runInstallHint() {

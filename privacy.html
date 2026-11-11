@@ -34,6 +34,7 @@
     <script src="./site/analytics.js"></script>
     <script src="./site/playtest.js"></script>
     <script src="./site/a2hs.js" defer></script>
+    <script src="./site/nav.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -55,8 +56,16 @@
           </svg>
           The Place Department
         </a>
+        <nav class="nav-links" id="nav-links" aria-label="Pages">
+          <button type="button" class="nav-close" data-nav-close aria-label="Close menu">Close</button>
+            <a href="./index.html" data-nav="home">Front desk</a>
+            <a href="./lore.html" data-nav="lore">Lore</a>
+            <a href="./whatsnew.html" data-nav="whatsnew">What's new</a>
+            <a href="./privacy.html" data-nav="privacy" aria-current="page">Privacy</a>
+        </nav>
         <div class="nav-tools">
           <a class="nav-play" href="Game/index.html">Play</a>
+          <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav-links" aria-label="Menu">Menu</button>
         </div>
       </div>
     </header>
