@@ -563,8 +563,24 @@
     var btn = document.querySelector(".hero .play-btn");
     function rect(el) { var r = el.getBoundingClientRect(); return r.left + "," + Math.round(r.top) + "," + Math.round(r.width) + "," + Math.round(r.height); }
     var before = h1 && btn ? rect(h1) + "|" + rect(btn) : "";
+    // Watch the hero title and PLAY on every frame until the page has settled, not only at two instants:
+    // a font swap or a late image that nudges them and then settles must still be caught.
+    var maxMove = 0, sampling = true, base = h1 && btn ? { h: h1.getBoundingClientRect(), b: btn.getBoundingClientRect() } : null;
+    (function sample() {
+      if (!sampling) return;
+      if (base) {
+        var h = h1.getBoundingClientRect(), b = btn.getBoundingClientRect();
+        maxMove = Math.max(maxMove, Math.abs(h.top - base.h.top), Math.abs(h.height - base.h.height), Math.abs(b.top - base.b.top), Math.abs(b.left - base.b.left));
+      }
+      requestAnimationFrame(sample);
+    })();
     await loaded();
+    try { if (document.fonts && document.fonts.ready) await Promise.race([document.fonts.ready, wait(4000)]); } catch (e) {}
     await wait(1500);
+    sampling = false;
+    run.metrics.heroMaxMovePx = Math.round(maxMove * 10) / 10;
+    if (document.fonts) event("fonts", Array.prototype.map.call(document.fonts, function (f) { return f.family.replace(/"/g, "") + ":" + f.status; }).join(", "));
+    if (maxMove > 1) problem("bug", "hero title or PLAY moved " + (Math.round(maxMove * 10) / 10) + " px while the page loaded");
     run.metrics.width = window.innerWidth;
     event("viewport", window.innerWidth + "x" + window.innerHeight);
     if (!h1 || !btn) { problem("bug", "hero title or PLAY button missing"); finish("error"); return; }

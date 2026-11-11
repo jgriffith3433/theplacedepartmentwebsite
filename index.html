@@ -40,10 +40,17 @@
     <script src="./site/playtest.js"></script>
     <script src="./site/a2hs.js" defer></script>
     <script src="./site/nav.js" defer></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,520;1,9..144,520&family=Outfit:wght@500;600;700&family=Special+Elite&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,520;1,9..144,520&family=Outfit:wght@500;600;700&family=Special+Elite&display=swap" /></noscript>
+    <link rel="preload" as="font" type="font/woff2" href="./site/fonts/special-elite-latin.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="./site/fonts/outfit-latin.woff2" crossorigin />
+    <style>
+      /* Self-hosted, same-origin fonts (no Google round trip). Special Elite and Outfit set the hero's type, so they are
+         "optional": a font that is not ready in the first moments is skipped for this view, never swapped in under the
+         reader, so the hero text and PLAY cannot reflow. */
+      @font-face { font-family: "Special Elite"; font-style: normal; font-weight: 400; font-display: optional; src: url(./site/fonts/special-elite-latin.woff2) format("woff2"); }
+      @font-face { font-family: "Outfit"; font-style: normal; font-weight: 100 900; font-display: optional; src: url(./site/fonts/outfit-latin.woff2) format("woff2"); }
+      @font-face { font-family: "Fraunces"; font-style: normal; font-weight: 100 900; font-display: swap; src: url(./site/fonts/fraunces-latin.woff2) format("woff2"); }
+      @font-face { font-family: "Fraunces"; font-style: italic; font-weight: 100 900; font-display: swap; src: url(./site/fonts/fraunces-italic-latin.woff2) format("woff2"); }
+    </style>
     <link rel="preload" as="image" href="./site/hero-loop-640.webp" imagesrcset="./site/hero-loop-640.webp 640w, ./site/hero-loop.webp 1280w" imagesizes="100vw" fetchpriority="high" />
     <link rel="stylesheet" href="./site/marketing.css" />
     <link rel="stylesheet" href="./site/dossier.css" />
