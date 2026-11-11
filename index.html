@@ -39,14 +39,20 @@
     <script src="./site/analytics.js"></script>
     <script src="./site/playtest.js"></script>
     <script src="./site/a2hs.js" defer></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,520;0,9..144,560;1,9..144,520&family=Outfit:wght@500;600;700&family=Special+Elite&display=swap"
-      rel="stylesheet"
-    />
+    <script src="./site/nav.js" defer></script>
+    <link rel="preload" as="font" type="font/woff2" href="./site/fonts/special-elite-latin.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="./site/fonts/outfit-latin.woff2" crossorigin />
+    <style>
+      /* Self-hosted, same-origin fonts (no Google round trip). Special Elite and Outfit set the hero's type, so they are
+         "optional": a font that is not ready in the first moments is skipped for this view, never swapped in under the
+         reader, so the hero text and PLAY cannot reflow. */
+      @font-face { font-family: "Special Elite"; font-style: normal; font-weight: 400; font-display: optional; src: url(./site/fonts/special-elite-latin.woff2) format("woff2"); }
+      @font-face { font-family: "Outfit"; font-style: normal; font-weight: 100 900; font-display: optional; src: url(./site/fonts/outfit-latin.woff2) format("woff2"); }
+      @font-face { font-family: "Fraunces"; font-style: normal; font-weight: 100 900; font-display: swap; src: url(./site/fonts/fraunces-latin.woff2) format("woff2"); }
+      @font-face { font-family: "Fraunces"; font-style: italic; font-weight: 100 900; font-display: swap; src: url(./site/fonts/fraunces-italic-latin.woff2) format("woff2"); }
+    </style>
+    <link rel="preload" as="image" href="./site/hero-loop-640.webp" imagesrcset="./site/hero-loop-640.webp 640w, ./site/hero-loop.webp 1280w" imagesizes="(max-width: 700px) 320px, 100vw" fetchpriority="high" />
     <link rel="stylesheet" href="./site/marketing.css" />
-    <link rel="stylesheet" href="./site/lore.css" />
     <link rel="stylesheet" href="./site/dossier.css" />
   </head>
   <body data-page="home">
@@ -61,53 +67,16 @@
           </svg>
           The Place Department
         </a>
+        <nav class="nav-links" id="nav-links" aria-label="Pages">
+          <button type="button" class="nav-close" data-nav-close aria-label="Close menu">Close</button>
+            <a href="./index.html" data-nav="home" aria-current="page">Front desk</a>
+            <a href="./lore.html" data-nav="lore">Lore</a>
+            <a href="./whatsnew.html" data-nav="whatsnew">What's new</a>
+            <a href="./privacy.html" data-nav="privacy">Privacy</a>
+        </nav>
         <div class="nav-tools">
-          <a class="nav-lore" href="./lore.html">Lore</a>
-          <!-- hawkes-whatsnew: written by breakingthrough's WebGL deploy (Tools/Web/whatsnew-landing.html); edit it there, not here -->
-          <a class="nav-whatsnew" href="./whatsnew.html" data-hawkes-whatsnew>What's new <span data-hawkes-version hidden></span></a>
-          <style>
-            .nav-whatsnew {
-              display: inline-flex;
-              align-items: center;
-              gap: 8px;
-              min-height: 42px;
-              padding: 0 10px;
-              color: var(--muted);
-              font-size: 12px;
-              font-weight: 600;
-              letter-spacing: 0.2em;
-              text-decoration: none;
-              text-transform: uppercase;
-              white-space: nowrap;
-            }
-            .nav-whatsnew:hover,
-            .nav-whatsnew:focus-visible {
-              color: var(--gold);
-            }
-            .nav-whatsnew [data-hawkes-version] {
-              color: var(--gold);
-              letter-spacing: 0.12em;
-              text-transform: none;
-            }
-            @media (max-width: 560px) {
-              .nav-whatsnew {
-                letter-spacing: 0.12em;
-              }
-              .nav-whatsnew [data-hawkes-version] {
-                display: none;
-              }
-            }
-            @media (max-width: 420px) {
-              .nav-whatsnew {
-                padding: 0 4px;
-                font-size: 11px;
-                letter-spacing: 0.08em;
-              }
-            }
-          </style>
-          <script src="./js/hawkes-release.js" data-releases="./releases.json" defer></script>
-          <!-- /hawkes-whatsnew -->
           <a class="nav-play" href="Game/index.html">Play</a>
+          <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav-links" aria-label="Menu">Menu</button>
         </div>
       </div>
     </header>
@@ -117,12 +86,23 @@
         <div class="stage" aria-hidden="true">
           <div class="stage-shot" id="shotA"></div>
           <div class="stage-shot" id="shotB"></div>
-          <video class="stage-loop" data-hero-loop autoplay muted loop playsinline preload="auto" disablepictureinpicture poster="./site/hero-loop.jpg" aria-hidden="true"><source media="(max-width: 700px)" src="./site/hero-loop-sm.mp4" type="video/mp4"><source src="./site/hero-loop.mp4" type="video/mp4"></video><script>(function(){var v=document.querySelector('[data-hero-loop]');if(v&&window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){v.removeAttribute('autoplay');v.preload='none';v.innerHTML='';v.load();}})();</script>
+          <img class="stage-poster" src="./site/hero-loop-640.webp" srcset="./site/hero-loop-640.webp 640w, ./site/hero-loop.webp 1280w" sizes="(max-width: 700px) 320px, 100vw" width="1280" height="720" alt="" fetchpriority="high" decoding="async" />
+          <video class="stage-loop" data-hero-loop muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true"></video><script>(function(){
+/* The poster above is the first paint and the LCP. The loop (hundreds of KB) is attached only after the page has loaded, so it never competes with the poster for a slow phone connection. */
+var v=document.querySelector('[data-hero-loop]');if(!v)return;
+if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+function go(){var s=window.innerWidth<=700?['hero-loop-sm.webm','video/webm; codecs=vp9','hero-loop-sm.mp4','video/mp4']:['hero-loop.webm','video/webm; codecs=vp9','hero-loop.mp4','video/mp4'];
+for(var i=0;i<s.length;i+=2){var e=document.createElement('source');e.src='./site/'+s[i];e.type=s[i+1];v.appendChild(e);}
+v.preload='auto';v.autoplay=true;v.load();var p=v.play();if(p&&p.catch)p.catch(function(){});}
+function later(){(window.requestIdleCallback||function(f){setTimeout(f,200)})(go,{timeout:1500});}
+if(document.readyState==='complete')later();else window.addEventListener('load',later,{once:true});
+})();</script>
           <div class="stage-vignette"></div>
         </div>
         <div class="hero-copy">
           <p class="eyebrow"><span class="stamp stamp-filed">Filed</span></p>
           <h1 class="display">The Place Department</h1>
+          <p class="pitch">A free browser action game for phone and desktop. One wallet with a bat guards Slice from the robot bailiffs. Noted.</p>
           <p class="omen">It's where it's at.</p>
           <a class="play-btn" href="Game/index.html" data-play="hero">Play</a>
         </div>
@@ -168,7 +148,7 @@
           <p class="lede">Everything the Department lost, everything it sent to find it. Tap a card to hear them.</p>
           <div class="cast-grid">
           <article class="cast-card" data-cast="wallit" data-line="Return to sender.">
-            <div class="cast-art" style="background-image:url(./assets/cast/wallit.jpg)" role="img" aria-label="Wallit"></div>
+            <div class="cast-art" data-bg="./assets/cast/wallit.webp" role="img" aria-label="Wallit"></div>
             <div class="cast-body">
               <p class="kicker">The lost thing that fought back</p>
               <h3>Wallit</h3>
@@ -185,7 +165,7 @@
             </audio>
           </article>
           <article class="cast-card" data-cast="slice" data-line="Noted.">
-            <div class="cast-art" style="background-image:url(./assets/cast/slice.jpg)" role="img" aria-label="Slice"></div>
+            <div class="cast-art" data-bg="./assets/cast/slice.webp" role="img" aria-label="Slice"></div>
             <div class="cast-body">
               <p class="kicker">The Department's tidiest knife</p>
               <h3>Slice</h3>
@@ -202,7 +182,7 @@
             </audio>
           </article>
           <article class="cast-card" data-cast="yobot" data-line="Hello. Uploading victory.">
-            <div class="cast-art" style="background-image:url(./assets/cast/yobot.jpg)" role="img" aria-label="Yo Bot"></div>
+            <div class="cast-art" data-bg="./assets/cast/yobot.webp" role="img" aria-label="Yo Bot"></div>
             <div class="cast-body">
               <p class="kicker">Clearing Crew, chirpy and cheap</p>
               <h3>Yo Bot</h3>
@@ -219,7 +199,7 @@
             </audio>
           </article>
           <article class="cast-card" data-cast="spider" data-line="Delivery is to the named address.">
-            <div class="cast-art" style="background-image:url(./assets/cast/spider.jpg)" role="img" aria-label="Spider Bot"></div>
+            <div class="cast-art" data-bg="./assets/cast/spider.webp" role="img" aria-label="Spider Bot"></div>
             <div class="cast-body">
               <p class="kicker">The process server with six legs</p>
               <h3>Spider Bot</h3>
@@ -237,7 +217,7 @@
           </article>
           </div>
           <article class="cast-card cast-card--featured" data-cast="courier" data-line="Special delivery! Notice of striking!">
-            <div class="cast-art" style="background-image:url(./assets/cast/courier.jpg)" role="img" aria-label="The Courier"></div>
+            <div class="cast-art" data-bg="./assets/cast/courier.webp" role="img" aria-label="The Courier"></div>
             <div class="cast-body">
               <p class="kicker">Featured boss · Chapter 1</p>
               <h3>The Courier</h3>
@@ -262,32 +242,32 @@
           <h2 id="campaign-h">The campaign</h2>
           <p class="lede">Six chapters. The last three are sealed.</p>
         </div>
-        <ol class="path" data-campaign tabindex="0" aria-label="Campaign chapters, swipe sideways">
+        <ol class="path" data-campaign tabindex="0" aria-label="Campaign chapters">
           <li class="chapter" data-chapter="1">
             <span class="c-num">Ch. 1</span><h3>Return to Sender</h3>
-            <div class="c-body"><img class="c-shot" src="./assets/campaign/ch1.jpg" alt="Chapter 1 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-1.png" alt="Boss silhouette, chapter 1" width="256" height="256" loading="lazy" /></div><p class="c-line">Wallit wakes under a stamp.</p></div>
+            <div class="c-body"><img class="c-shot" src="./assets/campaign/ch1.jpg" alt="Chapter 1 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-1.png" alt="Boss silhouette, chapter 1" width="256" height="256" loading="lazy" /></div><p class="c-line">Wallit wakes under a stamp. A Courier brings the notice.</p></div>
           </li>
           <li class="chapter" data-chapter="2">
             <span class="c-num">Ch. 2</span><h3>No Fixed Address</h3>
-            <div class="c-body"><img class="c-shot" src="./assets/campaign/ch2.jpg" alt="Chapter 2 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-2.png" alt="Boss silhouette, chapter 2" width="256" height="256" loading="lazy" /></div><p class="c-line">One lantern, one road, no return.</p></div>
+            <div class="c-body"><img class="c-shot" src="./assets/campaign/ch2.jpg" alt="Chapter 2 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-2.png" alt="Boss silhouette, chapter 2" width="256" height="256" loading="lazy" /></div><p class="c-line">A wall 205 metres out. A gate with no handle.</p></div>
           </li>
           <li class="chapter" data-chapter="3">
             <span class="c-num">Ch. 3</span><h3>The Clearing Floor</h3>
-            <div class="c-body"><img class="c-shot" src="./assets/campaign/ch3.jpg" alt="Chapter 3 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-3.png" alt="Boss silhouette, chapter 3" width="256" height="256" loading="lazy" /></div><p class="c-line">The lamps are lit. Nobody lives here.</p></div>
+            <div class="c-body"><img class="c-shot" src="./assets/campaign/ch3.jpg" alt="Chapter 3 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-3.png" alt="Boss silhouette, chapter 3" width="256" height="256" loading="lazy" /></div><p class="c-line">Past the gate, a belt carries cleared things away.</p></div>
           </li>
           <li class="chapter sealed" data-chapter="4" data-sealed="true">
             <span class="c-num">Ch. 4</span><h3>The Process Servers</h3>
-            <div class="c-body" id="c-body-4" hidden><img class="c-shot" src="./assets/campaign/ch4.jpg" alt="Chapter 4 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-4.png" alt="Boss silhouette, chapter 4" width="256" height="256" loading="lazy" /></div><p class="c-line">Served in person.</p></div>
+            <div class="c-body" id="c-body-4" hidden><img class="c-shot" src="./assets/campaign/ch4.jpg" alt="Chapter 4 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-4.png" alt="Boss silhouette, chapter 4" width="256" height="256" loading="lazy" /></div><p class="c-line">Spider Bots arrive with one paper each, and wait.</p></div>
             <button class="c-seal" type="button" aria-expanded="false" aria-controls="c-body-4"><span class="stamp stamp-open">Sealed</span><span class="c-tap">Tap to unseal</span></button>
           </li>
           <li class="chapter sealed" data-chapter="5" data-sealed="true">
             <span class="c-num">Ch. 5</span><h3>Strike This Address</h3>
-            <div class="c-body" id="c-body-5" hidden><img class="c-shot" src="./assets/campaign/ch5.jpg" alt="Chapter 5 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-5.png" alt="Boss silhouette, chapter 5" width="256" height="256" loading="lazy" /></div><p class="c-line">Every shelf has a name on it.</p></div>
+            <div class="c-body" id="c-body-5" hidden><img class="c-shot" src="./assets/campaign/ch5.jpg" alt="Chapter 5 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-5.png" alt="Boss silhouette, chapter 5" width="256" height="256" loading="lazy" /></div><p class="c-line">The Registrar reads the ledger. Every shelf has a name.</p></div>
             <button class="c-seal" type="button" aria-expanded="false" aria-controls="c-body-5"><span class="stamp stamp-open">Sealed</span><span class="c-tap">Tap to unseal</span></button>
           </li>
           <li class="chapter sealed" data-chapter="6" data-sealed="true">
             <span class="c-num">Ch. 6</span><h3>Address Filed</h3>
-            <div class="c-body" id="c-body-6" hidden><img class="c-shot" src="./assets/campaign/ch6.jpg" alt="Chapter 6 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-6.png" alt="Boss silhouette, chapter 6" width="256" height="256" loading="lazy" /></div><p class="c-line">The last drawer closes.</p></div>
+            <div class="c-body" id="c-body-6" hidden><img class="c-shot" src="./assets/campaign/ch6.jpg" alt="Chapter 6 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-6.png" alt="Boss silhouette, chapter 6" width="256" height="256" loading="lazy" /></div><p class="c-line">One last drawer. One address to file.</p></div>
             <button class="c-seal" type="button" aria-expanded="false" aria-controls="c-body-6"><span class="stamp stamp-open">Sealed</span><span class="c-tap">Tap to unseal</span></button>
           </li>
         </ol>
@@ -296,21 +276,21 @@
       <section class="cases" id="case-files" aria-labelledby="cases-h">
         <div class="wrap">
           <p class="kicker">Records</p>
-          <h2 id="cases-h">The case files</h2>
-          <p class="lede">Three files, six chapters each. File them all.</p>
+          <h2 id="cases-h">Example case files</h2>
+          <p class="lede">Examples only, not your saves. In the game, Campaign keeps your progress in three real files.</p>
           <div class="dossier-grid">
           <article class="dossier" data-case-file="1">
-            <header><h3>Case File 01</h3><span class="stamp stamp-filed">FILED</span></header>
+            <header><h3>Example File 01</h3><span class="stamp stamp-blank">Example</span></header>
             <p class="note">Address filed. Stamped, numbered, closed.</p>
             <ol><li class="done"><span>Ch. 1</span> Return to Sender</li><li class="done"><span>Ch. 2</span> No Fixed Address</li><li class="done"><span>Ch. 3</span> The Clearing Floor</li><li class="done"><span>Ch. 4</span> The Process Servers</li><li class="done"><span>Ch. 5</span> Strike This Address</li><li class="done"><span>Ch. 6</span> Address Filed</li></ol>
           </article>
           <article class="dossier" data-case-file="2">
-            <header><h3>Case File 02</h3><span class="stamp stamp-open">OPEN</span></header>
+            <header><h3>Example File 02</h3><span class="stamp stamp-blank">Example</span></header>
             <p class="note">In progress. The Clearing Floor is next.</p>
             <ol><li class="done"><span>Ch. 1</span> Return to Sender</li><li class="done"><span>Ch. 2</span> No Fixed Address</li><li class="done"><span>Ch. 3</span> The Clearing Floor</li><li class="now"><span>Ch. 4</span> The Process Servers</li><li class=""><span>Ch. 5</span> Strike This Address</li><li class=""><span>Ch. 6</span> Address Filed</li></ol>
           </article>
           <article class="dossier" data-case-file="3">
-            <header><h3>Case File 03</h3><span class="stamp stamp-blank">BLANK</span></header>
+            <header><h3>Example File 03</h3><span class="stamp stamp-blank">Example</span></header>
             <p class="note">Unopened. Wallit has not arrived yet.</p>
             <ol><li class=""><span>Ch. 1</span> Return to Sender</li><li class=""><span>Ch. 2</span> No Fixed Address</li><li class=""><span>Ch. 3</span> The Clearing Floor</li><li class=""><span>Ch. 4</span> The Process Servers</li><li class=""><span>Ch. 5</span> Strike This Address</li><li class=""><span>Ch. 6</span> Address Filed</li></ol>
           </article>
@@ -347,13 +327,13 @@
               <button type="button" class="gallery-open" data-gallery-open data-index="2" aria-label="Open exhibit C, No Fixed Address">
                 <img src="./assets/shots/shot-3-640.jpg" srcset="./assets/shots/shot-3-640.jpg 640w, ./assets/shots/shot-3.jpg 1280w" sizes="(max-width: 520px) 100vw, (max-width: 860px) 50vw, 33vw" alt="Chapter 2: a lantern on an empty road" width="1280" height="720" loading="lazy" decoding="async" />
               </button>
-              <figcaption>Exhibit C. Ch. 2 No Fixed Address. One lantern, one road.</figcaption>
+              <figcaption>Exhibit C. Ch. 2 No Fixed Address. A gate with no handle.</figcaption>
             </figure>
             <figure>
               <button type="button" class="gallery-open" data-gallery-open data-index="3" aria-label="Open exhibit D, The Clearing Floor">
                 <img src="./assets/shots/shot-4-640.jpg" srcset="./assets/shots/shot-4-640.jpg 640w, ./assets/shots/shot-4.jpg 1280w" sizes="(max-width: 520px) 100vw, (max-width: 860px) 50vw, 33vw" alt="Chapter 3: lantern bots on the clearing floor" width="1280" height="720" loading="lazy" decoding="async" />
               </button>
-              <figcaption>Exhibit D. Ch. 3 The Clearing Floor. Lamps lit. Nobody lives here.</figcaption>
+              <figcaption>Exhibit D. Ch. 3 The Clearing Floor. The belt carries the cleared things away.</figcaption>
             </figure>
             <figure>
               <button type="button" class="gallery-open" data-gallery-open data-index="4" aria-label="Open exhibit E, The Process Servers">

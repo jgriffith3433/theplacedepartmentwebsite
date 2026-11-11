@@ -1,3 +1,9 @@
+/* Fallbacks sized to the web fonts, so a late font (or none) does not reflow the hero.
+   Special Elite sets the h1, eyebrow and PLAY; Outfit the pitch; Fraunces the omen line. */
+@font-face { font-family: "Special Elite Fallback"; src: local("Courier New"), local("CourierNewPSMT"), local("Liberation Mono"), local("Cousine"); size-adjust: 95.3%; ascent-override: 73.8%; descent-override: 31.2%; line-gap-override: 0%; }
+@font-face { font-family: "Fraunces Fallback"; src: local("Georgia"); size-adjust: 104%; ascent-override: 92%; descent-override: 24%; line-gap-override: 0%; }
+@font-face { font-family: "Outfit Fallback"; src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Arimo"); size-adjust: 102%; ascent-override: 100%; descent-override: 26%; line-gap-override: 0%; }
+
 :root {
   --bg: #12100e;
   --bg-raise: #1c1814;
@@ -24,7 +30,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: Outfit, Arial, Helvetica, sans-serif;
+  font-family: Outfit, "Outfit Fallback", Arial, Helvetica, sans-serif;
 }
 
 body {
@@ -94,7 +100,7 @@ a {
 .dossier h2,
 .level h3,
 .beat h3 {
-  font-family: Fraunces, Georgia, serif;
+  font-family: Fraunces, "Fraunces Fallback", Georgia, serif;
   font-weight: 560;
   letter-spacing: -0.02em;
   line-height: 0.95;
@@ -279,7 +285,8 @@ a {
 
 .hero {
   position: relative;
-  min-height: 100dvh;
+  min-height: 100vh;
+  min-height: 100svh; /* small-viewport height: the phone URL bar showing or hiding must not resize the hero */
   display: flex;
   align-items: flex-end;
   padding: calc(var(--nav-h) + 40px) 0 72px;
@@ -305,6 +312,16 @@ a {
 .stage-shot.is-live {
   opacity: 1;
   animation: ken 28s linear forwards;
+}
+
+/* The hero's first paint: a real image (not a video poster) so it is preloaded and sized before the MP4 arrives */
+.stage-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
 }
 
 .stage-loop {
@@ -347,10 +364,25 @@ a {
   text-shadow: 0 18px 50px rgba(0, 0, 0, 0.8);
 }
 
+.hero-omen .pitch {
+  margin: 0 0 18px;
+  max-width: 30em;
+  padding: 12px 18px;
+  font-family: Outfit, "Outfit Fallback", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(17px, 1.9vw, 22px);
+  line-height: 1.4;
+  color: #fff;
+  background: rgba(10, 8, 6, 0.72);
+  border-left: 3px solid var(--stamp-red, #b3402f);
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
 .omen {
   margin: 0 0 36px;
   max-width: 18em;
-  font-family: Fraunces, Georgia, serif;
+  font-family: Fraunces, "Fraunces Fallback", Georgia, serif;
   font-style: italic;
   font-weight: 520;
   font-size: clamp(22px, 2.6vw, 34px);
@@ -425,7 +457,7 @@ a {
   padding: 0 24px;
   text-align: center;
   color: var(--text);
-  font-family: Fraunces, Georgia, serif;
+  font-family: Fraunces, "Fraunces Fallback", Georgia, serif;
   font-size: clamp(26px, 3vw, 40px);
   font-weight: 520;
   font-style: italic;
@@ -540,7 +572,7 @@ a {
 .prose h2 {
   margin: 22px 0 -6px;
   color: var(--gold);
-  font-family: Fraunces, Georgia, serif;
+  font-family: Fraunces, "Fraunces Fallback", Georgia, serif;
   font-size: 28px;
   font-weight: 560;
   letter-spacing: -0.01em;
@@ -657,7 +689,7 @@ a {
 .board-card blockquote,
 .closing blockquote {
   margin: 0 0 18px;
-  font-family: Fraunces, Georgia, serif;
+  font-family: Fraunces, "Fraunces Fallback", Georgia, serif;
   font-style: italic;
   font-weight: 520;
   font-size: clamp(26px, 3vw, 34px);
@@ -679,7 +711,7 @@ a {
 
 .board-card h3 {
   margin: 0 0 14px;
-  font-family: Fraunces, Georgia, serif;
+  font-family: Fraunces, "Fraunces Fallback", Georgia, serif;
   font-size: 40px;
   font-weight: 560;
   line-height: 1;
@@ -826,7 +858,7 @@ a {
 .cast h2,
 .cases h2 {
   margin: 4px 0 8px;
-  font-family: Fraunces, Georgia, serif;
+  font-family: Fraunces, "Fraunces Fallback", Georgia, serif;
   font-weight: 560;
   font-size: clamp(32px, 5vw, 52px);
 }
@@ -916,7 +948,7 @@ a {
 }
 .cast-body h3 {
   margin: 4px 0 8px;
-  font-family: Fraunces, Georgia, serif;
+  font-family: Fraunces, "Fraunces Fallback", Georgia, serif;
   font-size: 28px;
   font-weight: 560;
 }
@@ -931,7 +963,7 @@ a {
   border-left: 3px solid var(--accent);
   background: rgba(240, 179, 106, 0.08);
   color: var(--text);
-  font-family: Fraunces, Georgia, serif;
+  font-family: Fraunces, "Fraunces Fallback", Georgia, serif;
   font-size: 17px;
   font-style: italic;
   line-height: 1.35;
@@ -1054,7 +1086,7 @@ a {
 .dossier li {
   padding: 9px 0;
   border-top: 1px dashed var(--line);
-  font-family: Fraunces, Georgia, serif;
+  font-family: Fraunces, "Fraunces Fallback", Georgia, serif;
   font-size: 18px;
   color: var(--muted);
 }

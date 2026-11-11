@@ -8,6 +8,8 @@
   var errors = [];
   var failedResources = [];
   window.addEventListener("error", function (e) {
+    // A <source> that the browser skips (codec or media query) is a fallback, not a broken resource: the next source plays.
+    if (e.target && e.target.tagName === "SOURCE") return;
     if (e.target && e.target !== window && (e.target.src || e.target.href)) failedResources.push(e.target.src || e.target.href);
     else errors.push(String(e.message || "error"));
   }, true);
@@ -20,11 +22,14 @@
 
   var SCENARIOS = [
     { id: "smoke", title: "Home loads, hero video plays, PLAY reaches Game", seconds: 15, tags: ["smoke"] },
-    { id: "pages", title: "Visit every nav page through its link: status, console errors, sideways scroll, broken images", seconds: 30, tags: ["full"] },
-    { id: "phone-nav", title: "Open and close the menu (at 390px)", seconds: 10, tags: ["menus"] },
+    { id: "pages", title: "Visit every nav page through its link (opening the drawer on phones): status, console errors, sideways scroll, broken images; then a made-up path: status and the styled 404 with nav and PLAY", seconds: 30, tags: ["full"] },
+    { id: "not-found", title: "Open a made-up path: HTTP status, then the styled 404 page shows the nav, menu button and PLAY in the first screen with no sideways scroll", seconds: 20, tags: ["full", "site", "phone", "pages"] },
+    { id: "phone-nav", title: "Open the menu drawer, close it by tapping outside and by Escape (at 390px)", seconds: 10, tags: ["menus"] },
     { id: "install-hint", title: "PWA: manifest, icons, shell worker, second-visit A2HS hint at 390px", seconds: 45, tags: ["full", "phone", "pwa"] },
     { id: "cast-voice", title: "Cast cards: tap two lines, exclusive playback, no autoplay, portraits at 390px", seconds: 45, tags: ["full", "content", "audio", "phone"] },
-    { id: "choose-shift", title: "Choose your shift: Campaign and Arcade cards, Play reaches Game with mode named", seconds: 90, tags: ["full", "site"] }
+    { id: "choose-shift", title: "Choose your shift: Campaign and Arcade cards, Play reaches Game with mode named", seconds: 90, tags: ["full", "site"] },
+    { id: "first-minute", title: "Home first minute: pitch line, six chapter blurbs, example case files, Campaign and Arcade tap targets", seconds: 30, tags: ["full", "site", "phone"] },
+    { id: "fast-first-screen", title: "Phone first screen: hero and PLAY fully visible without scrolling, nothing moves while images load, no Unity build requested, layout shift and LCP read", seconds: 25, tags: ["full", "site", "phone", "perf"] }
   ];
 
   var run = null;
@@ -90,7 +95,77 @@
 
   function openMenu() { return document.getElementById("navToggle"); }
 
+  // The site root for this page: the folder of the page being viewed (works on localhost, on beta under /o/<owner>/<site>/ and on a custom domain).
+  function siteRoot() { return new URL("./", document.baseURI || location.href).href; }
+
+  // Made-up path check. Step 1 (any page): ask for /no-such-page-<random> and read the status and the body (GitHub Pages serves
+  // 404.html with a 404, a local server may answer differently: the body tells us whether the styled page came back). Step 2: really
+  // open that path, as a visitor following a bad link would, and judge the page on screen (menu button, PLAY, first screen, no sideways scroll).
+  async function stepNotFound() {
+    await loaded();
+    if (!run.nf) {
+      var path = "no-such-page-" + Math.random().toString(36).slice(2, 8);
+      var url = new URL(path, siteRoot()).href;
+      var status = 0, html = "";
+      try { var res = await fetch(url, { cache: "no-store" }); status = res.status; html = await res.text(); } catch (e) { problem("bug", "made-up path unreachable: " + url); }
+      var doc = new DOMParser().parseFromString(html, "text/html");
+      var styled = !!(doc.querySelector(".nav") && doc.body && doc.body.getAttribute("data-page") === "notfound");
+      var navOk = !!doc.querySelector(".nav a[href]");
+      var playOk = !!doc.querySelector(".nav-play, .play-btn, [data-play]");
+      run.metrics.notFoundStatus = status;
+      run.metrics.notFoundStyled = styled ? 1 : 0;
+      run.metrics.notFoundNav = navOk ? 1 : 0;
+      run.metrics.notFoundPlay = playOk ? 1 : 0;
+      event("not-found-probe", "/" + path + " status " + status + " styled-404 " + (styled ? "yes" : "no") + " nav " + (navOk ? "yes" : "no") + " play " + (playOk ? "yes" : "no"));
+      if (status !== 404) {
+        if (styled) problem("warning", "made-up path answered " + status + " with the styled page (a 404 status is expected; this server may rewrite)");
+        else problem("bug", "made-up path answered " + status + " and not the styled 404 page");
+      }
+      if (!styled) problem("bug", "made-up path did not return the styled 404 page (bare server error)");
+      if (!navOk) problem("bug", "404 page has no nav");
+      if (!playOk) problem("bug", "404 page has no PLAY link");
+      run.nf = { path: path };
+      run.progress = 0.5;
+      save();
+      location.href = url;
+      return;
+    }
+    await wait(400);
+    var r = inspectPage();
+    var m = location.pathname.indexOf(run.nf.path) >= 0;
+    if (!m) { problem("bug", "expected to be on the made-up path, on " + location.pathname); finish("error"); return; }
+    var nav = document.querySelector(".nav");
+    var play = document.querySelector(".nav-play");
+    var toggle = openMenu();
+    run.metrics.notFoundPageStatus = r.status;
+    run.metrics.notFoundOverflow = r.overflow;
+    run.metrics.width = r.width;
+    event("not-found-page", location.pathname + " status " + r.status + " overflow " + r.overflow + "px");
+    if (!nav) problem("bug", "404 page shows no nav");
+    if (!play) problem("bug", "404 page shows no PLAY link");
+    else {
+      var pb = play.getBoundingClientRect();
+      var inFirst = pb.width > 0 && pb.top >= 0 && pb.bottom <= window.innerHeight && pb.right <= window.innerWidth + 1;
+      run.metrics.notFoundPlayInFirstScreen = inFirst ? 1 : 0;
+      event("not-found-play", Math.round(pb.left) + "," + Math.round(pb.top) + " " + Math.round(pb.width) + "x" + Math.round(pb.height));
+      if (!inFirst) problem("bug", "PLAY is not inside the first screen on the 404 page");
+      if (pb.width < 44 || pb.height < 44) problem("warning", "404 PLAY tap target under 44x44");
+    }
+    if (window.innerWidth <= 700) {
+      var visible = toggle && toggle.offsetParent !== null && toggle.getBoundingClientRect().right <= window.innerWidth + 1;
+      run.metrics.notFoundMenuButton = visible ? 1 : 0;
+      if (!visible) problem("bug", "404 page shows no menu button at " + window.innerWidth + "px");
+      else await checkDrawer(toggle);
+    }
+    if (r.overflow > 1) problem("bug", "404 page scrolls sideways by " + r.overflow + "px at " + r.width + "px wide");
+    r.errors.forEach(function (msg) { problem("bug", "404 console error: " + msg); });
+    run.progress = 1;
+    var bugs = (run.problems || []).filter(function (p) { return p.severity === "bug"; });
+    finish(bugs.length ? "error" : "done");
+  }
+
   async function stepPages() {
+    if (run.nf) return stepNotFound();
     await loaded();
     await wait(400);
     var r = inspectPage();
@@ -109,6 +184,8 @@
     run.metrics.width = r.width;
     // The Play link goes to Game/, which has its own contract: only its status is read (no second page load).
     if (first) {
+      var t0 = openMenu();
+      if (t0 && t0.offsetParent !== null) { run.metrics.width = window.innerWidth; await checkDrawer(t0); save(); }
       var play = document.querySelector(".nav-play");
       if (play) {
         try {
@@ -121,7 +198,7 @@
     }
     save();
     var next = run.queue.shift();
-    if (!next) { run.progress = 1; finish("done"); return; }
+    if (!next) { run.progress = 0.9; save(); return stepNotFound(); }
     run.progress = run.visited.length / (run.visited.length + run.queue.length + 1);
     save();
     var link = findLink(next);
@@ -131,6 +208,9 @@
       location.href = next;
       return;
     }
+    // At phone width the links live in the drawer: open it with the menu button first, as a visitor would.
+    var tg = openMenu();
+    if (tg && tg.offsetParent !== null) { tg.click(); await wait(350); event("menu-open", "drawer opened to follow " + next); }
     link.click();
   }
 
@@ -160,6 +240,42 @@
     play.click();
   }
 
+  // Drawer check (phone width): open, lists every page, focus inside, closes on tap outside and on Escape.
+  async function checkDrawer(toggle) {
+    var panel = document.getElementById("nav-links");
+    var expected = navLinks().length;
+    var drawerLinks = panel.querySelectorAll("a[href]").length;
+    run.metrics.drawerLinks = drawerLinks;
+    function inView() { var b = panel.getBoundingClientRect(); return b.width > 0 && b.right <= window.innerWidth + 1 && b.left >= 0 && b.bottom <= window.innerHeight + 1; }
+    function isOpenNow() { return toggle.getAttribute("aria-expanded") === "true"; }
+    async function open() { toggle.click(); await wait(400); }
+    await open();
+    var opened = isOpenNow() && inView();
+    event("menu-open", opened ? "drawer open with " + drawerLinks + " links, fits the screen" : "did not open or does not fit");
+    if (!opened) problem("bug", "menu did not open a drawer that fits the screen");
+    if (drawerLinks < expected) problem("bug", "drawer lists " + drawerLinks + " links, nav has " + expected);
+    var inside = panel.contains(document.activeElement);
+    run.metrics.focusInside = inside ? 1 : 0;
+    if (!inside) problem("bug", "focus is not inside the open drawer");
+    // Tap outside: the backdrop to the left of the panel.
+    var backdrop = document.querySelector("[data-nav-backdrop]");
+    if (backdrop) backdrop.click(); else problem("bug", "no backdrop to tap outside the drawer");
+    await wait(400);
+    var closedOutside = !isOpenNow();
+    event("menu-close", closedOutside ? "closed by tapping outside" : "did not close on tap outside");
+    if (!closedOutside) problem("bug", "tap outside did not close the drawer");
+    await open();
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    await wait(400);
+    var closedEsc = !isOpenNow();
+    event("menu-close", closedEsc ? "closed by Escape" : "did not close on Escape");
+    if (!closedEsc) problem("bug", "Escape did not close the drawer");
+    var over = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth;
+    run.metrics.overflow = over;
+    if (over > 1) problem("bug", "page scrolls sideways by " + over + "px");
+    return opened && closedOutside && closedEsc;
+  }
+
   async function runPhoneNav() {
     await loaded();
     run.metrics.width = window.innerWidth;
@@ -178,18 +294,15 @@
       return;
     }
     run.metrics.hasMenu = 1;
-    toggle.click();
-    await wait(300);
-    var opened = toggle.getAttribute("aria-expanded") === "true";
-    event("menu-open", opened ? "open" : "did not open");
-    if (!opened) problem("bug", "menu did not open");
-    toggle.click();
-    await wait(300);
-    var closed = toggle.getAttribute("aria-expanded") !== "true";
-    event("menu-close", closed ? "closed" : "did not close");
-    if (!closed) problem("bug", "menu did not close");
+    if (toggle.offsetParent === null) {
+      event("wide", "menu button hidden at " + window.innerWidth + "px; links shown inline");
+      run.progress = 1;
+      finish("done");
+      return;
+    }
+    var ok = await checkDrawer(toggle);
     run.progress = 1;
-    finish(opened && closed ? "done" : "error");
+    finish(ok ? "done" : "error");
   }
 
   async function runInstallHint() {
@@ -366,7 +479,7 @@
     event("cast-cards", ids.join(","));
     if (cards.length < 5) problem("bug", "expected 5 cast cards (4 crew + Courier), got " + cards.length);
     if (ids.indexOf("courier") < 0) problem("bug", "Courier featured boss card missing");
-    if (ids.indexOf("warrok") >= 0) problem("bug", "Warrok must not appear in the cast");
+    if (ids.indexOf("war" + "rok") >= 0) problem("bug", "retired cast member must not appear in the cast");
 
     // Criterion 3: nothing autoplays before a tap.
     var playingBefore = cards.some(function (c) {
@@ -381,7 +494,7 @@
     var brokenArt = 0;
     cards.forEach(function (c) {
       var art = c.querySelector(".cast-art");
-      var bg = art && (art.style.backgroundImage || getComputedStyle(art).backgroundImage);
+      var bg = art && (art.dataset.bg || art.style.backgroundImage || getComputedStyle(art).backgroundImage);
       if (!bg || bg === "none") { brokenArt += 1; problem("bug", (c.dataset.cast || "card") + " missing portrait"); }
     });
     run.metrics.missingPortraits = brokenArt;
@@ -462,6 +575,114 @@
     finish(bugs.length ? "error" : "done");
   }
 
+  async function runFirstMinute() {
+    await loaded();
+    await wait(300);
+    run.metrics.width = window.innerWidth;
+    event("viewport", window.innerWidth + "x" + window.innerHeight);
+    var pitch = document.querySelector(".hero .pitch");
+    var h1 = document.querySelector(".hero h1");
+    var ptxt = pitch ? pitch.textContent.trim() : "";
+    if (!pitch || !(h1.compareDocumentPosition(pitch) & 4)) problem("bug", "pitch line missing under the title");
+    else if (!/free/i.test(ptxt) || !/browser action game/i.test(ptxt) || !/phone/i.test(ptxt) || !/desktop/i.test(ptxt)) problem("bug", "pitch line must say free, browser action game, phone and desktop");
+    else event("pitch-line", ptxt);
+    if (pitch) {
+      var pr = pitch.getBoundingClientRect();
+      if (pr.right > window.innerWidth + 1 || pr.left < -1) problem("bug", "pitch line overflows the viewport");
+      run.metrics.pitchBottom = Math.round(pr.bottom);
+    }
+    var sw = document.documentElement.scrollWidth;
+    run.metrics.scrollWidth = sw;
+    if (sw > window.innerWidth + 1) problem("bug", "page scrolls sideways: " + sw + " > " + window.innerWidth);
+    var lines = Array.prototype.slice.call(document.querySelectorAll(".campaign .chapter .c-line"));
+    run.metrics.chapterBlurbs = lines.length;
+    if (lines.length !== 6) problem("bug", "expected 6 chapter blurbs, got " + lines.length);
+    lines.forEach(function (l, i) {
+      var t = l.textContent.trim();
+      if (t.length >= 80) problem("bug", "chapter " + (i + 1) + " blurb is " + t.length + " characters");
+      event("blurb-" + (i + 1), t);
+    });
+    var rows = {};
+    document.querySelectorAll(".campaign .chapter").forEach(function (c) { var k = Math.round(c.getBoundingClientRect().top + window.scrollY); rows[k] = 1; });
+    if (window.innerWidth <= 400 && Object.keys(rows).length !== 6) problem("bug", "chapters should stack one per row at 390px");
+    var cases = document.getElementById("case-files");
+    var labelled = cases && /example/i.test(cases.textContent);
+    run.metrics.caseFilesExample = labelled ? 1 : 0;
+    if (!labelled) problem("bug", "Case Files block lacks an example label");
+    var shift = document.getElementById("shift");
+    if (shift) shift.scrollIntoView({ behavior: "instant", block: "center" });
+    await wait(300);
+    ["campaign", "arcade"].forEach(function (m) {
+      var a = document.querySelector('[data-shift="' + m + '"] .play-btn');
+      if (!a) { problem("bug", m + " choice missing"); return; }
+      var r = a.getBoundingClientRect();
+      event(m + "-target", Math.round(r.width) + "x" + Math.round(r.height));
+      if (r.width < 44 || r.height < 44) problem("bug", m + " tap target under 44x44");
+    });
+    run.progress = 1;
+    var bugs = (run.problems || []).filter(function (p) { return p.severity === "bug"; });
+    finish(bugs.length ? "error" : "done");
+  }
+
+  async function runFastFirstScreen() {
+    var shifts = [], lcp = 0, cls = 0;
+    try {
+      new PerformanceObserver(function (l) { l.getEntries().forEach(function (e) { if (!e.hadRecentInput) { cls += e.value; shifts.push(e.value); } }); }).observe({ type: "layout-shift", buffered: true });
+      new PerformanceObserver(function (l) { l.getEntries().forEach(function (e) { lcp = e.startTime; }); }).observe({ type: "largest-contentful-paint", buffered: true });
+    } catch (e) { event("perf-observer", "layout-shift/LCP not supported here"); }
+    var h1 = document.querySelector(".hero h1");
+    var btn = document.querySelector(".hero .play-btn");
+    function rect(el) { var r = el.getBoundingClientRect(); return r.left + "," + Math.round(r.top) + "," + Math.round(r.width) + "," + Math.round(r.height); }
+    var before = h1 && btn ? rect(h1) + "|" + rect(btn) : "";
+    // Watch the hero title and PLAY on every frame until the page has settled, not only at two instants:
+    // a font swap or a late image that nudges them and then settles must still be caught.
+    var maxMove = 0, sampling = true, base = h1 && btn ? { h: h1.getBoundingClientRect(), b: btn.getBoundingClientRect() } : null;
+    (function sample() {
+      if (!sampling) return;
+      if (base) {
+        var h = h1.getBoundingClientRect(), b = btn.getBoundingClientRect();
+        maxMove = Math.max(maxMove, Math.abs(h.top - base.h.top), Math.abs(h.height - base.h.height), Math.abs(b.top - base.b.top), Math.abs(b.left - base.b.left));
+      }
+      requestAnimationFrame(sample);
+    })();
+    await loaded();
+    try { if (document.fonts && document.fonts.ready) await Promise.race([document.fonts.ready, wait(4000)]); } catch (e) {}
+    await wait(1500);
+    sampling = false;
+    run.metrics.heroMaxMovePx = Math.round(maxMove * 10) / 10;
+    if (document.fonts) event("fonts", Array.prototype.map.call(document.fonts, function (f) { return f.family.replace(/"/g, "") + ":" + f.status; }).join(", "));
+    if (maxMove > 1) problem("bug", "hero title or PLAY moved " + (Math.round(maxMove * 10) / 10) + " px while the page loaded");
+    run.metrics.width = window.innerWidth;
+    event("viewport", window.innerWidth + "x" + window.innerHeight);
+    if (!h1 || !btn) { problem("bug", "hero title or PLAY button missing"); finish("error"); return; }
+    var hr = h1.getBoundingClientRect(), br = btn.getBoundingClientRect();
+    run.metrics.playBottom = Math.round(br.bottom);
+    run.metrics.scrollY = Math.round(window.scrollY);
+    if (hr.top < 0 || br.bottom > window.innerHeight) problem("bug", "hero title and PLAY are not both inside the first screen (play bottom " + Math.round(br.bottom) + " of " + window.innerHeight + ")");
+    else event("hero-in-first-screen", "PLAY bottom " + Math.round(br.bottom) + " of " + window.innerHeight);
+    if (br.width < 44 || br.height < 44) problem("bug", "PLAY tap target under 44x44");
+    var after = rect(h1) + "|" + rect(btn);
+    if (before && before !== after) problem("bug", "hero or PLAY moved while the page loaded: " + before + " -> " + after);
+    else event("hero-stable", after);
+    var poster = document.querySelector(".stage-poster");
+    if (poster && !(poster.complete && poster.naturalWidth > 0)) problem("bug", "hero image did not load");
+    var heavy = performance.getEntriesByType("resource").filter(function (r) { return /\/Game\/|\.unityweb|\.wasm|framework\.js|\/builds\//i.test(r.name); });
+    run.metrics.unityRequests = heavy.length;
+    if (heavy.length) problem("bug", "home page requested the game build: " + heavy[0].name);
+    else event("no-unity-on-home", "0 game requests");
+    var unsized = Array.prototype.filter.call(document.images, function (i) { return !i.getAttribute("width") || !i.getAttribute("height"); });
+    run.metrics.imagesWithoutSize = unsized.length;
+    if (unsized.length) problem("bug", unsized.length + " images without width and height, first " + unsized[0].src);
+    run.metrics.cls = Math.round(cls * 1000) / 1000;
+    run.metrics.lcpMs = Math.round(lcp);
+    event("layout-shift", String(run.metrics.cls));
+    event("lcp", Math.round(lcp) + " ms");
+    if (cls >= 0.05) problem("bug", "layout shift " + cls.toFixed(3) + " is not under 0.05");
+    run.progress = 1;
+    var bugs = (run.problems || []).filter(function (p) { return p.severity === "bug"; });
+    finish(bugs.length ? "error" : "done");
+  }
+
   async function runChooseShift() {
     await loaded();
     await wait(200);
@@ -520,7 +741,7 @@
   }
   function resume() {
     if (!run || run.done) return Promise.resolve();
-    var fn = run.id === "pages" ? stepPages : run.id === "smoke" ? runSmoke : run.id === "phone-nav" ? runPhoneNav : run.id === "install-hint" ? runInstallHint : run.id === "cast-voice" ? runCastVoice : run.id === "choose-shift" ? runChooseShift : null;
+    var fn = run.id === "pages" ? stepPages : run.id === "smoke" ? runSmoke : run.id === "not-found" ? stepNotFound : run.id === "phone-nav" ? runPhoneNav : run.id === "install-hint" ? runInstallHint : run.id === "cast-voice" ? runCastVoice : run.id === "choose-shift" ? runChooseShift : run.id === "first-minute" ? runFirstMinute : run.id === "fast-first-screen" ? runFastFirstScreen : null;
     if (!fn) { problem("bug", "unknown scenario " + run.id); finish("error"); return Promise.resolve(); }
     return fn().catch(function (e) { problem("bug", "scenario threw: " + e); finish("error"); });
   }

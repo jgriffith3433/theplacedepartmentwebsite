@@ -5,28 +5,19 @@ document.querySelectorAll("[data-nav]").forEach((link) => {
   }
 });
 
+// Below-the-fold cast portraits load when they near the screen (a CSS background cannot be loading="lazy").
+(() => {
+  const arts = document.querySelectorAll("[data-bg]");
+  const load = (el) => { el.style.backgroundImage = `url("${el.dataset.bg}")`; };
+  if (!("IntersectionObserver" in window)) { arts.forEach(load); return; }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { load(e.target); io.unobserve(e.target); } });
+  }, { rootMargin: "600px 0px" });
+  arts.forEach((el) => io.observe(el));
+})();
+
 const nav = document.querySelector(".nav");
-const navLinks = document.getElementById("nav-links");
-const navToggle = document.getElementById("navToggle");
-
-const setMenu = (open) => {
-  if (!navLinks || !navToggle) return;
-  navLinks.classList.toggle("is-open", open);
-  navToggle.setAttribute("aria-expanded", open ? "true" : "false");
-  navToggle.textContent = open ? "Close" : "Menu";
-};
-
-navToggle?.addEventListener("click", () => {
-  setMenu(!navLinks.classList.contains("is-open"));
-});
-
-navLinks?.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => setMenu(false));
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") setMenu(false);
-});
+// The menu drawer lives in nav.js
 
 const onScroll = () => {
   nav?.classList.toggle("is-scrolled", window.scrollY > 8);
@@ -49,11 +40,6 @@ if (shotA && shotB) {
   let index = 0;
   let showingA = true;
 
-  BACKGROUNDS.forEach((src) => {
-    const img = new Image();
-    img.src = src;
-  });
-
   const setShot = (el, src) => {
     el.style.backgroundImage = `url("${src}")`;
   };
@@ -66,10 +52,6 @@ if (shotA && shotB) {
       el.style.animation = "";
     }
   };
-
-  setShot(shotA, BACKGROUNDS[0]);
-  setShot(shotB, BACKGROUNDS[1]);
-  show(shotA, true);
 
   const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
@@ -90,7 +72,18 @@ if (shotA && shotB) {
     }
   };
 
-  runCycle();
+  // The poster is the hero's first paint and its LCP. The slideshow art stays out of the first paint: it is
+  // fetched and faded in only after the page has loaded and the browser is idle.
+  const startShow = () => {
+    BACKGROUNDS.forEach((src) => { const img = new Image(); img.src = src; });
+    setShot(shotA, BACKGROUNDS[0]);
+    setShot(shotB, BACKGROUNDS[1]);
+    show(shotA, true);
+    runCycle();
+  };
+  const afterLoad = () => (window.requestIdleCallback || ((f) => window.setTimeout(f, 300)))(startShow, { timeout: 2500 });
+  if (document.readyState === "complete") afterLoad();
+  else window.addEventListener("load", afterLoad, { once: true });
 }
 
 // Share card: copies this page's address on a click (no request is made).

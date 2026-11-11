@@ -25,3 +25,6 @@ Arcade waves keep the Hollow busy; Campaign chapters move Wallit through wall, f
 
 ## Story told in play
 Campaign: explore, talk, pick up, then fight — each chapter its own place. Arcade: hold the circle against the Clearing Crew. Site copy names the shift on the loading card; the Unity build should read `?mode=` when a breakingthrough task wires it.
+
+## Site copy (home)
+Home pitch: a free browser action game for phone and desktop; a wallet with a bat guards Slice from the robot bailiffs. Chapter blurbs: Ch.1 stamp + Courier; Ch.2 wall and handleless gate; Ch.3 the belt of cleared things; Ch.4 Process Servers with one paper; Ch.5 Registrar's ledger; Ch.6 one address to file (no spoilers; 4-6 stay sealed). The case-file block is an *example*, never the visitor's saves. Retired: Warrok, birds, the piano.
