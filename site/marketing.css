@@ -1,6 +1,8 @@
-/* Fallbacks sized to the web fonts, so the font-display swap does not reflow the hero */
+/* Fallbacks sized to the web fonts, so a late font (or none) does not reflow the hero.
+   Special Elite sets the h1, eyebrow and PLAY; Outfit the pitch; Fraunces the omen line. */
+@font-face { font-family: "Special Elite Fallback"; src: local("Courier New"), local("CourierNewPSMT"), local("Liberation Mono"), local("Cousine"); size-adjust: 95.3%; ascent-override: 73.8%; descent-override: 31.2%; line-gap-override: 0%; }
 @font-face { font-family: "Fraunces Fallback"; src: local("Georgia"); size-adjust: 104%; ascent-override: 92%; descent-override: 24%; line-gap-override: 0%; }
-@font-face { font-family: "Outfit Fallback"; src: local("Arial"); size-adjust: 102%; ascent-override: 100%; descent-override: 26%; line-gap-override: 0%; }
+@font-face { font-family: "Outfit Fallback"; src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Arimo"); size-adjust: 102%; ascent-override: 100%; descent-override: 26%; line-gap-override: 0%; }
 
 :root {
   --bg: #12100e;
@@ -283,7 +285,8 @@ a {
 
 .hero {
   position: relative;
-  min-height: 100dvh;
+  min-height: 100vh;
+  min-height: 100svh; /* small-viewport height: the phone URL bar showing or hiding must not resize the hero */
   display: flex;
   align-items: flex-end;
   padding: calc(var(--nav-h) + 40px) 0 72px;
