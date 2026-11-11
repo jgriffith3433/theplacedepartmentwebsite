@@ -300,11 +300,11 @@
     a.home {
       color: #8fd9b4;
     }
-    /* Phone controls: Fullscreen (top right, only where the browser has it) and a rotate hint (top, dismissible).
+    /* Phone controls: Fullscreen (bottom right, only where the browser has it) and a rotate hint (top, dismissible).
        Above Tap to play (z 1000) but small and at the edges, so neither covers its text; only they take taps. */
     #fs-button {
       position: fixed;
-      top: max(10px, env(safe-area-inset-top));
+      bottom: max(10px, env(safe-area-inset-bottom));
       right: max(10px, env(safe-area-inset-right));
       z-index: 1002;
       min-width: 44px;
@@ -320,10 +320,7 @@
       text-transform: uppercase;
       touch-action: manipulation;
     }
-    /* Landscape: the game's top-right HUD (This wave / Yo Bot, about 70px tall) owns the corner, so the button sits under it. */
-    @media (orientation: landscape) {
-      #fs-button { top: max(76px, calc(env(safe-area-inset-top) + 66px)); }
-    }
+    /* The top corners belong to the game's HUD (This wave / Yo Bot), so the button lives in the bottom-right corner in every orientation. */
     #fs-button[hidden], #rotate-hint[hidden] { display: none; }
     #fs-button:hover, #fs-button:focus-visible { border-color: #e7d3b0; outline: 2px solid #e7d3b0; outline-offset: 2px; }
     #rotate-card[hidden] { display: none; }
