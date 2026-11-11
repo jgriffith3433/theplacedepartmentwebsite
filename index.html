@@ -25,9 +25,20 @@
     <meta name="twitter:image" content="https://theplacedepartment.com/assets/og-card.jpg" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="The Place" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="assets/icons/splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="assets/icons/splash-2796x1290.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="assets/icons/splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="assets/icons/splash-2556x1179.png" />
     <title>The Place Department</title>
     <script src="https://hawkesgen.ai/sdk/analytics@1.js" data-product="theplacedepartment" data-hawkes-analytics="site" defer></script>
     <script src="./site/analytics.js"></script>
+    <script src="./site/playtest.js"></script>
+    <script src="./site/a2hs.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -118,45 +129,130 @@
         <p class="fine-print">Anonymous statistics. No cookies. <a href="./privacy.html">Privacy</a></p>
       </section>
 
+      <section class="shift" id="shift" aria-labelledby="shift-h">
+        <div class="wrap">
+          <p class="kicker">Duty roster</p>
+          <h2 id="shift-h">Choose your shift</h2>
+          <p class="lede">Two ways into the Hollow. Pick the file you open.</p>
+          <div class="shift-grid">
+            <article class="shift-card" data-shift="campaign">
+              <div class="shift-media" aria-hidden="true">
+                <img src="./assets/campaign/ch1.jpg" alt="" width="960" height="540" loading="lazy" decoding="async" />
+              </div>
+              <div class="shift-body">
+                <p class="shift-tag"><span class="stamp stamp-filed">Case file</span></p>
+                <h3>Campaign</h3>
+                <p class="shift-line">Story in six chapters. Progress stays filed.</p>
+                <a class="play-btn" href="Game/index.html?mode=campaign" data-play="shift-campaign">Play</a>
+              </div>
+            </article>
+            <article class="shift-card" data-shift="arcade">
+              <div class="shift-media" aria-hidden="true">
+                <img src="./assets/shots/shot-1.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async" />
+              </div>
+              <div class="shift-body">
+                <p class="shift-tag"><span class="stamp stamp-open">Hollow</span></p>
+                <h3>Arcade</h3>
+                <p class="shift-line">Endless Hollow. Bosses at waves 10, 20 and 30.</p>
+                <a class="play-btn" href="Game/index.html?mode=arcade" data-play="shift-arcade">Play</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
       <section class="cast" id="cast" aria-labelledby="cast-h">
         <div class="wrap">
           <p class="kicker">Personnel</p>
           <h2 id="cast-h">The cast</h2>
-          <p class="lede">Everything the Department lost, everything it sent to find it.</p>
+          <p class="lede">Everything the Department lost, everything it sent to find it. Tap a card to hear them.</p>
           <div class="cast-grid">
-          <article class="cast-card" data-cast="wallit">
-            <div class="cast-art" role="img" aria-label="Wallit" style="background-image:url(./assets/cast/wallit.jpg);background-position:50% 50%;background-size:230%"></div>
+          <article class="cast-card" data-cast="wallit" data-line="Return to sender.">
+            <div class="cast-art" style="background-image:url(./assets/cast/wallit.jpg)" role="img" aria-label="Wallit"></div>
             <div class="cast-body">
               <p class="kicker">The lost thing that fought back</p>
               <h3>Wallit</h3>
-              <p>A brown leather wallet with a bat and a bad attitude. Filed under Money; answers to nobody. “Return to sender.”</p>
+              <p>A brown leather wallet with a bat and a bad attitude. Filed under Money; answers to nobody.</p>
+              <p class="cast-caption" data-cast-caption hidden aria-live="polite"></p>
+              <button type="button" class="cast-play" data-cast-play aria-label="Play Wallit's line">
+                <span class="cast-play-icon" aria-hidden="true"></span>
+                Hear them
+              </button>
             </div>
+            <audio preload="none" data-cast-audio>
+              <source src="./assets/cast/voice/wallit.ogg" type="audio/ogg" />
+              <source src="./assets/cast/voice/wallit.mp3" type="audio/mpeg" />
+            </audio>
           </article>
-          <article class="cast-card" data-cast="slice">
-            <div class="cast-art" role="img" aria-label="Slice" style="background-image:url(./assets/cast/slice.jpg);background-position:31% 13%;background-size:300%"></div>
+          <article class="cast-card" data-cast="slice" data-line="Noted.">
+            <div class="cast-art" style="background-image:url(./assets/cast/slice.jpg)" role="img" aria-label="Slice"></div>
             <div class="cast-body">
               <p class="kicker">The Department's tidiest knife</p>
               <h3>Slice</h3>
-              <p>Pale, patient and dressed for a funeral. She stakes the ring, keeps count, and says “Noted.”</p>
+              <p>Pale, patient and dressed for a funeral. She stakes the ring and keeps count.</p>
+              <p class="cast-caption" data-cast-caption hidden aria-live="polite"></p>
+              <button type="button" class="cast-play" data-cast-play aria-label="Play Slice's line">
+                <span class="cast-play-icon" aria-hidden="true"></span>
+                Hear them
+              </button>
             </div>
+            <audio preload="none" data-cast-audio>
+              <source src="./assets/cast/voice/slice.ogg" type="audio/ogg" />
+              <source src="./assets/cast/voice/slice.mp3" type="audio/mpeg" />
+            </audio>
           </article>
-          <article class="cast-card" data-cast="yobot">
-            <div class="cast-art" role="img" aria-label="Yo Bot" style="background-image:url(./assets/cast/bots.jpg);background-position:31% 67%;background-size:333%"></div>
+          <article class="cast-card" data-cast="yobot" data-line="Hello. Uploading victory.">
+            <div class="cast-art" style="background-image:url(./assets/cast/yobot.jpg)" role="img" aria-label="Yo Bot"></div>
             <div class="cast-body">
               <p class="kicker">Clearing Crew, chirpy and cheap</p>
               <h3>Yo Bot</h3>
               <p>Stamped out by the batch, paid in bolts. Cheerful face, pincer claws, no questions asked.</p>
+              <p class="cast-caption" data-cast-caption hidden aria-live="polite"></p>
+              <button type="button" class="cast-play" data-cast-play aria-label="Play Yo Bot's line">
+                <span class="cast-play-icon" aria-hidden="true"></span>
+                Hear them
+              </button>
             </div>
+            <audio preload="none" data-cast-audio>
+              <source src="./assets/cast/voice/yobot.ogg" type="audio/ogg" />
+              <source src="./assets/cast/voice/yobot.mp3" type="audio/mpeg" />
+            </audio>
           </article>
-          <article class="cast-card" data-cast="spider">
-            <div class="cast-art" role="img" aria-label="Spider Bot" style="background-image:url(./assets/cast/bots.jpg);background-position:73% 73%;background-size:333%"></div>
+          <article class="cast-card" data-cast="spider" data-line="Delivery is to the named address.">
+            <div class="cast-art" style="background-image:url(./assets/cast/spider.jpg)" role="img" aria-label="Spider Bot"></div>
             <div class="cast-body">
               <p class="kicker">The process server with six legs</p>
               <h3>Spider Bot</h3>
               <p>Delivers paper, not mercy. If it holds out a folded notice, you have been served.</p>
+              <p class="cast-caption" data-cast-caption hidden aria-live="polite"></p>
+              <button type="button" class="cast-play" data-cast-play aria-label="Play Spider Bot's line">
+                <span class="cast-play-icon" aria-hidden="true"></span>
+                Hear them
+              </button>
             </div>
+            <audio preload="none" data-cast-audio>
+              <source src="./assets/cast/voice/spider.ogg" type="audio/ogg" />
+              <source src="./assets/cast/voice/spider.mp3" type="audio/mpeg" />
+            </audio>
           </article>
           </div>
+          <article class="cast-card cast-card--featured" data-cast="courier" data-line="Special delivery! Notice of striking!">
+            <div class="cast-art" style="background-image:url(./assets/cast/courier.jpg)" role="img" aria-label="The Courier"></div>
+            <div class="cast-body">
+              <p class="kicker">Featured boss · Chapter 1</p>
+              <h3>The Courier</h3>
+              <p>An Alpha Yo Bot with a clipboard. It reads the notice aloud, then lands it on the circle.</p>
+              <p class="cast-caption" data-cast-caption hidden aria-live="polite"></p>
+              <button type="button" class="cast-play" data-cast-play aria-label="Play The Courier's line">
+                <span class="cast-play-icon" aria-hidden="true"></span>
+                Hear them
+              </button>
+            </div>
+            <audio preload="none" data-cast-audio>
+              <source src="./assets/cast/voice/courier.ogg" type="audio/ogg" />
+              <source src="./assets/cast/voice/courier.mp3" type="audio/mpeg" />
+            </audio>
+          </article>
         </div>
       </section>
 
@@ -354,6 +450,8 @@
     <!-- /hawkes-footer -->
 
     <script src="./site/marketing.js" defer></script>
+    <script src="./site/updates.js" defer></script>
+    <style>.nav-dot{display:inline-block;width:8px;height:8px;margin-left:6px;border-radius:50%;background:#f0b36a;vertical-align:middle}</style>
     <script src="./site/campaign.js" defer></script>
     <script>
       // Playtest bridge: Studio opens the site root; game scenarios live on Game/index.html.

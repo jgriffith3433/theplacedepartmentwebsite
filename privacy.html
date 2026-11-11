@@ -20,9 +20,20 @@
     <meta name="twitter:image" content="https://theplacedepartment.com/assets/og-card.jpg" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="The Place" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="assets/icons/splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="assets/icons/splash-2796x1290.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="assets/icons/splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="assets/icons/splash-2556x1179.png" />
     <title>Privacy · The Place Department</title>
     <script src="https://hawkesgen.ai/sdk/analytics@1.js" data-product="theplacedepartment" data-hawkes-analytics="site" defer></script>
     <script src="./site/analytics.js"></script>
+    <script src="./site/playtest.js"></script>
+    <script src="./site/a2hs.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -67,6 +78,9 @@
 
           <h2>No cookies. No personal data.</h2>
           <p>No names, no emails, no accounts. Your browser keeps a random number in its local storage (not a cookie) so two visits count as one visitor. It says nothing about who you are. Clearing this site's data removes it.</p>
+
+          <h2>Home screen and offline shell</h2>
+          <p>If you add The Place to your home screen, the browser may keep a small shell of this site (icons, styles, and an offline card) so the desk still answers when the line is down. The game build itself is never stored that way. A dismissible “keep this address” hint can remember, in local storage only, that you have visited twice and whether you closed it. HTML pages are always fetched fresh so a new deploy is not a stale filing.</p>
 
           <h2>No IP stored</h2>
           <p>Your IP address gives a rough country and city, then it is thrown away. It is never written down.</p>
