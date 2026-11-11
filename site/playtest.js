@@ -8,6 +8,8 @@
   var errors = [];
   var failedResources = [];
   window.addEventListener("error", function (e) {
+    // A <source> that the browser skips (codec or media query) is a fallback, not a broken resource: the next source plays.
+    if (e.target && e.target.tagName === "SOURCE") return;
     if (e.target && e.target !== window && (e.target.src || e.target.href)) failedResources.push(e.target.src || e.target.href);
     else errors.push(String(e.message || "error"));
   }, true);
