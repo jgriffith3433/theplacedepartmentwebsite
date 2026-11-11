@@ -1,7 +1,9 @@
 {
   "note": "Update cards, newest first. The deploy or an agent appends an object at the top: id, date (YYYY-MM-DD), title, image (or clip + image as poster), alt, lines (max 2).",
   "updates": [
-    {"id": "u-2026-10-27-loads", "date": "2026-10-27", "title": "Smoother starts", "clip": "./assets/updates/clip.mp4", "image": "./assets/updates/frame-3.jpg", "alt": "The Place at the start of a run", "lines": ["The game no longer freezes while it loads.", "Straight to Warrok and the birds."]},
+    {"id": "u-2026-11-03-arcade", "date": "2026-11-03", "title": "Arcade: three acts in the Hollow", "image": "./assets/shots/shot-1.jpg", "alt": "The Moonlit Hollow in Arcade", "lines": ["Hold the circle in three acts.", "Bosses at waves 10, 20 and 30."]},
+    {"id": "u-2026-11-05-campaign", "date": "2026-11-05", "title": "The six-chapter Campaign", "image": "./assets/campaign/ch1.jpg", "alt": "Campaign chapter 1", "lines": ["Six chapters, three case-file saves.", "Chapter 1 is Return to Sender."]},
+    {"id": "u-2026-10-27-loads", "date": "2026-10-27", "title": "Smoother starts", "clip": "./assets/updates/clip.mp4", "image": "./assets/updates/frame-3.jpg", "alt": "The Place at the start of a run", "lines": ["The game no longer freezes while it loads.", "Straight into the Hollow."]},
     {"id": "u-2026-10-25-wallit", "date": "2026-10-25", "title": "Wallit talks, Slice guards", "image": "./assets/updates/frame-9.jpg", "alt": "Wallit and Slice in the hallway", "lines": ["Wallit has a moving mouth and his own voice.", "Slice now guards the doors, with new menus."]},
     {"id": "u-2026-10-21-3d", "date": "2026-10-21", "title": "Slice, Wallit and the bots go 3D", "image": "./assets/updates/frame-15.jpg", "alt": "A 3D character in the Place", "lines": ["The Clearing Crew has new looks.", "Pickups work again in the browser."]},
     {"id": "u-2026-10-18-address", "date": "2026-10-18", "title": "The Place has an address", "image": "./assets/updates/frame-21.jpg", "alt": "The Place from the outside", "lines": ["Where things that should not exist are given an address."]}
