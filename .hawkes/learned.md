@@ -1,3 +1,0 @@
-- convention: PWA paths stay relative — beta lives under `/o/<id>/the-place-department/`, so manifest `start_url` is `./Game/`, icons and `sw.js` resolve from the site root, never `/...` absolute.
-- lesson: A2HS “second visit” means second browser session — count with `sessionStorage` once per tab session and store the total in `localStorage`, or home→Play looks like two visits.
-- convention: shell service worker may cache icons/CSS/offline only; HTML is network-first `no-store` and Unity `.unityweb`/builds are never intercepted (distinct from the “no edge Cache-Control” preference).
