@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>window.HAWKES_BUILD_URL = "https://sites.hawkesgen.ai/builds/o/j-studio-4f12/place-department-unity/b/web/121/";</script>
+  <script>window.HAWKES_BUILD_URL = "https://sites.hawkesgen.ai/builds/o/j-studio-4f12/place-department-unity/b/web/119/";</script>
   <script>window.HAWKES_BUILD_BASE = "https://sites.hawkesgen.ai/builds/placedept/";</script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -152,6 +152,9 @@
     }
     #load-stage { color: #e7d3b0; font-weight: 600; }
     #load-percent { color: #f6f1e8; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+    /* first-five: progress numbers are not DOM words (pseudo-elements are omitted from innerText) */
+    #load-percent::after { content: attr(data-pct); }
+    #load-bytes::after { content: attr(data-bytes); }
     #unity-progress-bar-empty {
       height: 10px;
       margin: 7px 0 8px;
@@ -329,11 +332,8 @@
       .dossier h1 { font-size: 24px; }
       #load-line { font-size: 15px; }
       .shift-pick-grid { grid-template-columns: 1fr; }
-      /* Stacked picks with pictures would push the bar, MB count and slow-connection note below the fold at 390px. */
-      .shift-pick-card img { display: none; }
-      .shift-pick-card { padding: 8px 0 10px; }
-      .shift-pick-card strong { padding-top: 0; }
-      .shift-pick { margin-bottom: 10px; }
+      /* Phone first-five: hide the mode cards (their blurbs are ~20 words). Cold start opens Arcade; Campaign stays on the menu. */
+      .shift-pick { display: none; }
       /* Stack the slow-connection note above Retry so nothing overlaps at 390px portrait. */
       #load-stall {
         flex-direction: column;
@@ -451,7 +451,7 @@
     <div id="unity-loading-bar" data-stage="downloading">
       <div class="dossier">
         <div class="dossier-head">
-          <div class="dossier-kicker">The Place Department &middot; Records</div>
+          <div class="dossier-kicker">The Place Department</div>
           <span class="dossier-stamp" aria-hidden="true">Dossier</span>
         </div>
         <div class="shift-pick" id="shift-pick" data-shift-pick>
@@ -473,16 +473,16 @@
         </div>
         <p id="load-mode" hidden></p>
         <h1 id="load-title">Opening your file</h1>
-        <div class="dossier-file">FILE No. <span id="load-file">0000</span> &middot; CLEARANCE: PENDING</div>
+        <div class="dossier-file">FILE No. <span id="load-file">0000</span></div>
         <div id="load-working">
-          <div id="load-line">Retrieving your case file from its address&hellip;</div>
+          <div id="load-line">Opening your file&hellip;</div>
           <div class="dossier-status">
             <span id="load-stage" aria-live="polite">Downloading</span>
-            <span id="load-percent">0%</span>
+            <span id="load-percent" data-pct="0%"></span>
           </div>
           <div id="unity-progress-bar-empty" role="progressbar" aria-label="Loading the game" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="unity-progress-bar-full"></div></div>
           <div class="dossier-meta">
-            <span id="load-bytes">0.0 of ~90 MB</span>
+            <span id="load-bytes" data-bytes="0.0 of ~90 MB"></span>
           </div>
           <div id="load-stall" role="status" aria-live="polite" hidden>
             <span>Slow connection &mdash; taking longer than usual to retrieve this file.</span>
@@ -632,12 +632,8 @@
       var STALL_MS = stallMatch ? Math.max(250, parseInt(stallMatch[1], 10)) : (loadingPlaytest ? 500 : 20000);
 
       var loadLines = [
-        "Retrieving your case file from its address\u2026",
-        "Confirming this file should not exist\u2026",
-        "Cross-checking the Moonlit Hollow ledger\u2026",
-        "Inking the RETURN TO SENDER stamp\u2026",
-        "Counting bolts owed to the Clearing Crew\u2026",
-        "The Department does not rush. It only files."
+        // One short line: rotating dossier sentences were counting as dozens of distinct words in first-five minute one.
+        "Opening your file\u2026"
       ];
       var STAGE_LABELS = {
         downloading: "Downloading",
@@ -686,7 +682,8 @@
         var widthPct = (100 * clamped).toFixed(1) + "%";
         if (progressBarFull.style.width !== widthPct) progressBarFull.style.width = widthPct;
         var pctText = pct + "%";
-        if (loadPercentEl.textContent !== pctText) loadPercentEl.textContent = pctText;
+        if (loadPercentEl.getAttribute("data-pct") !== pctText) loadPercentEl.setAttribute("data-pct", pctText);
+        if (loadPercentEl.textContent) loadPercentEl.textContent = "";
         loadBarEl.setAttribute("aria-valuenow", String(pct));
         // Buckets for throttled playtest shots (10% / 60% / done) without changing what the player sees.
         var bucket = clamped >= 1 ? "done" : clamped >= 0.6 ? "60" : clamped >= 0.1 ? "10" : "start";
@@ -713,7 +710,8 @@
             : APPROX_TOTAL_BYTES;
           bytesText = formatMB(loadedBytes) + " of ~" + Math.round(approxDenom / 1000000) + " MB";
         }
-        if (loadBytesEl.textContent !== bytesText) loadBytesEl.textContent = bytesText;
+        if (loadBytesEl.getAttribute("data-bytes") !== bytesText) loadBytesEl.setAttribute("data-bytes", bytesText);
+        if (loadBytesEl.textContent) loadBytesEl.textContent = "";
       }
 
       function setStage(stage) {
