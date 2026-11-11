@@ -25,7 +25,8 @@
     { id: "install-hint", title: "PWA: manifest, icons, shell worker, second-visit A2HS hint at 390px", seconds: 45, tags: ["full", "phone", "pwa"] },
     { id: "cast-voice", title: "Cast cards: tap two lines, exclusive playback, no autoplay, portraits at 390px", seconds: 45, tags: ["full", "content", "audio", "phone"] },
     { id: "choose-shift", title: "Choose your shift: Campaign and Arcade cards, Play reaches Game with mode named", seconds: 90, tags: ["full", "site"] },
-    { id: "first-minute", title: "Home first minute: pitch line, six chapter blurbs, example case files, Campaign and Arcade tap targets", seconds: 30, tags: ["full", "site", "phone"] }
+    { id: "first-minute", title: "Home first minute: pitch line, six chapter blurbs, example case files, Campaign and Arcade tap targets", seconds: 30, tags: ["full", "site", "phone"] },
+    { id: "fast-first-screen", title: "Phone first screen: hero and PLAY fully visible without scrolling, nothing moves while images load, no Unity build requested, layout shift and LCP read", seconds: 25, tags: ["full", "site", "phone", "perf"] }
   ];
 
   var run = null;
@@ -420,7 +421,7 @@
     var brokenArt = 0;
     cards.forEach(function (c) {
       var art = c.querySelector(".cast-art");
-      var bg = art && (art.style.backgroundImage || getComputedStyle(art).backgroundImage);
+      var bg = art && (art.dataset.bg || art.style.backgroundImage || getComputedStyle(art).backgroundImage);
       if (!bg || bg === "none") { brokenArt += 1; problem("bug", (c.dataset.cast || "card") + " missing portrait"); }
     });
     run.metrics.missingPortraits = brokenArt;
@@ -550,6 +551,49 @@
     finish(bugs.length ? "error" : "done");
   }
 
+  async function runFastFirstScreen() {
+    var shifts = [], lcp = 0, cls = 0;
+    try {
+      new PerformanceObserver(function (l) { l.getEntries().forEach(function (e) { if (!e.hadRecentInput) { cls += e.value; shifts.push(e.value); } }); }).observe({ type: "layout-shift", buffered: true });
+      new PerformanceObserver(function (l) { l.getEntries().forEach(function (e) { lcp = e.startTime; }); }).observe({ type: "largest-contentful-paint", buffered: true });
+    } catch (e) { event("perf-observer", "layout-shift/LCP not supported here"); }
+    var h1 = document.querySelector(".hero h1");
+    var btn = document.querySelector(".hero .play-btn");
+    function rect(el) { var r = el.getBoundingClientRect(); return r.left + "," + Math.round(r.top) + "," + Math.round(r.width) + "," + Math.round(r.height); }
+    var before = h1 && btn ? rect(h1) + "|" + rect(btn) : "";
+    await loaded();
+    await wait(1500);
+    run.metrics.width = window.innerWidth;
+    event("viewport", window.innerWidth + "x" + window.innerHeight);
+    if (!h1 || !btn) { problem("bug", "hero title or PLAY button missing"); finish("error"); return; }
+    var hr = h1.getBoundingClientRect(), br = btn.getBoundingClientRect();
+    run.metrics.playBottom = Math.round(br.bottom);
+    run.metrics.scrollY = Math.round(window.scrollY);
+    if (hr.top < 0 || br.bottom > window.innerHeight) problem("bug", "hero title and PLAY are not both inside the first screen (play bottom " + Math.round(br.bottom) + " of " + window.innerHeight + ")");
+    else event("hero-in-first-screen", "PLAY bottom " + Math.round(br.bottom) + " of " + window.innerHeight);
+    if (br.width < 44 || br.height < 44) problem("bug", "PLAY tap target under 44x44");
+    var after = rect(h1) + "|" + rect(btn);
+    if (before && before !== after) problem("bug", "hero or PLAY moved while the page loaded: " + before + " -> " + after);
+    else event("hero-stable", after);
+    var poster = document.querySelector(".stage-poster");
+    if (poster && !(poster.complete && poster.naturalWidth > 0)) problem("bug", "hero image did not load");
+    var heavy = performance.getEntriesByType("resource").filter(function (r) { return /\/Game\/|\.unityweb|\.wasm|framework\.js|\/builds\//i.test(r.name); });
+    run.metrics.unityRequests = heavy.length;
+    if (heavy.length) problem("bug", "home page requested the game build: " + heavy[0].name);
+    else event("no-unity-on-home", "0 game requests");
+    var unsized = Array.prototype.filter.call(document.images, function (i) { return !i.getAttribute("width") || !i.getAttribute("height"); });
+    run.metrics.imagesWithoutSize = unsized.length;
+    if (unsized.length) problem("bug", unsized.length + " images without width and height, first " + unsized[0].src);
+    run.metrics.cls = Math.round(cls * 1000) / 1000;
+    run.metrics.lcpMs = Math.round(lcp);
+    event("layout-shift", String(run.metrics.cls));
+    event("lcp", Math.round(lcp) + " ms");
+    if (cls >= 0.05) problem("bug", "layout shift " + cls.toFixed(3) + " is not under 0.05");
+    run.progress = 1;
+    var bugs = (run.problems || []).filter(function (p) { return p.severity === "bug"; });
+    finish(bugs.length ? "error" : "done");
+  }
+
   async function runChooseShift() {
     await loaded();
     await wait(200);
@@ -608,7 +652,7 @@
   }
   function resume() {
     if (!run || run.done) return Promise.resolve();
-    var fn = run.id === "pages" ? stepPages : run.id === "smoke" ? runSmoke : run.id === "phone-nav" ? runPhoneNav : run.id === "install-hint" ? runInstallHint : run.id === "cast-voice" ? runCastVoice : run.id === "choose-shift" ? runChooseShift : run.id === "first-minute" ? runFirstMinute : null;
+    var fn = run.id === "pages" ? stepPages : run.id === "smoke" ? runSmoke : run.id === "phone-nav" ? runPhoneNav : run.id === "install-hint" ? runInstallHint : run.id === "cast-voice" ? runCastVoice : run.id === "choose-shift" ? runChooseShift : run.id === "first-minute" ? runFirstMinute : run.id === "fast-first-screen" ? runFastFirstScreen : null;
     if (!fn) { problem("bug", "unknown scenario " + run.id); finish("error"); return Promise.resolve(); }
     return fn().catch(function (e) { problem("bug", "scenario threw: " + e); finish("error"); });
   }

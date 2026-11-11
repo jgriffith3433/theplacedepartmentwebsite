@@ -42,12 +42,10 @@
     <script src="./site/nav.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,520;0,9..144,560;1,9..144,520&family=Outfit:wght@500;600;700&family=Special+Elite&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,520;1,9..144,520&family=Outfit:wght@500;600;700&family=Special+Elite&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,520;1,9..144,520&family=Outfit:wght@500;600;700&family=Special+Elite&display=swap" /></noscript>
+    <link rel="preload" as="image" href="./site/hero-loop-640.webp" imagesrcset="./site/hero-loop-640.webp 640w, ./site/hero-loop.webp 1280w" imagesizes="100vw" fetchpriority="high" />
     <link rel="stylesheet" href="./site/marketing.css" />
-    <link rel="stylesheet" href="./site/lore.css" />
     <link rel="stylesheet" href="./site/dossier.css" />
   </head>
   <body data-page="home">
@@ -81,7 +79,8 @@
         <div class="stage" aria-hidden="true">
           <div class="stage-shot" id="shotA"></div>
           <div class="stage-shot" id="shotB"></div>
-          <video class="stage-loop" data-hero-loop autoplay muted loop playsinline preload="auto" disablepictureinpicture poster="./site/hero-loop.jpg" aria-hidden="true"><source media="(max-width: 700px)" src="./site/hero-loop-sm.mp4" type="video/mp4"><source src="./site/hero-loop.mp4" type="video/mp4"></video><script>(function(){var v=document.querySelector('[data-hero-loop]');if(v&&window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){v.removeAttribute('autoplay');v.preload='none';v.innerHTML='';v.load();}})();</script>
+          <img class="stage-poster" src="./site/hero-loop-640.webp" srcset="./site/hero-loop-640.webp 640w, ./site/hero-loop.webp 1280w" sizes="100vw" width="1280" height="720" alt="" fetchpriority="high" decoding="async" />
+          <video class="stage-loop" data-hero-loop autoplay muted loop playsinline preload="metadata" disablepictureinpicture aria-hidden="true"><source media="(max-width: 700px)" src="./site/hero-loop-sm.mp4" type="video/mp4"><source src="./site/hero-loop.mp4" type="video/mp4"></video><script>(function(){var v=document.querySelector('[data-hero-loop]');if(v&&window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){v.removeAttribute('autoplay');v.preload='none';v.innerHTML='';v.load();}})();</script>
           <div class="stage-vignette"></div>
         </div>
         <div class="hero-copy">
@@ -133,7 +132,7 @@
           <p class="lede">Everything the Department lost, everything it sent to find it. Tap a card to hear them.</p>
           <div class="cast-grid">
           <article class="cast-card" data-cast="wallit" data-line="Return to sender.">
-            <div class="cast-art" style="background-image:url(./assets/cast/wallit.jpg)" role="img" aria-label="Wallit"></div>
+            <div class="cast-art" data-bg="./assets/cast/wallit.webp" role="img" aria-label="Wallit"></div>
             <div class="cast-body">
               <p class="kicker">The lost thing that fought back</p>
               <h3>Wallit</h3>
@@ -150,7 +149,7 @@
             </audio>
           </article>
           <article class="cast-card" data-cast="slice" data-line="Noted.">
-            <div class="cast-art" style="background-image:url(./assets/cast/slice.jpg)" role="img" aria-label="Slice"></div>
+            <div class="cast-art" data-bg="./assets/cast/slice.webp" role="img" aria-label="Slice"></div>
             <div class="cast-body">
               <p class="kicker">The Department's tidiest knife</p>
               <h3>Slice</h3>
@@ -167,7 +166,7 @@
             </audio>
           </article>
           <article class="cast-card" data-cast="yobot" data-line="Hello. Uploading victory.">
-            <div class="cast-art" style="background-image:url(./assets/cast/yobot.jpg)" role="img" aria-label="Yo Bot"></div>
+            <div class="cast-art" data-bg="./assets/cast/yobot.webp" role="img" aria-label="Yo Bot"></div>
             <div class="cast-body">
               <p class="kicker">Clearing Crew, chirpy and cheap</p>
               <h3>Yo Bot</h3>
@@ -184,7 +183,7 @@
             </audio>
           </article>
           <article class="cast-card" data-cast="spider" data-line="Delivery is to the named address.">
-            <div class="cast-art" style="background-image:url(./assets/cast/spider.jpg)" role="img" aria-label="Spider Bot"></div>
+            <div class="cast-art" data-bg="./assets/cast/spider.webp" role="img" aria-label="Spider Bot"></div>
             <div class="cast-body">
               <p class="kicker">The process server with six legs</p>
               <h3>Spider Bot</h3>
@@ -202,7 +201,7 @@
           </article>
           </div>
           <article class="cast-card cast-card--featured" data-cast="courier" data-line="Special delivery! Notice of striking!">
-            <div class="cast-art" style="background-image:url(./assets/cast/courier.jpg)" role="img" aria-label="The Courier"></div>
+            <div class="cast-art" data-bg="./assets/cast/courier.webp" role="img" aria-label="The Courier"></div>
             <div class="cast-body">
               <p class="kicker">Featured boss · Chapter 1</p>
               <h3>The Courier</h3>
