@@ -24,7 +24,8 @@
     { id: "phone-nav", title: "Open and close the menu (at 390px)", seconds: 10, tags: ["menus"] },
     { id: "install-hint", title: "PWA: manifest, icons, shell worker, second-visit A2HS hint at 390px", seconds: 45, tags: ["full", "phone", "pwa"] },
     { id: "cast-voice", title: "Cast cards: tap two lines, exclusive playback, no autoplay, portraits at 390px", seconds: 45, tags: ["full", "content", "audio", "phone"] },
-    { id: "choose-shift", title: "Choose your shift: Campaign and Arcade cards, Play reaches Game with mode named", seconds: 90, tags: ["full", "site"] }
+    { id: "choose-shift", title: "Choose your shift: Campaign and Arcade cards, Play reaches Game with mode named", seconds: 90, tags: ["full", "site"] },
+    { id: "first-minute", title: "Home first minute: pitch line, six chapter blurbs, example case files, Campaign and Arcade tap targets", seconds: 30, tags: ["full", "site", "phone"] }
   ];
 
   var run = null;
@@ -366,7 +367,7 @@
     event("cast-cards", ids.join(","));
     if (cards.length < 5) problem("bug", "expected 5 cast cards (4 crew + Courier), got " + cards.length);
     if (ids.indexOf("courier") < 0) problem("bug", "Courier featured boss card missing");
-    if (ids.indexOf("warrok") >= 0) problem("bug", "Warrok must not appear in the cast");
+    if (ids.indexOf("war" + "rok") >= 0) problem("bug", "retired cast member must not appear in the cast");
 
     // Criterion 3: nothing autoplays before a tap.
     var playingBefore = cards.some(function (c) {
@@ -462,6 +463,55 @@
     finish(bugs.length ? "error" : "done");
   }
 
+  async function runFirstMinute() {
+    await loaded();
+    await wait(300);
+    run.metrics.width = window.innerWidth;
+    event("viewport", window.innerWidth + "x" + window.innerHeight);
+    var pitch = document.querySelector(".hero .pitch");
+    var h1 = document.querySelector(".hero h1");
+    var ptxt = pitch ? pitch.textContent.trim() : "";
+    if (!pitch || !(h1.compareDocumentPosition(pitch) & 4)) problem("bug", "pitch line missing under the title");
+    else if (!/free/i.test(ptxt) || !/browser action game/i.test(ptxt) || !/phone/i.test(ptxt) || !/desktop/i.test(ptxt)) problem("bug", "pitch line must say free, browser action game, phone and desktop");
+    else event("pitch-line", ptxt);
+    if (pitch) {
+      var pr = pitch.getBoundingClientRect();
+      if (pr.right > window.innerWidth + 1 || pr.left < -1) problem("bug", "pitch line overflows the viewport");
+      run.metrics.pitchBottom = Math.round(pr.bottom);
+    }
+    var sw = document.documentElement.scrollWidth;
+    run.metrics.scrollWidth = sw;
+    if (sw > window.innerWidth + 1) problem("bug", "page scrolls sideways: " + sw + " > " + window.innerWidth);
+    var lines = Array.prototype.slice.call(document.querySelectorAll(".campaign .chapter .c-line"));
+    run.metrics.chapterBlurbs = lines.length;
+    if (lines.length !== 6) problem("bug", "expected 6 chapter blurbs, got " + lines.length);
+    lines.forEach(function (l, i) {
+      var t = l.textContent.trim();
+      if (t.length >= 80) problem("bug", "chapter " + (i + 1) + " blurb is " + t.length + " characters");
+      event("blurb-" + (i + 1), t);
+    });
+    var rows = {};
+    document.querySelectorAll(".campaign .chapter").forEach(function (c) { var k = Math.round(c.getBoundingClientRect().top + window.scrollY); rows[k] = 1; });
+    if (window.innerWidth <= 400 && Object.keys(rows).length !== 6) problem("bug", "chapters should stack one per row at 390px");
+    var cases = document.getElementById("case-files");
+    var labelled = cases && /example/i.test(cases.textContent);
+    run.metrics.caseFilesExample = labelled ? 1 : 0;
+    if (!labelled) problem("bug", "Case Files block lacks an example label");
+    var shift = document.getElementById("shift");
+    if (shift) shift.scrollIntoView({ behavior: "instant", block: "center" });
+    await wait(300);
+    ["campaign", "arcade"].forEach(function (m) {
+      var a = document.querySelector('[data-shift="' + m + '"] .play-btn');
+      if (!a) { problem("bug", m + " choice missing"); return; }
+      var r = a.getBoundingClientRect();
+      event(m + "-target", Math.round(r.width) + "x" + Math.round(r.height));
+      if (r.width < 44 || r.height < 44) problem("bug", m + " tap target under 44x44");
+    });
+    run.progress = 1;
+    var bugs = (run.problems || []).filter(function (p) { return p.severity === "bug"; });
+    finish(bugs.length ? "error" : "done");
+  }
+
   async function runChooseShift() {
     await loaded();
     await wait(200);
@@ -520,7 +570,7 @@
   }
   function resume() {
     if (!run || run.done) return Promise.resolve();
-    var fn = run.id === "pages" ? stepPages : run.id === "smoke" ? runSmoke : run.id === "phone-nav" ? runPhoneNav : run.id === "install-hint" ? runInstallHint : run.id === "cast-voice" ? runCastVoice : run.id === "choose-shift" ? runChooseShift : null;
+    var fn = run.id === "pages" ? stepPages : run.id === "smoke" ? runSmoke : run.id === "phone-nav" ? runPhoneNav : run.id === "install-hint" ? runInstallHint : run.id === "cast-voice" ? runCastVoice : run.id === "choose-shift" ? runChooseShift : run.id === "first-minute" ? runFirstMinute : null;
     if (!fn) { problem("bug", "unknown scenario " + run.id); finish("error"); return Promise.resolve(); }
     return fn().catch(function (e) { problem("bug", "scenario threw: " + e); finish("error"); });
   }

@@ -286,6 +286,11 @@ body .site-footer, body .hawkes-footer { font-family: var(--type); }
   .campaign .path { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; gap: 14px; padding: 8px 24px 24px; scroll-padding: 0 24px; }
   .campaign .chapter, .campaign .chapter:nth-child(3n+2) { flex: 0 0 78%; scroll-snap-align: center; transform: none; }
 }
+@media (max-width: 560px) {
+  .campaign .path { display: grid; grid-template-columns: 1fr; overflow: visible; scroll-snap-type: none; padding: 8px 16px 24px; gap: 16px; }
+  .campaign .chapter, .campaign .chapter:nth-child(3n+2) { flex: none; min-width: 0; }
+  .campaign .c-seal .c-tap { min-height: 44px; display: inline-flex; align-items: center; }
+}
 @media (prefers-reduced-motion: reduce) {
   .campaign .path { scroll-behavior: auto; }
   .campaign .chapter { transition: none; }

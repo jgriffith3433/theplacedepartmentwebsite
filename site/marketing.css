@@ -347,6 +347,21 @@ a {
   text-shadow: 0 18px 50px rgba(0, 0, 0, 0.8);
 }
 
+.hero-omen .pitch {
+  margin: 0 0 18px;
+  max-width: 30em;
+  padding: 12px 18px;
+  font-family: Outfit, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(17px, 1.9vw, 22px);
+  line-height: 1.4;
+  color: #fff;
+  background: rgba(10, 8, 6, 0.72);
+  border-left: 3px solid var(--stamp-red, #b3402f);
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
 .omen {
   margin: 0 0 36px;
   max-width: 18em;
