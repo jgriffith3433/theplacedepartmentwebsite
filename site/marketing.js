@@ -40,11 +40,6 @@ if (shotA && shotB) {
   let index = 0;
   let showingA = true;
 
-  BACKGROUNDS.forEach((src) => {
-    const img = new Image();
-    img.src = src;
-  });
-
   const setShot = (el, src) => {
     el.style.backgroundImage = `url("${src}")`;
   };
@@ -57,10 +52,6 @@ if (shotA && shotB) {
       el.style.animation = "";
     }
   };
-
-  setShot(shotA, BACKGROUNDS[0]);
-  setShot(shotB, BACKGROUNDS[1]);
-  show(shotA, true);
 
   const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
@@ -81,7 +72,18 @@ if (shotA && shotB) {
     }
   };
 
-  runCycle();
+  // The poster is the hero's first paint and its LCP. The slideshow art stays out of the first paint: it is
+  // fetched and faded in only after the page has loaded and the browser is idle.
+  const startShow = () => {
+    BACKGROUNDS.forEach((src) => { const img = new Image(); img.src = src; });
+    setShot(shotA, BACKGROUNDS[0]);
+    setShot(shotB, BACKGROUNDS[1]);
+    show(shotA, true);
+    runCycle();
+  };
+  const afterLoad = () => (window.requestIdleCallback || ((f) => window.setTimeout(f, 300)))(startShow, { timeout: 2500 });
+  if (document.readyState === "complete") afterLoad();
+  else window.addEventListener("load", afterLoad, { once: true });
 }
 
 // Share card: copies this page's address on a click (no request is made).

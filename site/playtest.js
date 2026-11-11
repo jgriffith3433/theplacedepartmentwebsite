@@ -22,7 +22,8 @@
 
   var SCENARIOS = [
     { id: "smoke", title: "Home loads, hero video plays, PLAY reaches Game", seconds: 15, tags: ["smoke"] },
-    { id: "pages", title: "Visit every nav page through its link (opening the drawer on phones): status, console errors, sideways scroll, broken images", seconds: 30, tags: ["full"] },
+    { id: "pages", title: "Visit every nav page through its link (opening the drawer on phones): status, console errors, sideways scroll, broken images; then a made-up path: status and the styled 404 with nav and PLAY", seconds: 30, tags: ["full"] },
+    { id: "not-found", title: "Open a made-up path: HTTP status, then the styled 404 page shows the nav, menu button and PLAY in the first screen with no sideways scroll", seconds: 20, tags: ["full", "site", "phone", "pages"] },
     { id: "phone-nav", title: "Open the menu drawer, close it by tapping outside and by Escape (at 390px)", seconds: 10, tags: ["menus"] },
     { id: "install-hint", title: "PWA: manifest, icons, shell worker, second-visit A2HS hint at 390px", seconds: 45, tags: ["full", "phone", "pwa"] },
     { id: "cast-voice", title: "Cast cards: tap two lines, exclusive playback, no autoplay, portraits at 390px", seconds: 45, tags: ["full", "content", "audio", "phone"] },
@@ -94,7 +95,77 @@
 
   function openMenu() { return document.getElementById("navToggle"); }
 
+  // The site root for this page: the folder of the page being viewed (works on localhost, on beta under /o/<owner>/<site>/ and on a custom domain).
+  function siteRoot() { return new URL("./", document.baseURI || location.href).href; }
+
+  // Made-up path check. Step 1 (any page): ask for /no-such-page-<random> and read the status and the body (GitHub Pages serves
+  // 404.html with a 404, a local server may answer differently: the body tells us whether the styled page came back). Step 2: really
+  // open that path, as a visitor following a bad link would, and judge the page on screen (menu button, PLAY, first screen, no sideways scroll).
+  async function stepNotFound() {
+    await loaded();
+    if (!run.nf) {
+      var path = "no-such-page-" + Math.random().toString(36).slice(2, 8);
+      var url = new URL(path, siteRoot()).href;
+      var status = 0, html = "";
+      try { var res = await fetch(url, { cache: "no-store" }); status = res.status; html = await res.text(); } catch (e) { problem("bug", "made-up path unreachable: " + url); }
+      var doc = new DOMParser().parseFromString(html, "text/html");
+      var styled = !!(doc.querySelector(".nav") && doc.body && doc.body.getAttribute("data-page") === "notfound");
+      var navOk = !!doc.querySelector(".nav a[href]");
+      var playOk = !!doc.querySelector(".nav-play, .play-btn, [data-play]");
+      run.metrics.notFoundStatus = status;
+      run.metrics.notFoundStyled = styled ? 1 : 0;
+      run.metrics.notFoundNav = navOk ? 1 : 0;
+      run.metrics.notFoundPlay = playOk ? 1 : 0;
+      event("not-found-probe", "/" + path + " status " + status + " styled-404 " + (styled ? "yes" : "no") + " nav " + (navOk ? "yes" : "no") + " play " + (playOk ? "yes" : "no"));
+      if (status !== 404) {
+        if (styled) problem("warning", "made-up path answered " + status + " with the styled page (a 404 status is expected; this server may rewrite)");
+        else problem("bug", "made-up path answered " + status + " and not the styled 404 page");
+      }
+      if (!styled) problem("bug", "made-up path did not return the styled 404 page (bare server error)");
+      if (!navOk) problem("bug", "404 page has no nav");
+      if (!playOk) problem("bug", "404 page has no PLAY link");
+      run.nf = { path: path };
+      run.progress = 0.5;
+      save();
+      location.href = url;
+      return;
+    }
+    await wait(400);
+    var r = inspectPage();
+    var m = location.pathname.indexOf(run.nf.path) >= 0;
+    if (!m) { problem("bug", "expected to be on the made-up path, on " + location.pathname); finish("error"); return; }
+    var nav = document.querySelector(".nav");
+    var play = document.querySelector(".nav-play");
+    var toggle = openMenu();
+    run.metrics.notFoundPageStatus = r.status;
+    run.metrics.notFoundOverflow = r.overflow;
+    run.metrics.width = r.width;
+    event("not-found-page", location.pathname + " status " + r.status + " overflow " + r.overflow + "px");
+    if (!nav) problem("bug", "404 page shows no nav");
+    if (!play) problem("bug", "404 page shows no PLAY link");
+    else {
+      var pb = play.getBoundingClientRect();
+      var inFirst = pb.width > 0 && pb.top >= 0 && pb.bottom <= window.innerHeight && pb.right <= window.innerWidth + 1;
+      run.metrics.notFoundPlayInFirstScreen = inFirst ? 1 : 0;
+      event("not-found-play", Math.round(pb.left) + "," + Math.round(pb.top) + " " + Math.round(pb.width) + "x" + Math.round(pb.height));
+      if (!inFirst) problem("bug", "PLAY is not inside the first screen on the 404 page");
+      if (pb.width < 44 || pb.height < 44) problem("warning", "404 PLAY tap target under 44x44");
+    }
+    if (window.innerWidth <= 700) {
+      var visible = toggle && toggle.offsetParent !== null && toggle.getBoundingClientRect().right <= window.innerWidth + 1;
+      run.metrics.notFoundMenuButton = visible ? 1 : 0;
+      if (!visible) problem("bug", "404 page shows no menu button at " + window.innerWidth + "px");
+      else await checkDrawer(toggle);
+    }
+    if (r.overflow > 1) problem("bug", "404 page scrolls sideways by " + r.overflow + "px at " + r.width + "px wide");
+    r.errors.forEach(function (msg) { problem("bug", "404 console error: " + msg); });
+    run.progress = 1;
+    var bugs = (run.problems || []).filter(function (p) { return p.severity === "bug"; });
+    finish(bugs.length ? "error" : "done");
+  }
+
   async function stepPages() {
+    if (run.nf) return stepNotFound();
     await loaded();
     await wait(400);
     var r = inspectPage();
@@ -127,7 +198,7 @@
     }
     save();
     var next = run.queue.shift();
-    if (!next) { run.progress = 1; finish("done"); return; }
+    if (!next) { run.progress = 0.9; save(); return stepNotFound(); }
     run.progress = run.visited.length / (run.visited.length + run.queue.length + 1);
     save();
     var link = findLink(next);
@@ -670,7 +741,7 @@
   }
   function resume() {
     if (!run || run.done) return Promise.resolve();
-    var fn = run.id === "pages" ? stepPages : run.id === "smoke" ? runSmoke : run.id === "phone-nav" ? runPhoneNav : run.id === "install-hint" ? runInstallHint : run.id === "cast-voice" ? runCastVoice : run.id === "choose-shift" ? runChooseShift : run.id === "first-minute" ? runFirstMinute : run.id === "fast-first-screen" ? runFastFirstScreen : null;
+    var fn = run.id === "pages" ? stepPages : run.id === "smoke" ? runSmoke : run.id === "not-found" ? stepNotFound : run.id === "phone-nav" ? runPhoneNav : run.id === "install-hint" ? runInstallHint : run.id === "cast-voice" ? runCastVoice : run.id === "choose-shift" ? runChooseShift : run.id === "first-minute" ? runFirstMinute : run.id === "fast-first-screen" ? runFastFirstScreen : null;
     if (!fn) { problem("bug", "unknown scenario " + run.id); finish("error"); return Promise.resolve(); }
     return fn().catch(function (e) { problem("bug", "scenario threw: " + e); finish("error"); });
   }
