@@ -854,18 +854,62 @@ a {
 .dossier-grid {
   grid-template-columns: repeat(3, 1fr);
 }
-.cast-card,
+.cast .cast-card,
 .dossier {
   background: var(--bg-raise);
   border: 1px solid var(--line);
   border-radius: 4px;
   overflow: hidden;
+  padding: 0;
+  min-width: 0;
 }
 .cast-art {
+  position: relative;
   aspect-ratio: 4 / 5;
   background-repeat: no-repeat;
+  background-position: 50% 20%;
+  background-size: cover;
   background-color: #0b0a09;
   border-bottom: 1px solid var(--line);
+  transition: transform 0.35s ease;
+}
+.cast-card.is-speaking .cast-art {
+  animation: cast-bob 0.55s ease-in-out infinite;
+}
+.cast-wave {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: none;
+  align-items: flex-end;
+  gap: 3px;
+  height: 22px;
+  padding: 4px 7px;
+  border-radius: 3px;
+  background: rgba(18, 16, 14, 0.72);
+  pointer-events: none;
+}
+.cast-card.is-speaking .cast-wave {
+  display: flex;
+}
+.cast-wave span {
+  display: block;
+  width: 3px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 1px;
+  animation: cast-bar 0.7s ease-in-out infinite;
+}
+.cast-wave span:nth-child(2) { animation-delay: 0.1s; }
+.cast-wave span:nth-child(3) { animation-delay: 0.2s; }
+.cast-wave span:nth-child(4) { animation-delay: 0.3s; }
+@keyframes cast-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@keyframes cast-bar {
+  0%, 100% { height: 5px; opacity: 0.55; }
+  50% { height: 16px; opacity: 1; }
 }
 .cast-body {
   padding: 16px 18px 20px;
@@ -876,10 +920,89 @@ a {
   font-size: 28px;
   font-weight: 560;
 }
-.cast-body p:last-child {
-  margin: 0;
+.cast-body > p:not(.kicker):not(.cast-caption) {
+  margin: 0 0 14px;
   color: var(--muted);
   line-height: 1.5;
+}
+.cast-caption {
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  border-left: 3px solid var(--accent);
+  background: rgba(240, 179, 106, 0.08);
+  color: var(--text);
+  font-family: Fraunces, Georgia, serif;
+  font-size: 17px;
+  font-style: italic;
+  line-height: 1.35;
+}
+.cast-caption[hidden] {
+  display: none;
+}
+.cast-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--text);
+  font-family: Outfit, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.cast-play:hover,
+.cast-play:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  outline: none;
+}
+.cast-card.is-speaking .cast-play {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.cast-play-icon {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px 0 6px 10px;
+  border-color: transparent transparent transparent currentColor;
+}
+.cast-card.is-speaking .cast-play-icon {
+  width: 10px;
+  height: 10px;
+  border: 0;
+  background:
+    linear-gradient(currentColor, currentColor) 0 0 / 3px 100% no-repeat,
+    linear-gradient(currentColor, currentColor) 7px 0 / 3px 100% no-repeat;
+}
+.cast-card--featured {
+  display: grid;
+  grid-template-columns: minmax(140px, 220px) 1fr;
+  margin-top: 20px;
+  border-top: 4px solid var(--gold);
+}
+.cast-card--featured .cast-art {
+  aspect-ratio: auto;
+  min-height: 220px;
+  height: 100%;
+  border-bottom: 0;
+  border-right: 1px solid var(--line);
+  background-position: 50% 30%;
+}
+.cast-card--featured .cast-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 22px 24px 24px;
+}
+.cast-card--featured h3 {
+  font-size: clamp(28px, 4vw, 36px);
 }
 .dossier {
   position: relative;
@@ -964,5 +1087,21 @@ a {
 @media (max-width: 520px) {
   .cast-grid {
     grid-template-columns: 1fr;
+  }
+  .cast-card--featured {
+    grid-template-columns: 1fr;
+  }
+  .cast-card--featured .cast-art {
+    aspect-ratio: 4 / 5;
+    min-height: 0;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cast-card.is-speaking .cast-art,
+  .cast-wave span {
+    animation: none;
   }
 }

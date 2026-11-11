@@ -23,6 +23,7 @@
     { id: "pages", title: "Visit every nav page through its link: status, console errors, sideways scroll, broken images", seconds: 30, tags: ["full"] },
     { id: "phone-nav", title: "Open and close the menu (at 390px)", seconds: 10, tags: ["menus"] },
     { id: "install-hint", title: "PWA: manifest, icons, shell worker, second-visit A2HS hint at 390px", seconds: 45, tags: ["full", "phone", "pwa"] },
+    { id: "cast-voice", title: "Cast cards: tap two lines, exclusive playback, no autoplay, portraits at 390px", seconds: 45, tags: ["full", "content", "audio", "phone"] },
     { id: "choose-shift", title: "Choose your shift: Campaign and Arcade cards, Play reaches Game with mode named", seconds: 90, tags: ["full", "site"] }
   ];
 
@@ -333,6 +334,134 @@
     finish(bugs.length ? "error" : "done");
   }
 
+  function pointerTap(el) {
+    if (!el) return;
+    var rect = el.getBoundingClientRect();
+    var x = rect.left + Math.min(rect.width / 2, 24);
+    var y = rect.top + Math.min(rect.height / 2, 16);
+    var opts = { bubbles: true, cancelable: true, view: window, clientX: x, clientY: y, pointerId: 1, pointerType: "touch", isPrimary: true };
+    el.dispatchEvent(new PointerEvent("pointerdown", opts));
+    el.dispatchEvent(new PointerEvent("pointerup", opts));
+    el.click();
+  }
+
+  async function runCastVoice() {
+    await loaded();
+    // marketing.js is defer: wait until cast playback is installed.
+    var ready = await until(function () { return window.__placeCast && document.querySelector(".cast-card [data-cast-play]"); }, 8000);
+    if (!ready) { problem("bug", "cast playback did not install"); finish("error"); return; }
+    run.metrics.width = window.innerWidth;
+    event("viewport", window.innerWidth + "x" + window.innerHeight);
+    // AC4 (390px fit) is judged on the phone twin (device=phone → ~390). Desktop twin still checks overflow.
+    var atPhone = window.innerWidth >= 360 && window.innerWidth <= 420;
+    run.metrics.atPhone = atPhone ? 1 : 0;
+    event(atPhone ? "phone-width" : "desktop-width", window.innerWidth + "px");
+    var section = document.getElementById("cast");
+    if (section) section.scrollIntoView({ block: "start" });
+    await wait(400);
+
+    var cards = Array.prototype.slice.call(document.querySelectorAll(".cast-card[data-cast]"));
+    var ids = cards.map(function (c) { return c.getAttribute("data-cast"); });
+    run.metrics.castCards = cards.length;
+    event("cast-cards", ids.join(","));
+    if (cards.length < 5) problem("bug", "expected 5 cast cards (4 crew + Courier), got " + cards.length);
+    if (ids.indexOf("courier") < 0) problem("bug", "Courier featured boss card missing");
+    if (ids.indexOf("warrok") >= 0) problem("bug", "Warrok must not appear in the cast");
+
+    // Criterion 3: nothing autoplays before a tap.
+    var playingBefore = cards.some(function (c) {
+      var a = c.querySelector("[data-cast-audio]");
+      return a && !a.paused && a.currentTime > 0;
+    });
+    run.metrics.autoplay = playingBefore ? 1 : 0;
+    event("cast-idle", playingBefore ? "audio already playing" : "silent until tap");
+    if (playingBefore) problem("bug", "cast audio played before any tap");
+
+    // Criterion 4: portraits present and no sideways overflow / overlap at 390px.
+    var brokenArt = 0;
+    cards.forEach(function (c) {
+      var art = c.querySelector(".cast-art");
+      var bg = art && (art.style.backgroundImage || getComputedStyle(art).backgroundImage);
+      if (!bg || bg === "none") { brokenArt += 1; problem("bug", (c.dataset.cast || "card") + " missing portrait"); }
+    });
+    run.metrics.missingPortraits = brokenArt;
+    var root = document.documentElement;
+    var overflow = Math.max(root.scrollWidth, document.body.scrollWidth) - window.innerWidth;
+    run.metrics.overflow = overflow;
+    event("cast-layout", "overflow " + overflow + "px at " + window.innerWidth + "px");
+    if (overflow > 1) problem("bug", "cast page scrolls sideways by " + overflow + "px");
+    var rects = cards.map(function (c) { return c.getBoundingClientRect(); });
+    for (var i = 0; i < rects.length; i++) {
+      for (var j = i + 1; j < rects.length; j++) {
+        var a = rects[i], b = rects[j];
+        var overlap = !(a.right <= b.left + 1 || b.right <= a.left + 1 || a.bottom <= b.top + 1 || b.bottom <= a.top + 1);
+        if (overlap && a.width > 8 && b.width > 8) {
+          problem("bug", "cast cards overlap: " + ids[i] + " and " + ids[j]);
+          run.metrics.overlap = 1;
+        }
+      }
+    }
+    if (atPhone) {
+      var wrap = document.querySelector(".cast .wrap");
+      var ww = wrap ? wrap.getBoundingClientRect().width : window.innerWidth;
+      var narrow = 0;
+      rects.forEach(function (r, idx) {
+        if (r.width + 1 < ww * 0.72) {
+          narrow += 1;
+          problem("bug", ids[idx] + " not full-width at phone (" + Math.round(r.width) + "px of " + Math.round(ww) + "px)");
+        }
+      });
+      run.metrics.narrowCards = narrow;
+      event("phone-stack", narrow ? "cards too narrow" : "single column ok");
+    }
+    run.progress = 0.25;
+
+    var first = document.querySelector('.cast-card[data-cast="wallit"]');
+    var second = document.querySelector('.cast-card[data-cast="slice"]');
+    if (!first || !second) { problem("bug", "Wallit or Slice card missing"); finish("error"); return; }
+
+    var firstPlayed = null;
+    var switched = null;
+    function onPlay(e) {
+      if (!firstPlayed) firstPlayed = e.detail && e.detail.id;
+      else switched = e.detail && e.detail.id;
+    }
+    window.addEventListener("cast:play", onPlay);
+
+    pointerTap(first);
+    var wallitOk = await until(function () {
+      var card = document.querySelector('.cast-card[data-cast="wallit"]');
+      var audio = card && card.querySelector("[data-cast-audio]");
+      var cap = card && card.querySelector("[data-cast-caption]");
+      return card && card.classList.contains("is-speaking") && audio && !audio.paused && cap && !cap.hidden && /Return to sender/i.test(cap.textContent || "");
+    }, 6000);
+    run.metrics.wallitPlay = wallitOk ? 1 : 0;
+    event("cast-play", wallitOk ? "wallit with caption" : "wallit failed");
+    if (!wallitOk) problem("bug", "tapping Wallit did not play his line with caption");
+    run.progress = 0.55;
+
+    // Criterion 2: tapping another card stops the first before the next starts.
+    var wallitAudio = document.querySelector('.cast-card[data-cast="wallit"] [data-cast-audio]');
+    pointerTap(second);
+    var sliceOk = await until(function () {
+      var card = document.querySelector('.cast-card[data-cast="slice"]');
+      var audio = card && card.querySelector("[data-cast-audio]");
+      var cap = card && card.querySelector("[data-cast-caption]");
+      var wallitStill = wallitAudio && !wallitAudio.paused;
+      return card && card.classList.contains("is-speaking") && audio && !audio.paused && !wallitStill && cap && !cap.hidden && /Noted/i.test(cap.textContent || "");
+    }, 6000);
+    run.metrics.slicePlay = sliceOk ? 1 : 0;
+    run.metrics.exclusive = sliceOk && wallitAudio && wallitAudio.paused ? 1 : 0;
+    event("cast-switch", sliceOk ? "slice replaced wallit" : "exclusive playback failed");
+    if (!sliceOk) problem("bug", "tapping Slice did not stop Wallit and play Slice with caption");
+    window.removeEventListener("cast:play", onPlay);
+    run.metrics.firstPlayed = firstPlayed || "";
+    run.metrics.switchedTo = switched || "";
+    run.progress = 1;
+    var bugs = (run.problems || []).filter(function (p) { return p.severity === "bug"; });
+    finish(bugs.length ? "error" : "done");
+  }
+
   async function runChooseShift() {
     await loaded();
     await wait(200);
@@ -391,7 +520,7 @@
   }
   function resume() {
     if (!run || run.done) return Promise.resolve();
-    var fn = run.id === "pages" ? stepPages : run.id === "smoke" ? runSmoke : run.id === "phone-nav" ? runPhoneNav : run.id === "install-hint" ? runInstallHint : run.id === "choose-shift" ? runChooseShift : null;
+    var fn = run.id === "pages" ? stepPages : run.id === "smoke" ? runSmoke : run.id === "phone-nav" ? runPhoneNav : run.id === "install-hint" ? runInstallHint : run.id === "cast-voice" ? runCastVoice : run.id === "choose-shift" ? runChooseShift : null;
     if (!fn) { problem("bug", "unknown scenario " + run.id); finish("error"); return Promise.resolve(); }
     return fn().catch(function (e) { problem("bug", "scenario threw: " + e); finish("error"); });
   }
