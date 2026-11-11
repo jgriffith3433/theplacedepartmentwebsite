@@ -1,12 +1,42 @@
 {
   "name": "The Place Department",
   "short_name": "The Place",
-  "start_url": "./",
-  "display": "standalone",
+  "description": "The Place is where things that should not exist are given an address.",
+  "start_url": "./Game/",
+  "scope": "./",
+  "id": "./Game/",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "landscape",
   "background_color": "#12100e",
   "theme_color": "#12100e",
-  "description": "The Place is where things that should not exist are given an address.",
+  "lang": "en",
+  "categories": ["games"],
   "icons": [
+    {
+      "src": "./assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
     {
       "src": "./favicon.svg",
       "sizes": "any",
