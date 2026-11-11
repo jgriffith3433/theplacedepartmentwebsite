@@ -51,7 +51,7 @@
       @font-face { font-family: "Fraunces"; font-style: normal; font-weight: 100 900; font-display: swap; src: url(./site/fonts/fraunces-latin.woff2) format("woff2"); }
       @font-face { font-family: "Fraunces"; font-style: italic; font-weight: 100 900; font-display: swap; src: url(./site/fonts/fraunces-italic-latin.woff2) format("woff2"); }
     </style>
-    <link rel="preload" as="image" href="./site/hero-loop-640.webp" imagesrcset="./site/hero-loop-640.webp 640w, ./site/hero-loop.webp 1280w" imagesizes="100vw" fetchpriority="high" />
+    <link rel="preload" as="image" href="./site/hero-loop-640.webp" imagesrcset="./site/hero-loop-640.webp 640w, ./site/hero-loop.webp 1280w" imagesizes="(max-width: 700px) 320px, 100vw" fetchpriority="high" />
     <link rel="stylesheet" href="./site/marketing.css" />
     <link rel="stylesheet" href="./site/dossier.css" />
   </head>
@@ -86,8 +86,17 @@
         <div class="stage" aria-hidden="true">
           <div class="stage-shot" id="shotA"></div>
           <div class="stage-shot" id="shotB"></div>
-          <img class="stage-poster" src="./site/hero-loop-640.webp" srcset="./site/hero-loop-640.webp 640w, ./site/hero-loop.webp 1280w" sizes="100vw" width="1280" height="720" alt="" fetchpriority="high" decoding="async" />
-          <video class="stage-loop" data-hero-loop autoplay muted loop playsinline preload="metadata" disablepictureinpicture aria-hidden="true"><source media="(max-width: 700px)" src="./site/hero-loop-sm.webm" type="video/webm; codecs=vp9"><source media="(max-width: 700px)" src="./site/hero-loop-sm.mp4" type="video/mp4"><source src="./site/hero-loop.webm" type="video/webm; codecs=vp9"><source src="./site/hero-loop.mp4" type="video/mp4"></video><script>(function(){var v=document.querySelector('[data-hero-loop]');if(v&&window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){v.removeAttribute('autoplay');v.preload='none';v.innerHTML='';v.load();}})();</script>
+          <img class="stage-poster" src="./site/hero-loop-640.webp" srcset="./site/hero-loop-640.webp 640w, ./site/hero-loop.webp 1280w" sizes="(max-width: 700px) 320px, 100vw" width="1280" height="720" alt="" fetchpriority="high" decoding="async" />
+          <video class="stage-loop" data-hero-loop muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true"></video><script>(function(){
+/* The poster above is the first paint and the LCP. The loop (hundreds of KB) is attached only after the page has loaded, so it never competes with the poster for a slow phone connection. */
+var v=document.querySelector('[data-hero-loop]');if(!v)return;
+if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+function go(){var s=window.innerWidth<=700?['hero-loop-sm.webm','video/webm; codecs=vp9','hero-loop-sm.mp4','video/mp4']:['hero-loop.webm','video/webm; codecs=vp9','hero-loop.mp4','video/mp4'];
+for(var i=0;i<s.length;i+=2){var e=document.createElement('source');e.src='./site/'+s[i];e.type=s[i+1];v.appendChild(e);}
+v.preload='auto';v.autoplay=true;v.load();var p=v.play();if(p&&p.catch)p.catch(function(){});}
+function later(){(window.requestIdleCallback||function(f){setTimeout(f,200)})(go,{timeout:1500});}
+if(document.readyState==='complete')later();else window.addEventListener('load',later,{once:true});
+})();</script>
           <div class="stage-vignette"></div>
         </div>
         <div class="hero-copy">

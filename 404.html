@@ -19,12 +19,13 @@
     <script src="./site/analytics.js"></script>
     <script src="./site/playtest.js"></script>
     <script src="./site/nav.js" defer></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,520;0,9..144,560;1,9..144,520&family=Outfit:wght@500;600;700&family=Special+Elite&display=swap"
-      rel="stylesheet"
-    />
+    <style>
+      /* Self-hosted, same-origin fonts: no render-blocking Google stylesheet, so the menu button and PLAY paint at once. */
+      @font-face { font-family: "Special Elite"; font-style: normal; font-weight: 400; font-display: swap; src: url(./site/fonts/special-elite-latin.woff2) format("woff2"); }
+      @font-face { font-family: "Outfit"; font-style: normal; font-weight: 100 900; font-display: swap; src: url(./site/fonts/outfit-latin.woff2) format("woff2"); }
+      @font-face { font-family: "Fraunces"; font-style: normal; font-weight: 100 900; font-display: swap; src: url(./site/fonts/fraunces-latin.woff2) format("woff2"); }
+      @font-face { font-family: "Fraunces"; font-style: italic; font-weight: 100 900; font-display: swap; src: url(./site/fonts/fraunces-italic-latin.woff2) format("woff2"); }
+    </style>
     <link rel="stylesheet" href="./site/marketing.css" />
     <link rel="stylesheet" href="./site/dossier.css" />
   </head>
