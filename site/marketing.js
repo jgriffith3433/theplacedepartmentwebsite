@@ -5,6 +5,17 @@ document.querySelectorAll("[data-nav]").forEach((link) => {
   }
 });
 
+// Below-the-fold cast portraits load when they near the screen (a CSS background cannot be loading="lazy").
+(() => {
+  const arts = document.querySelectorAll("[data-bg]");
+  const load = (el) => { el.style.backgroundImage = `url("${el.dataset.bg}")`; };
+  if (!("IntersectionObserver" in window)) { arts.forEach(load); return; }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { load(e.target); io.unobserve(e.target); } });
+  }, { rootMargin: "600px 0px" });
+  arts.forEach((el) => io.observe(el));
+})();
+
 const nav = document.querySelector(".nav");
 // The menu drawer lives in nav.js
 
