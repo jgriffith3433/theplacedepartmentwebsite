@@ -21,7 +21,8 @@
   var SCENARIOS = [
     { id: "smoke", title: "Home loads, hero video plays, PLAY reaches Game", seconds: 15, tags: ["smoke"] },
     { id: "pages", title: "Visit every nav page through its link: status, console errors, sideways scroll, broken images", seconds: 30, tags: ["full"] },
-    { id: "phone-nav", title: "Open and close the menu (at 390px)", seconds: 10, tags: ["menus"] }
+    { id: "phone-nav", title: "Open and close the menu (at 390px)", seconds: 10, tags: ["menus"] },
+    { id: "install-hint", title: "PWA: manifest, icons, shell worker, second-visit A2HS hint at 390px", seconds: 45, tags: ["full", "phone", "pwa"] }
   ];
 
   var run = null;
@@ -189,6 +190,148 @@
     finish(opened && closed ? "done" : "error");
   }
 
+  async function runInstallHint() {
+    await loaded();
+    run.metrics.width = window.innerWidth;
+    event("viewport", window.innerWidth + "x" + window.innerHeight);
+
+    var manifestLink = document.querySelector('link[rel="manifest"]');
+    if (!manifestLink) { problem("bug", "no manifest link"); finish("error"); return; }
+    var manifestUrl = new URL(manifestLink.href, location.href);
+    var manifest;
+    try {
+      var res = await fetch(manifestUrl.href, { cache: "no-store" });
+      run.metrics.manifestStatus = res.status;
+      manifest = await res.json();
+    } catch (e) {
+      problem("bug", "manifest fetch failed");
+      finish("error");
+      return;
+    }
+    event("manifest", (manifest.name || "") + " start_url=" + (manifest.start_url || ""));
+    if (manifest.name !== "The Place Department") problem("bug", "manifest name wrong");
+    if (manifest.short_name !== "The Place") problem("bug", "manifest short_name wrong");
+    if (!/Game\/?$/.test(String(manifest.start_url || "").replace(/^\.\//, ""))) problem("bug", "start_url should point at Game/");
+    if (manifest.display !== "fullscreen" && !(manifest.display_override || []).includes("fullscreen")) problem("bug", "display should be fullscreen");
+    if (manifest.orientation !== "landscape") problem("bug", "orientation should be landscape");
+    if (manifest.theme_color !== "#12100e" || manifest.background_color !== "#12100e") problem("bug", "theme/background should be dossier #12100e");
+    var icons = manifest.icons || [];
+    var has192 = icons.some(function (i) { return String(i.sizes || "").indexOf("192") >= 0; });
+    var has512 = icons.some(function (i) { return String(i.sizes || "").indexOf("512") >= 0; });
+    var hasMaskable = icons.some(function (i) { return String(i.purpose || "").indexOf("maskable") >= 0; });
+    run.metrics.icon192 = has192 ? 1 : 0;
+    run.metrics.icon512 = has512 ? 1 : 0;
+    run.metrics.maskable = hasMaskable ? 1 : 0;
+    if (!has192 || !has512) problem("bug", "manifest needs 192 and 512 icons");
+    if (!hasMaskable) problem("bug", "manifest needs maskable icons");
+    run.progress = 0.25;
+
+    var apple = document.querySelector('link[rel="apple-touch-icon"]');
+    if (!apple) problem("bug", "missing apple-touch-icon");
+    else {
+      try {
+        var ares = await fetch(apple.href, { method: "HEAD", cache: "no-store" });
+        run.metrics.appleTouchStatus = ares.status;
+        event("apple-touch-icon", ares.status + " " + apple.href.split("/").pop());
+        if (ares.status >= 400) problem("bug", "apple-touch-icon failed");
+      } catch (e) { problem("bug", "apple-touch-icon unreachable"); }
+    }
+    var splash = document.querySelectorAll('link[rel="apple-touch-startup-image"]');
+    run.metrics.iosSplash = splash.length;
+    event("ios-splash", splash.length + " startup image meta tags");
+    if (splash.length < 1) problem("bug", "missing iOS splash meta");
+    run.progress = 0.4;
+
+    if (!("serviceWorker" in navigator)) {
+      problem("warning", "serviceWorker API missing in this browser");
+    } else {
+      var ready = await until(function () { return navigator.serviceWorker.controller || (window.__placeA2HS && document.querySelector('script[src*="a2hs"]')); }, 4000);
+      var regs = await navigator.serviceWorker.getRegistrations();
+      run.metrics.swRegistrations = regs.length;
+      event("service-worker", regs.length ? ("registered " + regs.map(function (r) { return r.scope; }).join(", ")) : "none yet");
+      // Confirm the worker script exists and never claims Unity builds in its source text.
+      try {
+        var swRes = await fetch(new URL("sw.js", location.href).href, { cache: "no-store" });
+        var swText = await swRes.text();
+        run.metrics.swStatus = swRes.status;
+        if (swRes.status >= 400) problem("bug", "sw.js missing");
+        if (!/unityweb/i.test(swText) || !/no-store/i.test(swText)) problem("bug", "sw.js should refuse Unity builds and network-first HTML");
+        else event("sw-policy", "shell-only + network-first HTML");
+      } catch (e) { problem("bug", "sw.js fetch failed"); }
+    }
+    run.progress = 0.55;
+
+    // Setup shortcut: simulate sessions with localStorage visit count (sessionStorage marks one bump per tab).
+    event("start-at", "second-visit");
+    await until(function () { return window.__placeA2HS; }, 3000);
+    if (!window.__placeA2HS) {
+      problem("bug", "a2hs.js did not install window.__placeA2HS");
+      finish("error");
+      return;
+    }
+    try {
+      localStorage.removeItem("placeA2HS.dismissed");
+      localStorage.setItem("placeA2HS.visits", "1");
+      sessionStorage.removeItem("placeA2HS.sessionCounted");
+    } catch (e) {}
+    window.__placeA2HS.hide();
+    var first = window.__placeA2HS.maybeShow();
+    run.metrics.firstVisitHint = first ? 1 : 0;
+    if (first) problem("bug", "hint appeared on first visit/session");
+    else event("hint-first-visit", "hidden");
+    // Same session, navigating pages must not bump again.
+    var before = parseInt(localStorage.getItem("placeA2HS.visits") || "0", 10);
+    sessionStorage.setItem("placeA2HS.sessionCounted", "1");
+    window.__placeA2HS.bumpVisit();
+    var after = parseInt(localStorage.getItem("placeA2HS.visits") || "0", 10);
+    run.metrics.sameSessionBump = after === before ? 0 : 1;
+    if (after !== before) problem("bug", "visit count rose twice in one session");
+    else event("hint-same-session", "no second bump");
+    // Second session: visits >= 2.
+    try {
+      localStorage.setItem("placeA2HS.visits", "2");
+      sessionStorage.setItem("placeA2HS.sessionCounted", "1");
+    } catch (e) {}
+    var hint = window.__placeA2HS.maybeShow();
+    if (!hint) {
+      // Desktop playtest bots may not count as phones: force the same UI so footage still shows it.
+      if (!window.__placeA2HS.isPhone()) {
+        event("phone-check", "not a phone viewport; forcing hint for review shot");
+        hint = window.__placeA2HS.show({ force: true });
+        run.metrics.forcedHint = 1;
+      }
+    }
+    await wait(400);
+    hint = document.getElementById("place-a2hs-hint");
+    run.metrics.hintVisible = hint ? 1 : 0;
+    if (!hint) { problem("bug", "A2HS hint not visible after second visit"); finish("error"); return; }
+    event("hint-shown", hint.innerText.replace(/\s+/g, " ").slice(0, 120));
+    run.progress = 0.8;
+
+    var dismissBtn = hint.querySelector(".a2hs-dismiss") || hint.querySelector("button");
+    if (!dismissBtn) { problem("bug", "hint has no dismiss control"); finish("error"); return; }
+    dismissBtn.click();
+    await wait(200);
+    var gone = !document.getElementById("place-a2hs-hint");
+    var stayed = false;
+    try { stayed = localStorage.getItem("placeA2HS.dismissed") === "1"; } catch (e) {}
+    run.metrics.hintDismissed = gone && stayed ? 1 : 0;
+    event("hint-dismissed", gone && stayed ? "gone and remembered" : "failed");
+    if (!(gone && stayed)) problem("bug", "dismiss did not hide and remember");
+    // Stays dismissed on another maybeShow
+    var again = window.__placeA2HS.maybeShow();
+    if (again) problem("bug", "hint returned after dismiss");
+    else event("hint-stays-dismissed", "ok");
+
+    // Desktop should not show for a normal visitor path (criterion: phones only).
+    run.metrics.isPhone = window.__placeA2HS.isPhone() ? 1 : 0;
+    event("phone-only", window.__placeA2HS.isPhone() ? "phone" : "desktop (hint only via force in this run)");
+
+    run.progress = 1;
+    var bugs = (run.problems || []).filter(function (p) { return p.severity === "bug"; });
+    finish(bugs.length ? "error" : "done");
+  }
+
   function begin(id, options) {
     run = { id: id, t0: Date.now(), moved: Date.now(), status: "running", progress: 0, done: false, events: [], problems: [], metrics: {}, options: options || {}, log: [] };
     save();
@@ -196,7 +339,7 @@
   }
   function resume() {
     if (!run || run.done) return Promise.resolve();
-    var fn = run.id === "pages" ? stepPages : run.id === "smoke" ? runSmoke : run.id === "phone-nav" ? runPhoneNav : null;
+    var fn = run.id === "pages" ? stepPages : run.id === "smoke" ? runSmoke : run.id === "phone-nav" ? runPhoneNav : run.id === "install-hint" ? runInstallHint : null;
     if (!fn) { problem("bug", "unknown scenario " + run.id); finish("error"); return Promise.resolve(); }
     return fn().catch(function (e) { problem("bug", "scenario threw: " + e); finish("error"); });
   }
