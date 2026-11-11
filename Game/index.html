@@ -329,6 +329,11 @@
       .dossier h1 { font-size: 24px; }
       #load-line { font-size: 15px; }
       .shift-pick-grid { grid-template-columns: 1fr; }
+      /* Stacked picks with pictures would push the bar, MB count and slow-connection note below the fold at 390px. */
+      .shift-pick-card img { display: none; }
+      .shift-pick-card { padding: 8px 0 10px; }
+      .shift-pick-card strong { padding-top: 0; }
+      .shift-pick { margin-bottom: 10px; }
       /* Stack the slow-connection note above Retry so nothing overlaps at 390px portrait. */
       #load-stall {
         flex-direction: column;
@@ -1362,9 +1367,15 @@
       var box = dossier.getBoundingClientRect();
       if (box.width > vb.w + 1 || box.height > vb.h + 1) return false;
       if (box.left < -1 || box.top < -1) return false;
+      // The bar and the MB count must be on screen without scrolling the card.
+      var barEl = document.getElementById("unity-progress-bar-empty");
+      var mbEl = document.getElementById("load-bytes");
+      if (barEl && barEl.getBoundingClientRect().bottom > vb.h) return false;
+      if (mbEl && mbEl.getBoundingClientRect().bottom > vb.h) return false;
       var stall = document.getElementById("load-stall");
       var retry = document.getElementById("load-stall-retry");
       if (stall && !stall.hidden && retry) {
+        if (stall.getBoundingClientRect().bottom > vb.h) return false;
         var s = stall.getBoundingClientRect();
         var r = retry.getBoundingClientRect();
         if (r.bottom > s.bottom + 2 || r.right > s.right + 2) return false;
