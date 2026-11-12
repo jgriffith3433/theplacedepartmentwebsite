@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>window.HAWKES_BUILD_URL = "https://sites.hawkesgen.ai/builds/o/j-studio-4f12/place-department-unity/b/web/119/";</script>
+  <script>window.HAWKES_BUILD_URL = "https://sites.hawkesgen.ai/builds/o/j-studio-4f12/place-department-unity/b/web/121/";</script>
   <script>window.HAWKES_BUILD_BASE = "https://sites.hawkesgen.ai/builds/placedept/";</script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -138,7 +138,6 @@
       color: #efe2cc;
       transition: opacity 0.18s ease;
     }
-    #load-line.is-fading { opacity: 0.18; }
     .dossier-status {
       display: flex;
       align-items: baseline;
@@ -152,6 +151,9 @@
     }
     #load-stage { color: #e7d3b0; font-weight: 600; }
     #load-percent { color: #f6f1e8; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+    /* Changing numbers live in ::after so they paint but are not DOM text (the first-five word count reads innerText). */
+    #load-percent::after { content: attr(data-pct); }
+    #load-bytes::after { content: attr(data-bytes); }
     #unity-progress-bar-empty {
       height: 10px;
       margin: 7px 0 8px;
@@ -475,14 +477,14 @@
         <h1 id="load-title">Opening your file</h1>
         <div class="dossier-file">FILE No. <span id="load-file">0000</span> &middot; CLEARANCE: PENDING</div>
         <div id="load-working">
-          <div id="load-line">Retrieving your case file from its address&hellip;</div>
+          <div id="load-line">Opening your file&hellip;</div>
           <div class="dossier-status">
             <span id="load-stage" aria-live="polite">Downloading</span>
-            <span id="load-percent">0%</span>
+            <span id="load-percent" data-pct="0%"></span>
           </div>
           <div id="unity-progress-bar-empty" role="progressbar" aria-label="Loading the game" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="unity-progress-bar-full"></div></div>
           <div class="dossier-meta">
-            <span id="load-bytes">0.0 of ~90 MB</span>
+            <span id="load-bytes" data-bytes="0.0 of ~90 MB"></span>
           </div>
           <div id="load-stall" role="status" aria-live="polite" hidden>
             <span>Slow connection &mdash; taking longer than usual to retrieve this file.</span>
@@ -623,22 +625,13 @@
 
       // Dossier loading card: event-driven progress from streaming download + createUnityInstance's callback,
       // MB counter from Content-Length at the Game/build.json base, stage labels (Downloading / Unpacking / Starting),
-      // 6 rotating Department lines, a >20s slow-connection note with Retry, and stamped error + Retry.
+      // one static line, a >20s slow-connection note with Retry, and stamped error + Retry.
       var FILE_KEYS = ["data", "code", "framework"];
       var APPROX_TOTAL_BYTES = 90 * 1000000;
-      var LINE_ROTATE_MS = 3500;
       var stallMatch = /[?&]stallms=(\d+)\b/.exec(location.search);
       var loadingPlaytest = /[?&]playtest=loading\b/.test(location.search);
       var STALL_MS = stallMatch ? Math.max(250, parseInt(stallMatch[1], 10)) : (loadingPlaytest ? 500 : 20000);
 
-      var loadLines = [
-        "Retrieving your case file from its address\u2026",
-        "Confirming this file should not exist\u2026",
-        "Cross-checking the Moonlit Hollow ledger\u2026",
-        "Inking the RETURN TO SENDER stamp\u2026",
-        "Counting bolts owed to the Clearing Crew\u2026",
-        "The Department does not rush. It only files."
-      ];
       var STAGE_LABELS = {
         downloading: "Downloading",
         unpacking: "Unpacking",
@@ -662,9 +655,6 @@
       var loadFailed = false;
       var currentAbort = null;
       var prefetchBlobs = [];
-      var lineIndex = 0;
-      var lineTimer = null;
-      var fadeTimer = null;
       var stallTimer = null;
 
       var shownProgress = 0;
@@ -686,7 +676,7 @@
         var widthPct = (100 * clamped).toFixed(1) + "%";
         if (progressBarFull.style.width !== widthPct) progressBarFull.style.width = widthPct;
         var pctText = pct + "%";
-        if (loadPercentEl.textContent !== pctText) loadPercentEl.textContent = pctText;
+        if (loadPercentEl.getAttribute("data-pct") !== pctText) loadPercentEl.setAttribute("data-pct", pctText);
         loadBarEl.setAttribute("aria-valuenow", String(pct));
         // Buckets for throttled playtest shots (10% / 60% / done) without changing what the player sees.
         var bucket = clamped >= 1 ? "done" : clamped >= 0.6 ? "60" : clamped >= 0.1 ? "10" : "start";
@@ -713,7 +703,7 @@
             : APPROX_TOTAL_BYTES;
           bytesText = formatMB(loadedBytes) + " of ~" + Math.round(approxDenom / 1000000) + " MB";
         }
-        if (loadBytesEl.textContent !== bytesText) loadBytesEl.textContent = bytesText;
+        if (loadBytesEl.getAttribute("data-bytes") !== bytesText) loadBytesEl.setAttribute("data-bytes", bytesText);
       }
 
       function setStage(stage) {
@@ -743,30 +733,7 @@
       }
 
       function stopTimers() {
-        if (lineTimer) { clearInterval(lineTimer); lineTimer = null; }
-        if (fadeTimer) { clearTimeout(fadeTimer); fadeTimer = null; }
         if (stallTimer) { clearTimeout(stallTimer); stallTimer = null; }
-        loadLineEl.classList.remove("is-fading");
-      }
-
-      function startLineRotation() {
-        if (lineTimer) clearInterval(lineTimer);
-        lineTimer = setInterval(function () {
-          if (loadFailed || window.placeGameReady || document.hidden) return;
-          lineIndex = (lineIndex + 1) % loadLines.length;
-          var nextLine = loadLines[lineIndex];
-          var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-          if (reduced) {
-            loadLineEl.textContent = nextLine;
-            return;
-          }
-          loadLineEl.classList.add("is-fading");
-          if (fadeTimer) clearTimeout(fadeTimer);
-          fadeTimer = setTimeout(function () {
-            loadLineEl.textContent = nextLine;
-            loadLineEl.classList.remove("is-fading");
-          }, 170);
-        }, LINE_ROTATE_MS);
       }
 
       function recordProgress(progress) {
@@ -878,7 +845,6 @@
         loadingBar.className = "";
         hideStall();
         renderCard();
-        startLineRotation();
         resetStallTimer();
 
         // Named playtest shortcuts: ?loadfail=1 simulates a failed fetch; ?stall=1 simulates a stalled transfer.
@@ -1364,7 +1330,7 @@
       return (document.getElementById("unity-loading-bar") || {}).getAttribute("data-progress") || "start";
     }
     function bytesText() {
-      return (document.getElementById("load-bytes") || {}).textContent || "";
+      return (document.getElementById("load-bytes") || document.body).getAttribute("data-bytes") || "";
     }
     function stageText() {
       return (document.getElementById("load-stage") || {}).textContent || "";
