@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>window.HAWKES_BUILD_URL = "https://sites.hawkesgen.ai/builds/o/j-studio-4f12/place-department-unity/b/web/121/";</script>
+  <script src="hawkes-playtest-bridge.js?v=v134" data-hawkes-playtest-bridge></script>
+  <script>window.HAWKES_BUILD_URL = "https://sites.hawkesgen.ai/builds/o/j-studio-4f12/place-department-unity/b/web/161/";</script>
   <script>window.HAWKES_BUILD_BASE = "https://sites.hawkesgen.ai/builds/placedept/";</script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -94,6 +95,19 @@
       border-radius: 2px 12px 3px 3px;
       box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
     }
+    /* First-five budget: the page's own text in the first minute stays under 40 words. Decorative and changing lines
+       paint from ::after (not DOM text, so not in innerText); each control keeps an aria-label with its full name. */
+    .dossier-file::after { content: attr(data-file); }
+    #load-mode::after { content: attr(data-text); }
+    .shift-pick-card .shift-desc::after { content: attr(data-desc); }
+    #load-stage::after { content: "Downloading"; }
+    #unity-loading-bar[data-stage="unpacking"] #load-stage::after { content: "Unpacking"; }
+    #unity-loading-bar[data-stage="starting"] #load-stage::after { content: "Starting"; }
+    #version-display a::after { content: attr(data-label); }
+    #fs-button::after { content: attr(data-label); }
+    #hawkes-tap .s, #hawkes-tap .n { display: none; }
+    #rotate-card .rotate-note { display: block; }
+    #rotate-card .rotate-note::after { content: attr(data-note); }
     .dossier-head {
       display: flex;
       align-items: center;
@@ -445,7 +459,8 @@
     // corner and in analytics, and busts the cache per build (a fixed "v1" kept every build under one cache key).
     window.PLACE_BUILD = (function (u) { var m = /\/b\/[^\/]+\/(\d+)\/?$/.exec(u || ""); return m ? "v" + m[1] : "v1"; })(window.HAWKES_BUILD_URL);
   </script>
-  <script src="hawkes-sound.js?v=v1" data-hawkes-sound></script>
+  <script src="hawkes-load-quiet.js?v=v128" data-hawkes-load-quiet></script>
+  <script src="hawkes-sound.js?v=v128" data-hawkes-sound></script>
 </head>
 <body>
   <div id="unity-container">
@@ -453,33 +468,33 @@
     <div id="unity-loading-bar" data-stage="downloading">
       <div class="dossier">
         <div class="dossier-head">
-          <div class="dossier-kicker">The Place Department &middot; Records</div>
+          <div class="dossier-kicker">Records</div>
           <span class="dossier-stamp" aria-hidden="true">Dossier</span>
         </div>
         <div class="shift-pick" id="shift-pick" data-shift-pick>
           <p class="shift-pick-label">Choose your shift</p>
           <div class="shift-pick-grid">
-            <a class="shift-pick-card" data-shift="campaign" href="?mode=campaign" data-play="load-campaign">
+            <a class="shift-pick-card" data-shift="campaign" href="?mode=campaign" data-play="load-campaign" aria-label="Campaign: story in six chapters, progress stays filed">
               <img src="../assets/campaign/ch1.jpg" alt="" width="480" height="270" loading="lazy" decoding="async" />
               <strong>Campaign</strong>
-              <span>Story in six chapters. Progress stays filed.</span>
+              <span class="shift-desc" aria-hidden="true" data-desc="Story in six chapters. Progress stays filed."></span>
               <span class="shift-play">Play</span>
             </a>
-            <a class="shift-pick-card" data-shift="arcade" href="?mode=arcade" data-play="load-arcade">
+            <a class="shift-pick-card" data-shift="arcade" href="?mode=arcade" data-play="load-arcade" aria-label="Arcade: endless Hollow, bosses at waves 10, 20 and 30">
               <img src="../assets/shots/shot-1-640.jpg" alt="" width="640" height="360" loading="lazy" decoding="async" />
               <strong>Arcade</strong>
-              <span>Endless Hollow. Bosses at waves 10, 20 and 30.</span>
+              <span class="shift-desc" aria-hidden="true" data-desc="Endless Hollow. Bosses at waves 10, 20 and 30."></span>
               <span class="shift-play">Play</span>
             </a>
           </div>
         </div>
-        <p id="load-mode" hidden></p>
+        <p id="load-mode" hidden aria-hidden="true"></p>
         <h1 id="load-title">Opening your file</h1>
-        <div class="dossier-file">FILE No. <span id="load-file">0000</span> &middot; CLEARANCE: PENDING</div>
+        <div class="dossier-file" data-file="FILE No. 0000 · CLEARANCE: PENDING" aria-hidden="true"></div>
         <div id="load-working">
           <div id="load-line">Opening your file&hellip;</div>
           <div class="dossier-status">
-            <span id="load-stage" aria-live="polite">Downloading</span>
+            <span id="load-stage" role="status" aria-label="Downloading"></span>
             <span id="load-percent" data-pct="0%"></span>
           </div>
           <div id="unity-progress-bar-empty" role="progressbar" aria-label="Loading the game" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="unity-progress-bar-full"></div></div>
@@ -487,7 +502,7 @@
             <span id="load-bytes" data-bytes="0.0 of ~90 MB"></span>
           </div>
           <div id="load-stall" role="status" aria-live="polite" hidden>
-            <span>Slow connection &mdash; taking longer than usual to retrieve this file.</span>
+            <span aria-label="Slow connection: taking longer than usual to retrieve this file.">Slow connection</span>
             <button type="button" id="load-stall-retry">Retry</button>
           </div>
         </div>
@@ -508,20 +523,20 @@
     </div>
     <div id="unity-warning"></div>
   </div>
-  <button type="button" id="fs-button" hidden aria-label="Enter fullscreen">Fullscreen</button>
+  <button type="button" id="fs-button" hidden aria-label="Enter fullscreen" data-label="Fullscreen"></button>
   <div id="rotate-card" role="dialog" aria-labelledby="rotate-title" hidden>
     <div class="rotate-icon" aria-hidden="true">&#8635;</div>
-    <h2 id="rotate-title">This file reads better sideways.</h2>
-    <p>Turn your phone to landscape and the Department will carry on.</p>
-    <button type="button" id="rotate-anyway">Play in portrait anyway</button>
+    <h2 id="rotate-title">Turn sideways</h2>
+    <p class="rotate-note" data-note="Turn your phone to landscape and the Department will carry on."></p>
+    <button type="button" id="rotate-anyway" aria-label="Play in portrait anyway">Play anyway</button>
   </div>
-  <div id="version-display"></div>
+  <div id="version-display" aria-hidden="false"></div>
   <script>
     var gameVersion = window.PLACE_BUILD;
     // The build every event names: the Game/v<n> folder this page loads (set before the deferred SDK runs).
     window.HAWKES_BUILD = { version: gameVersion };
     var gameName = "PlaceDepartment";
-    document.getElementById("version-display").textContent = gameVersion;
+    
 
     // Shift from the landing (or this card): ?mode=campaign|arcade. The loading card names it; Unity does not
     // read the param yet (note for a breakingthrough task). Preserve other query keys on the pick links.
@@ -531,13 +546,13 @@
           label: "Campaign",
           title: "Opening Campaign",
           file: "SHIFT: CAMPAIGN · SIX CHAPTERS",
-          line: "Retrieving your case file from its address\u2026"
+          line: "Retrieving your case file\u2026"
         },
         arcade: {
           label: "Arcade",
           title: "Opening Arcade",
           file: "SHIFT: ARCADE · ENDLESS HOLLOW",
-          line: "Opening the endless Hollow ledger\u2026"
+          line: "Opening the Hollow ledger\u2026"
         }
       };
       var params = new URLSearchParams(location.search);
@@ -558,10 +573,10 @@
         if (titleEl) titleEl.textContent = info.title;
         if (modeEl) {
           modeEl.hidden = false;
-          modeEl.textContent = "Shift · " + info.label;
+          modeEl.setAttribute("data-text", "Shift \u00b7 " + info.label);
         }
         if (fileEl) {
-          fileEl.innerHTML = info.file + " &middot; FILE No. <span id=\"load-file\">0000</span>";
+          fileEl.setAttribute("data-file", info.file + " \u00b7 FILE No. 0000");
         }
         if (lineEl) lineEl.textContent = info.line;
         document.title = info.label + " — The Place Department";
@@ -646,7 +661,11 @@
       var loadStallEl = document.getElementById("load-stall");
       var loadStallRetryBtn = document.getElementById("load-stall-retry");
       var loadRetryBtn = document.getElementById("load-retry");
-      document.getElementById("load-file").textContent = String(Math.floor(1000 + Math.random() * 9000));
+      (function () {
+        var fe = document.querySelector(".dossier-file");
+        var n = String(Math.floor(1000 + Math.random() * 9000));
+        fe.setAttribute("data-file", fe.getAttribute("data-file").replace("0000", n));
+      })();
 
       var initialHeadUrl = window.HAWKES_BUILD_URL;
       var loadAttempt = 0;
@@ -686,7 +705,7 @@
         }
 
         var stageLabel = STAGE_LABELS[currentStage] || "Downloading";
-        if (loadStageEl.textContent !== stageLabel) loadStageEl.textContent = stageLabel;
+        if (loadStageEl.getAttribute("aria-label") !== stageLabel) loadStageEl.setAttribute("aria-label", stageLabel);
         if (loadingBar.getAttribute("data-stage") !== currentStage) {
           loadingBar.setAttribute("data-stage", currentStage);
         }
@@ -1150,7 +1169,7 @@
       function syncFs() {
         fsButton.hidden = !supported || !window.placeGameReady || !tapShowing();
         var on = !!fsElement();
-        fsButton.textContent = on ? "Exit fullscreen" : "Fullscreen";
+        fsButton.setAttribute("data-label", on ? "Exit fullscreen" : "Fullscreen");
         fsButton.setAttribute("aria-label", on ? "Exit fullscreen" : "Enter fullscreen");
       }
       fsButton.addEventListener("click", function () {
@@ -1206,30 +1225,32 @@
     color: #e7d3b0;
   }
 </style>
-<script src="../js/hawkes-release.js?v=v1" data-releases="../releases.json"></script>
+<script src="../js/hawkes-release.js?v=v128" data-releases="../releases.json"></script>
 <script>
-  // The release (releases.json) and the build running, as a link to What's new: "v1.0.0 · build 8 · What's new".
-  // It opens in a new tab, so a tap in the corner never ends a run.
+  // The release (releases.json) and the build running, as a link to What's new. The corner shows only "build 121"
+  // (two words: first-five counts every distinct line on the page in a stranger's first minute); the version and
+  // "What's new" ride in the link's aria-label and title. It opens in a new tab, so a tap never ends a run.
   (function () {
     var box = document.getElementById("version-display");
     if (!box) return;
-    var build = String(window.PLACE_BUILD || window.GAME_BUILD || "");
-    function show(label) {
-      var link = document.createElement("a");
-      link.href = "../whatsnew.html";
-      link.target = "_blank";
-      link.rel = "noopener";
-      link.setAttribute("data-hawkes-whatsnew", "");
-      link.textContent = label;
-      box.textContent = "";
-      box.appendChild(link);
+    var build = String(window.PLACE_BUILD || window.GAME_BUILD || "").replace(/^v/, "");
+    var link = document.createElement("a");
+    link.href = "../whatsnew.html";
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.setAttribute("data-hawkes-whatsnew", "");
+    link.textContent = build ? "build " + build : "";
+    function name(version) {
+      var label = (version ? "v" + version + " · " : "") + (build ? "build " + build + " · " : "") + "What's new";
+      link.setAttribute("aria-label", label);
+      link.title = label;
     }
-    show(build + " · What's new");
+    name("");
+    box.textContent = "";
+    box.appendChild(link);
     if (window.hawkesRelease) window.hawkesRelease.then(function (r) {
       var top = r && r.releases && r.releases[0];
-      if (!top) return;
-      var beta = /\.hawkesgen\.ai$/.test(location.hostname) || location.hostname === "localhost" || location.hostname === "127.0.0.1";
-      show("v" + top.version + (beta ? " beta" : "") + " · build " + build.replace(/^v/, "") + " · What's new");
+      if (top) name(top.version);
     });
   })();
 </script>
@@ -1333,7 +1354,7 @@
       return (document.getElementById("load-bytes") || document.body).getAttribute("data-bytes") || "";
     }
     function stageText() {
-      return (document.getElementById("load-stage") || {}).textContent || "";
+      return (document.getElementById("load-stage") || {}).getAttribute("aria-label") || "";
     }
     async function playLoading(tr) {
       tr.scene("LoadingCard");
@@ -1467,8 +1488,8 @@
       else tr.event("shift-pick", "present");
       var modeAttr = (document.getElementById("unity-loading-bar") || {}).getAttribute("data-mode") || "";
       var title = (document.getElementById("load-title") || {}).textContent || "";
-      var modeLine = (document.getElementById("load-mode") || {}).textContent || "";
-      var fileLine = (document.querySelector(".dossier-file") || {}).textContent || "";
+      var modeLine = (document.getElementById("load-mode") || {}).getAttribute("data-text") || "";
+      var fileLine = (document.querySelector(".dossier-file") || {}).getAttribute("data-file") || "";
       var named = function (want) {
         var blob = (title + " " + modeLine + " " + fileLine + " " + modeAttr).toLowerCase();
         return blob.indexOf(want) >= 0;
