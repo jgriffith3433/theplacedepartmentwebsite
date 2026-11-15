@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#12100e" />
+    <meta
+      name="description"
+      content="The Place is where things that should not exist are given an address."
+    />
+    <link rel="canonical" href="https://theplacedepartment.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="The Place Department" />
+    <meta property="og:title" content="The Place Department" />
+    <meta property="og:description" content="Where things that should not exist are given an address." />
+    <meta property="og:url" content="https://theplacedepartment.com/" />
+    <meta property="og:image" content="https://theplacedepartment.com/assets/og-card.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The Place Department: RETURN TO SENDER over the filed circle." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The Place Department" />
+    <meta name="twitter:description" content="Where things that should not exist are given an address." />
+    <meta name="twitter:image" content="https://theplacedepartment.com/assets/og-card.jpg" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="The Place" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="assets/icons/splash-1290x2796.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="assets/icons/splash-2796x1290.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="assets/icons/splash-1179x2556.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="assets/icons/splash-2556x1179.png" />
+    <title>The Place Department</title>
+    <script src="https://hawkesgen.ai/sdk/analytics@1.js" data-product="theplacedepartment" data-hawkes-analytics="site" defer></script>
+    <script src="./site/analytics.js"></script>
+    <script src="./site/playtest.js"></script>
+    <script src="./site/a2hs.js" defer></script>
+    <script src="./site/nav.js" defer></script>
+    <link rel="preload" as="font" type="font/woff2" href="./site/fonts/special-elite-latin.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="./site/fonts/outfit-latin.woff2" crossorigin />
+    <style>
+      /* Self-hosted, same-origin fonts (no Google round trip). Special Elite and Outfit set the hero's type, so they are
+         "optional": a font that is not ready in the first moments is skipped for this view, never swapped in under the
+         reader, so the hero text and PLAY cannot reflow. */
+      @font-face { font-family: "Special Elite"; font-style: normal; font-weight: 400; font-display: optional; src: url(./site/fonts/special-elite-latin.woff2) format("woff2"); }
+      @font-face { font-family: "Outfit"; font-style: normal; font-weight: 100 900; font-display: optional; src: url(./site/fonts/outfit-latin.woff2) format("woff2"); }
+      @font-face { font-family: "Fraunces"; font-style: normal; font-weight: 100 900; font-display: swap; src: url(./site/fonts/fraunces-latin.woff2) format("woff2"); }
+      @font-face { font-family: "Fraunces"; font-style: italic; font-weight: 100 900; font-display: swap; src: url(./site/fonts/fraunces-italic-latin.woff2) format("woff2"); }
+    </style>
+    <link rel="preload" as="image" href="./site/hero-loop-640.webp" imagesrcset="./site/hero-loop-640.webp 640w, ./site/hero-loop.webp 1280w" imagesizes="(max-width: 700px) 320px, 100vw" fetchpriority="high" />
+    <link rel="stylesheet" href="./site/marketing.css" />
+    <link rel="stylesheet" href="./site/dossier.css" />
+  </head>
+  <body data-page="home">
+    <a class="skip" href="#content">Skip to content</a>
+
+    <header class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="./index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="5" y="3" width="14" height="18" rx="1" fill="none" stroke="#e7d3b0" stroke-width="1.6" />
+            <circle cx="15.2" cy="12" r="1.1" fill="#f0b36a" />
+          </svg>
+          The Place Department
+        </a>
+        <nav class="nav-links" id="nav-links" aria-label="Pages">
+          <button type="button" class="nav-close" data-nav-close aria-label="Close menu">Close</button>
+            <a href="./index.html" data-nav="home" aria-current="page">Front desk</a>
+            <a href="./lore.html" data-nav="lore">Lore</a>
+            <a href="./whatsnew.html" data-nav="whatsnew">What's new</a>
+            <a href="./privacy.html" data-nav="privacy">Privacy</a>
+        </nav>
+        <div class="nav-tools">
+          <a class="nav-play" href="Game/index.html">Play</a>
+          <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav-links" aria-label="Menu">Menu</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="content">
+      <section class="hero hero-omen" aria-label="Introduction">
+        <div class="stage" aria-hidden="true">
+          <div class="stage-shot" id="shotA"></div>
+          <div class="stage-shot" id="shotB"></div>
+          <img class="stage-poster" src="./site/hero-loop-640.webp" srcset="./site/hero-loop-640.webp 640w, ./site/hero-loop.webp 1280w" sizes="(max-width: 700px) 320px, 100vw" width="1280" height="720" alt="" fetchpriority="high" decoding="async" />
+          <video class="stage-loop" data-hero-loop muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true"></video><script>(function(){
+/* The poster above is the first paint and the LCP. The loop (hundreds of KB) is attached only after the page has loaded, so it never competes with the poster for a slow phone connection. */
+var v=document.querySelector('[data-hero-loop]');if(!v)return;
+if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+function go(){var s=window.innerWidth<=700?['hero-loop-sm.webm','video/webm; codecs=vp9','hero-loop-sm.mp4','video/mp4']:['hero-loop.webm','video/webm; codecs=vp9','hero-loop.mp4','video/mp4'];
+for(var i=0;i<s.length;i+=2){var e=document.createElement('source');e.src='./site/'+s[i];e.type=s[i+1];v.appendChild(e);}
+v.preload='auto';v.autoplay=true;v.load();var p=v.play();if(p&&p.catch)p.catch(function(){});}
+function later(){(window.requestIdleCallback||function(f){setTimeout(f,200)})(go,{timeout:1500});}
+if(document.readyState==='complete')later();else window.addEventListener('load',later,{once:true});
+})();</script>
+          <div class="stage-vignette"></div>
+        </div>
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="stamp stamp-filed">Filed</span></p>
+          <h1 class="display">The Place Department</h1>
+          <p class="pitch">A free browser action game for phone and desktop. One wallet with a bat guards Slice from the robot bailiffs. Noted.</p>
+          <p class="omen">It's where it's at.</p>
+          <a class="play-btn" href="Game/index.html" data-play="hero">Play</a>
+        </div>
+        <p class="fine-print">Anonymous statistics. No cookies. <a href="./privacy.html">Privacy</a></p>
+      </section>
+
+      <section class="shift" id="shift" aria-labelledby="shift-h">
+        <div class="wrap">
+          <p class="kicker">Duty roster</p>
+          <h2 id="shift-h">Choose your shift</h2>
+          <p class="lede">Two ways into the Hollow. Pick the file you open.</p>
+          <div class="shift-grid">
+            <article class="shift-card" data-shift="campaign">
+              <div class="shift-media" aria-hidden="true">
+                <img src="./assets/campaign/ch1.jpg" alt="" width="960" height="540" loading="lazy" decoding="async" />
+              </div>
+              <div class="shift-body">
+                <p class="shift-tag"><span class="stamp stamp-filed">Case file</span></p>
+                <h3>Campaign</h3>
+                <p class="shift-line">Story in six chapters. Progress stays filed.</p>
+                <a class="play-btn" href="Game/index.html?mode=campaign" data-play="shift-campaign">Play</a>
+              </div>
+            </article>
+            <article class="shift-card" data-shift="arcade">
+              <div class="shift-media" aria-hidden="true">
+                <img src="./assets/shots/shot-1.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async" />
+              </div>
+              <div class="shift-body">
+                <p class="shift-tag"><span class="stamp stamp-open">Hollow</span></p>
+                <h3>Arcade</h3>
+                <p class="shift-line">Endless Hollow. Bosses at waves 10, 20 and 30.</p>
+                <a class="play-btn" href="Game/index.html?mode=arcade" data-play="shift-arcade">Play</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="cast" id="cast" aria-labelledby="cast-h">
+        <div class="wrap">
+          <p class="kicker">Personnel</p>
+          <h2 id="cast-h">The cast</h2>
+          <p class="lede">Everything the Department lost, everything it sent to find it. Tap a card to hear them.</p>
+          <div class="cast-grid">
+          <article class="cast-card" data-cast="wallit" data-line="Return to sender.">
+            <div class="cast-art" data-bg="./assets/cast/wallit.webp" role="img" aria-label="Wallit"></div>
+            <div class="cast-body">
+              <p class="kicker">The lost thing that fought back</p>
+              <h3>Wallit</h3>
+              <p>A brown leather wallet with a bat and a bad attitude. Filed under Money; answers to nobody.</p>
+              <p class="cast-caption" data-cast-caption hidden aria-live="polite"></p>
+              <button type="button" class="cast-play" data-cast-play aria-label="Play Wallit's line">
+                <span class="cast-play-icon" aria-hidden="true"></span>
+                Hear them
+              </button>
+            </div>
+            <audio preload="none" data-cast-audio>
+              <source src="./assets/cast/voice/wallit.ogg" type="audio/ogg" />
+              <source src="./assets/cast/voice/wallit.mp3" type="audio/mpeg" />
+            </audio>
+          </article>
+          <article class="cast-card" data-cast="slice" data-line="Noted.">
+            <div class="cast-art" data-bg="./assets/cast/slice.webp" role="img" aria-label="Slice"></div>
+            <div class="cast-body">
+              <p class="kicker">The Department's tidiest knife</p>
+              <h3>Slice</h3>
+              <p>Pale, patient and dressed for a funeral. She stakes the ring and keeps count.</p>
+              <p class="cast-caption" data-cast-caption hidden aria-live="polite"></p>
+              <button type="button" class="cast-play" data-cast-play aria-label="Play Slice's line">
+                <span class="cast-play-icon" aria-hidden="true"></span>
+                Hear them
+              </button>
+            </div>
+            <audio preload="none" data-cast-audio>
+              <source src="./assets/cast/voice/slice.ogg" type="audio/ogg" />
+              <source src="./assets/cast/voice/slice.mp3" type="audio/mpeg" />
+            </audio>
+          </article>
+          <article class="cast-card" data-cast="yobot" data-line="Hello. Uploading victory.">
+            <div class="cast-art" data-bg="./assets/cast/yobot.webp" role="img" aria-label="Yo Bot"></div>
+            <div class="cast-body">
+              <p class="kicker">Clearing Crew, chirpy and cheap</p>
+              <h3>Yo Bot</h3>
+              <p>Stamped out by the batch, paid in bolts. Cheerful face, pincer claws, no questions asked.</p>
+              <p class="cast-caption" data-cast-caption hidden aria-live="polite"></p>
+              <button type="button" class="cast-play" data-cast-play aria-label="Play Yo Bot's line">
+                <span class="cast-play-icon" aria-hidden="true"></span>
+                Hear them
+              </button>
+            </div>
+            <audio preload="none" data-cast-audio>
+              <source src="./assets/cast/voice/yobot.ogg" type="audio/ogg" />
+              <source src="./assets/cast/voice/yobot.mp3" type="audio/mpeg" />
+            </audio>
+          </article>
+          <article class="cast-card" data-cast="spider" data-line="Delivery is to the named address.">
+            <div class="cast-art" data-bg="./assets/cast/spider.webp" role="img" aria-label="Spider Bot"></div>
+            <div class="cast-body">
+              <p class="kicker">The process server with six legs</p>
+              <h3>Spider Bot</h3>
+              <p>Delivers paper, not mercy. If it holds out a folded notice, you have been served.</p>
+              <p class="cast-caption" data-cast-caption hidden aria-live="polite"></p>
+              <button type="button" class="cast-play" data-cast-play aria-label="Play Spider Bot's line">
+                <span class="cast-play-icon" aria-hidden="true"></span>
+                Hear them
+              </button>
+            </div>
+            <audio preload="none" data-cast-audio>
+              <source src="./assets/cast/voice/spider.ogg" type="audio/ogg" />
+              <source src="./assets/cast/voice/spider.mp3" type="audio/mpeg" />
+            </audio>
+          </article>
+          </div>
+          <article class="cast-card cast-card--featured" data-cast="courier" data-line="Special delivery! Notice of striking!">
+            <div class="cast-art" data-bg="./assets/cast/courier.webp" role="img" aria-label="The Courier"></div>
+            <div class="cast-body">
+              <p class="kicker">Featured boss · Chapter 1</p>
+              <h3>The Courier</h3>
+              <p>An Alpha Yo Bot with a clipboard. It reads the notice aloud, then lands it on the circle.</p>
+              <p class="cast-caption" data-cast-caption hidden aria-live="polite"></p>
+              <button type="button" class="cast-play" data-cast-play aria-label="Play The Courier's line">
+                <span class="cast-play-icon" aria-hidden="true"></span>
+                Hear them
+              </button>
+            </div>
+            <audio preload="none" data-cast-audio>
+              <source src="./assets/cast/voice/courier.ogg" type="audio/ogg" />
+              <source src="./assets/cast/voice/courier.mp3" type="audio/mpeg" />
+            </audio>
+          </article>
+        </div>
+      </section>
+
+      <section class="campaign" id="campaign" aria-labelledby="campaign-h">
+        <div class="wrap">
+          <p class="kicker">Route</p>
+          <h2 id="campaign-h">The campaign</h2>
+          <p class="lede">Six chapters. The last three are sealed.</p>
+        </div>
+        <ol class="path" data-campaign tabindex="0" aria-label="Campaign chapters">
+          <li class="chapter" data-chapter="1">
+            <span class="c-num">Ch. 1</span><h3>Return to Sender</h3>
+            <div class="c-body"><img class="c-shot" src="./assets/campaign/ch1.jpg" alt="Chapter 1 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-1.png" alt="Boss silhouette, chapter 1" width="256" height="256" loading="lazy" /></div><p class="c-line">Wallit wakes under a stamp. A Courier brings the notice.</p></div>
+          </li>
+          <li class="chapter" data-chapter="2">
+            <span class="c-num">Ch. 2</span><h3>No Fixed Address</h3>
+            <div class="c-body"><img class="c-shot" src="./assets/campaign/ch2.jpg" alt="Chapter 2 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-2.png" alt="Boss silhouette, chapter 2" width="256" height="256" loading="lazy" /></div><p class="c-line">A wall 205 metres out. A gate with no handle.</p></div>
+          </li>
+          <li class="chapter" data-chapter="3">
+            <span class="c-num">Ch. 3</span><h3>The Clearing Floor</h3>
+            <div class="c-body"><img class="c-shot" src="./assets/campaign/ch3.jpg" alt="Chapter 3 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-3.png" alt="Boss silhouette, chapter 3" width="256" height="256" loading="lazy" /></div><p class="c-line">Past the gate, a belt carries cleared things away.</p></div>
+          </li>
+          <li class="chapter sealed" data-chapter="4" data-sealed="true">
+            <span class="c-num">Ch. 4</span><h3>The Process Servers</h3>
+            <div class="c-body" id="c-body-4" hidden><img class="c-shot" src="./assets/campaign/ch4.jpg" alt="Chapter 4 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-4.png" alt="Boss silhouette, chapter 4" width="256" height="256" loading="lazy" /></div><p class="c-line">Spider Bots arrive with one paper each, and wait.</p></div>
+            <button class="c-seal" type="button" aria-expanded="false" aria-controls="c-body-4"><span class="stamp stamp-open">Sealed</span><span class="c-tap">Tap to unseal</span></button>
+          </li>
+          <li class="chapter sealed" data-chapter="5" data-sealed="true">
+            <span class="c-num">Ch. 5</span><h3>Strike This Address</h3>
+            <div class="c-body" id="c-body-5" hidden><img class="c-shot" src="./assets/campaign/ch5.jpg" alt="Chapter 5 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-5.png" alt="Boss silhouette, chapter 5" width="256" height="256" loading="lazy" /></div><p class="c-line">The Registrar reads the ledger. Every shelf has a name.</p></div>
+            <button class="c-seal" type="button" aria-expanded="false" aria-controls="c-body-5"><span class="stamp stamp-open">Sealed</span><span class="c-tap">Tap to unseal</span></button>
+          </li>
+          <li class="chapter sealed" data-chapter="6" data-sealed="true">
+            <span class="c-num">Ch. 6</span><h3>Address Filed</h3>
+            <div class="c-body" id="c-body-6" hidden><img class="c-shot" src="./assets/campaign/ch6.jpg" alt="Chapter 6 location" width="960" height="540" loading="lazy" /><div class="c-boss"><img src="./assets/campaign/boss-6.png" alt="Boss silhouette, chapter 6" width="256" height="256" loading="lazy" /></div><p class="c-line">One last drawer. One address to file.</p></div>
+            <button class="c-seal" type="button" aria-expanded="false" aria-controls="c-body-6"><span class="stamp stamp-open">Sealed</span><span class="c-tap">Tap to unseal</span></button>
+          </li>
+        </ol>
+      </section>
+
+      <section class="cases" id="case-files" aria-labelledby="cases-h">
+        <div class="wrap">
+          <p class="kicker">Records</p>
+          <h2 id="cases-h">Example case files</h2>
+          <p class="lede">Examples only, not your saves. In the game, Campaign keeps your progress in three real files.</p>
+          <div class="dossier-grid">
+          <article class="dossier" data-case-file="1">
+            <header><h3>Example File 01</h3><span class="stamp stamp-blank">Example</span></header>
+            <p class="note">Address filed. Stamped, numbered, closed.</p>
+            <ol><li class="done"><span>Ch. 1</span> Return to Sender</li><li class="done"><span>Ch. 2</span> No Fixed Address</li><li class="done"><span>Ch. 3</span> The Clearing Floor</li><li class="done"><span>Ch. 4</span> The Process Servers</li><li class="done"><span>Ch. 5</span> Strike This Address</li><li class="done"><span>Ch. 6</span> Address Filed</li></ol>
+          </article>
+          <article class="dossier" data-case-file="2">
+            <header><h3>Example File 02</h3><span class="stamp stamp-blank">Example</span></header>
+            <p class="note">In progress. The Clearing Floor is next.</p>
+            <ol><li class="done"><span>Ch. 1</span> Return to Sender</li><li class="done"><span>Ch. 2</span> No Fixed Address</li><li class="done"><span>Ch. 3</span> The Clearing Floor</li><li class="now"><span>Ch. 4</span> The Process Servers</li><li class=""><span>Ch. 5</span> Strike This Address</li><li class=""><span>Ch. 6</span> Address Filed</li></ol>
+          </article>
+          <article class="dossier" data-case-file="3">
+            <header><h3>Example File 03</h3><span class="stamp stamp-blank">Example</span></header>
+            <p class="note">Unopened. Wallit has not arrived yet.</p>
+            <ol><li class=""><span>Ch. 1</span> Return to Sender</li><li class=""><span>Ch. 2</span> No Fixed Address</li><li class=""><span>Ch. 3</span> The Clearing Floor</li><li class=""><span>Ch. 4</span> The Process Servers</li><li class=""><span>Ch. 5</span> Strike This Address</li><li class=""><span>Ch. 6</span> Address Filed</li></ol>
+          </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="proof" id="proof" aria-labelledby="proof-h">
+        <div class="wrap">
+          <p class="kicker">Evidence</p>
+          <h2 id="proof-h">Exhibits and footage</h2>
+          <p class="lede">Frames from the game, as played.</p>
+          <div class="trailer" data-trailer data-embed="" data-video="./site/trailer.mp4" data-poster="./site/trailer-poster.jpg">
+            <button type="button" class="trailer-play" data-trailer-start aria-label="Play the trailer, 57 seconds, with sound">
+              <img src="./site/trailer-poster.jpg" alt="" width="1280" height="720" loading="lazy" />
+              <span>&#9654; Play the trailer</span>
+            </button>
+          </div>
+          <p class="fine-print trailer-note">Nothing loads until you press play.</p>
+          <div class="gallery" data-gallery>
+            <figure>
+              <button type="button" class="gallery-open" data-gallery-open data-index="0" aria-label="Open exhibit A, the hub doors">
+                <img src="./assets/shots/shot-1-640.jpg" srcset="./assets/shots/shot-1-640.jpg 640w, ./assets/shots/shot-1.jpg 1280w" sizes="(max-width: 520px) 100vw, (max-width: 860px) 50vw, 33vw" alt="The hub: three case-file doors at dusk" width="1280" height="720" loading="lazy" decoding="async" />
+              </button>
+              <figcaption>Exhibit A. Hub. Three case files, one Hollow.</figcaption>
+            </figure>
+            <figure>
+              <button type="button" class="gallery-open" data-gallery-open data-index="1" aria-label="Open exhibit B, Return to Sender">
+                <img src="./assets/shots/shot-2-640.jpg" srcset="./assets/shots/shot-2-640.jpg 640w, ./assets/shots/shot-2.jpg 1280w" sizes="(max-width: 520px) 100vw, (max-width: 860px) 50vw, 33vw" alt="Chapter 1: the RETURN TO SENDER stamp over the circle" width="1280" height="720" loading="lazy" decoding="async" />
+              </button>
+              <figcaption>Exhibit B. Ch. 1 Return to Sender. The stamp finds its mark.</figcaption>
+            </figure>
+            <figure>
+              <button type="button" class="gallery-open" data-gallery-open data-index="2" aria-label="Open exhibit C, No Fixed Address">
+                <img src="./assets/shots/shot-3-640.jpg" srcset="./assets/shots/shot-3-640.jpg 640w, ./assets/shots/shot-3.jpg 1280w" sizes="(max-width: 520px) 100vw, (max-width: 860px) 50vw, 33vw" alt="Chapter 2: a lantern on an empty road" width="1280" height="720" loading="lazy" decoding="async" />
+              </button>
+              <figcaption>Exhibit C. Ch. 2 No Fixed Address. A gate with no handle.</figcaption>
+            </figure>
+            <figure>
+              <button type="button" class="gallery-open" data-gallery-open data-index="3" aria-label="Open exhibit D, The Clearing Floor">
+                <img src="./assets/shots/shot-4-640.jpg" srcset="./assets/shots/shot-4-640.jpg 640w, ./assets/shots/shot-4.jpg 1280w" sizes="(max-width: 520px) 100vw, (max-width: 860px) 50vw, 33vw" alt="Chapter 3: lantern bots on the clearing floor" width="1280" height="720" loading="lazy" decoding="async" />
+              </button>
+              <figcaption>Exhibit D. Ch. 3 The Clearing Floor. The belt carries the cleared things away.</figcaption>
+            </figure>
+            <figure>
+              <button type="button" class="gallery-open" data-gallery-open data-index="4" aria-label="Open exhibit E, The Process Servers">
+                <img src="./assets/shots/shot-5-640.jpg" srcset="./assets/shots/shot-5-640.jpg 640w, ./assets/shots/shot-5.jpg 1280w" sizes="(max-width: 520px) 100vw, (max-width: 860px) 50vw, 33vw" alt="Chapter 4: a process server reads a notice on the lamp path" width="1280" height="720" loading="lazy" decoding="async" />
+              </button>
+              <figcaption>Exhibit E. Ch. 4 The Process Servers. Paper in hand. Served.</figcaption>
+            </figure>
+            <figure>
+              <button type="button" class="gallery-open" data-gallery-open data-index="5" aria-label="Open exhibit F, Strike This Address">
+                <img src="./assets/shots/shot-6-640.jpg" srcset="./assets/shots/shot-6-640.jpg 640w, ./assets/shots/shot-6.jpg 1280w" sizes="(max-width: 520px) 100vw, (max-width: 860px) 50vw, 33vw" alt="Chapter 5: the Registrar over an open ledger in the archive" width="1280" height="720" loading="lazy" decoding="async" />
+              </button>
+              <figcaption>Exhibit F. Ch. 5 Strike This Address. The Registrar reads the shelves.</figcaption>
+            </figure>
+            <figure>
+              <button type="button" class="gallery-open" data-gallery-open data-index="6" aria-label="Open exhibit G, Address Filed">
+                <img src="./assets/shots/shot-7-640.jpg" srcset="./assets/shots/shot-7-640.jpg 640w, ./assets/shots/shot-7.jpg 1280w" sizes="(max-width: 520px) 100vw, (max-width: 860px) 50vw, 33vw" alt="Chapter 6: The Order leaves the filed door as pages fly" width="1280" height="720" loading="lazy" decoding="async" />
+              </button>
+              <figcaption>Exhibit G. Ch. 6 Address Filed. The Order steps out. Pages fly.</figcaption>
+            </figure>
+            <figure>
+              <button type="button" class="gallery-open" data-gallery-open data-index="7" aria-label="Open exhibit H, The Courier">
+                <img src="./assets/shots/shot-8-640.jpg" srcset="./assets/shots/shot-8-640.jpg 640w, ./assets/shots/shot-8.jpg 1280w" sizes="(max-width: 520px) 100vw, (max-width: 860px) 50vw, 33vw" alt="Boss: The Courier raises a sealed notice under the moon" width="1280" height="720" loading="lazy" decoding="async" />
+              </button>
+              <figcaption>Exhibit H. Boss. The Courier. Notice of striking.</figcaption>
+            </figure>
+            <figure>
+              <button type="button" class="gallery-open" data-gallery-open data-index="8" aria-label="Open exhibit I, Wallit">
+                <img src="./assets/shots/shot-9-640.jpg" srcset="./assets/shots/shot-9-640.jpg 640w, ./assets/shots/shot-9.jpg 1280w" sizes="(max-width: 520px) 100vw, (max-width: 860px) 50vw, 33vw" alt="Cast: Wallit holds a RETURN TO SENDER stamp" width="1280" height="720" loading="lazy" decoding="async" />
+              </button>
+              <figcaption>Exhibit I. Cast. Wallit. No refunds. Return to sender.</figcaption>
+            </figure>
+          </div>
+          <figure class="share-card" data-share-card>
+            <img src="./assets/og-card.jpg" alt="The share card: RETURN TO SENDER over the filed circle." width="1200" height="630" loading="lazy" />
+            <figcaption>The card a shared link shows. <button type="button" class="share-copy" data-share-copy>Copy the link</button> <span class="share-status" role="status"></span></figcaption>
+          </figure>
+        </div>
+      </section>
+    </main>
+
+    <!-- hawkes-footer: written by breakingthrough's WebGL deploy (Tools/Web/site-footer.html); edit it there, not here -->
+    <footer class="hawkes-footer" data-hawkes-footer>
+      <style>
+        .hawkes-footer {
+          border-top: 1px solid var(--line, rgba(231, 211, 176, 0.22));
+          color: var(--muted, #cbbdaa);
+          background: var(--bg, #12100e);
+          font-family: Outfit, Arial, Helvetica, sans-serif;
+          font-size: 12px;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+        }
+        .hawkes-footer-inner {
+          width: min(1120px, calc(100% - 40px));
+          margin-inline: auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px 18px;
+          flex-wrap: wrap;
+          padding: 28px 0 40px;
+        }
+        .hawkes-footer a {
+          color: inherit;
+          text-decoration: none;
+        }
+        .hawkes-footer a:hover,
+        .hawkes-footer a:focus-visible {
+          color: var(--gold, #e7d3b0);
+        }
+        .hawkes-footer .hawkes-gen {
+          margin-left: auto;
+        }
+        .hawkes-footer .hawkes-privacy {
+          flex-basis: 100%;
+          margin: 0;
+          font-size: 12px;
+          letter-spacing: 0.02em;
+          text-transform: none;
+          opacity: 0.8;
+        }
+        .hawkes-footer .hawkes-gen strong {
+          color: var(--gold, #e7d3b0);
+          font-weight: 600;
+          letter-spacing: 0.24em;
+        }
+      </style>
+      <div class="hawkes-footer-inner">
+        <a class="hawkes-parent" href="https://hawkesbiomedical.com" data-hawkes-parent>A Hawkes Biomedical company</a>
+        <a class="hawkes-gen" href="https://hawkesgen.ai" data-hawkes-powered>Powered by <strong>HAWKES GEN</strong></a>
+        <p class="hawkes-privacy" data-hawkes-privacy>The Place Department collects anonymous gameplay statistics to improve the game: no cookies, no personal data, no IP stored.</p>
+      </div>
+    </footer>
+    <!-- /hawkes-footer -->
+
+    <script src="./site/marketing.js" defer></script>
+    <script src="./site/updates.js" defer></script>
+    <style>.nav-dot{display:inline-block;width:8px;height:8px;margin-left:6px;border-radius:50%;background:#f0b36a;vertical-align:middle}</style>
+    <script src="./site/campaign.js" defer></script>
+    <script>
+      // Playtest bridge: Studio opens the site root; game scenarios live on Game/index.html.
+      (function () {
+        if (window.hawkesPlaytest) return;
+        var scenarios = [
+          { id: "smoke", title: "Load the Game page through to Tap to play", seconds: 180, tags: ["smoke"] },
+          { id: "loading", title: "Honest loading card: stall Retry, MB, 10/60/done", seconds: 240, tags: ["full"] },
+          { id: "gallery", title: "Exhibits gallery and lightbox on the landing page", seconds: 90, tags: ["full", "site"] }
+        ];
+        function goGame(id, options) {
+          var u = new URL("Game/index.html", location.href);
+          u.searchParams.set("playtest", id || "smoke");
+          if (options && options.seed != null) u.searchParams.set("seed", String(options.seed));
+          if (options && options.speed != null) u.searchParams.set("speed", String(options.speed));
+          if (options && options.at) u.searchParams.set("at", String(options.at));
+          if (id === "loading") {
+            u.searchParams.set("stall", "1");
+            u.searchParams.set("stallms", "500");
+          }
+          location.replace(u.toString());
+        }
+        function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+        function whenReady() {
+          return new Promise(function (resolve) {
+            if (document.readyState === "complete") resolve();
+            else window.addEventListener("load", function () { resolve(); }, { once: true });
+          });
+        }
+        function runGallery(t) {
+          var report = { outcome: "fail", events: [], metrics: {}, problems: [], scenes: [] };
+          function event(type, detail) { report.events.push({ type: type, detail: detail || "", at: Date.now() }); if (t && t.event) t.event(type, detail); }
+          function scene(name) { report.scenes.push(name); if (t && t.scene) t.scene(name); }
+          function progress(p) { if (t && t.progress) t.progress(p); }
+          function finish(note) { report.outcome = "pass"; report.note = note || "done"; if (t && t.finish) t.finish(note); }
+          function problem(kind, msg) { report.problems.push({ kind: kind, message: msg }); if (t && t.problem) t.problem(kind, msg); }
+          return (async function () {
+            await whenReady();
+            await wait(50);
+            scene("Home");
+            var gallery = document.querySelector("[data-gallery]");
+            if (!gallery) { problem("bug", "gallery missing"); return report; }
+            gallery.scrollIntoView({ behavior: "instant", block: "center" });
+            await wait(400);
+            var imgs = gallery.querySelectorAll("img");
+            imgs.forEach(function (img) {
+              if (!img.hasAttribute("loading") || img.getAttribute("loading") !== "lazy") problem("polish", "gallery image missing loading=lazy");
+              if (!img.getAttribute("srcset")) problem("polish", "gallery image missing srcset");
+            });
+            if (imgs.length < 6 || imgs.length > 9) problem("bug", "gallery should show 6-9 exhibits, saw " + imgs.length);
+            else event("gallery-count", String(imgs.length));
+            var captions = gallery.querySelectorAll("figcaption");
+            event("gallery-captions", String(captions.length));
+            progress(0.35);
+            var openBtn = gallery.querySelector("[data-gallery-open]");
+            if (!openBtn) { problem("bug", "gallery open control missing"); return report; }
+            openBtn.click();
+            await wait(300);
+            var lb = document.querySelector("[data-lightbox]");
+            if (!lb) { problem("bug", "lightbox did not open"); return report; }
+            event("lightbox-open");
+            scene("Lightbox");
+            progress(0.55);
+            document.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+            await wait(200);
+            event("lightbox-arrow");
+            document.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft", bubbles: true }));
+            await wait(200);
+            var track = lb.querySelector("[data-lightbox-track]");
+            if (track) {
+              track.dispatchEvent(new PointerEvent("pointerdown", { pointerId: 1, clientX: 200, bubbles: true }));
+              track.dispatchEvent(new PointerEvent("pointerup", { pointerId: 1, clientX: 40, bubbles: true }));
+              await wait(200);
+              event("lightbox-swipe");
+            }
+            progress(0.85);
+            document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+            await wait(200);
+            if (document.querySelector("[data-lightbox]")) problem("bug", "lightbox did not close on Escape");
+            else event("lightbox-close");
+            var og = document.querySelector('meta[property="og:image"]');
+            if (og && /og-card\.jpg/.test(og.content)) event("og-home", og.content);
+            else problem("bug", "home og:image should be og-card.jpg");
+            async function checkOg(path, needle, label) {
+              try {
+                var res = await fetch(path, { cache: "no-store" });
+                var html = await res.text();
+                if (html.indexOf(needle) >= 0) event(label, needle);
+                else problem("bug", label + " missing " + needle);
+              } catch (err) {
+                problem("bug", label + " fetch failed");
+              }
+            }
+            await checkOg("./lore.html", "og-lore.jpg", "og-lore");
+            await checkOg("./Game/index.html", "og-game.jpg", "og-game");
+            progress(1);
+            var bugs = report.problems.filter(function (p) { return p.kind === "bug"; });
+            if (bugs.length) {
+              report.outcome = "error";
+              report.note = bugs[0].message;
+              if (t && t.finish) { /* do not finish as done */ }
+              else if (t && t.problem) { /* already logged */ }
+              return report;
+            }
+            finish("gallery lightbox ok");
+            return report;
+          })();
+        }
+        var lastReport = null;
+        window.hawkesPlaytest = {
+          version: 1,
+          product: "theplacedepartment",
+          scenarios: function () { return scenarios.map(function (s) { return Object.assign({}, s); }); },
+          start: function (id, options) {
+            if (id === "gallery") {
+              return runGallery(null).then(function (r) { lastReport = r; return r; });
+            }
+            goGame(id, options || {});
+            return new Promise(function () {});
+          },
+          stop: function () {},
+          state: function () {
+            if (lastReport) {
+              var ok = lastReport.outcome === "pass" || lastReport.outcome === "done";
+              return { ready: true, status: ok ? "done" : "failed", progress: 1, scene: "Home", note: lastReport.note || "" };
+            }
+            return { ready: true, status: "running", progress: 0, scene: "Home", note: "opening Game page" };
+          },
+          report: function () { return lastReport; }
+        };
+        var q = new URLSearchParams(location.search);
+        var auto = q.get("playtest");
+        if (auto === "gallery") {
+          window.hawkesPlaytest.start("gallery", { seed: Number(q.get("seed") || 1) || 1 });
+        } else if (auto === "smoke" || auto === "loading") {
+          goGame(auto, { seed: Number(q.get("seed") || 1) || 1, speed: Number(q.get("speed") || 1) || 1, at: q.get("at") || undefined });
+        }
+      })();
+    </script>
+  </body>
+</html>

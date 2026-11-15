@@ -2,9 +2,10 @@
    Caches the marketing shell + offline card. Never the Unity build.
    HTML navigations are network-first so a new deploy is never stale. */
 (function () {
-  var CACHE = "place-shell-v1";
+  var CACHE = "place-shell-v2";
   var SHELL = [
     "./offline.html",
+    "./home.html",
     "./favicon.svg",
     "./manifest.webmanifest",
     "./assets/icons/icon-192.png",
