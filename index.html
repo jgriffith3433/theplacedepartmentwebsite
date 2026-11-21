@@ -2,579 +2,102 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Motion · The rules of physics, level 7 of 9</title>
-<meta name="description" content="Motion: the rule for things our size · left alone, a moving thing keeps moving, forever · a push doesn't keep it going: a push changes it. Level 7 of nine on the rules of physics, from the quark to the universe, drawn from measured numbers and explained simply by an A.I. narrator, with captions. Flip the page for its reverse: friction.">
-<meta name="theme-color" content="#03050b">
-<meta property="og:title" content="Motion · The rules of physics, level 7 of 9">
-<meta property="og:description" content="Motion: the rule for things our size · left alone, a moving thing keeps moving, forever · a push doesn't keep it going: a push changes it. Level 7 of nine on the rules of physics, from the quark to the universe, drawn from measured numbers and explained simply by an A.I. narrator, with captions. Flip the page for its reverse: friction.">
-<meta name="color-scheme" content="dark">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Have a nice weekend</title>
+<meta name="description" content="A friendly A.I. waving hello. Have a nice weekend.">
+<meta name="theme-color" content="#f6efe2">
 <style>
-:root{--ink:#eef4ff;--dim:rgba(214,228,255,.66)}
-html,body{margin:0;height:100%;overflow:hidden;color:var(--ink);font-family:"Space Grotesk",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
-#c{position:fixed;inset:0;width:100%;height:100%;display:block}
-#hud{position:fixed;left:0;right:0;top:0;pointer-events:none;text-align:center;padding:max(14px,env(safe-area-inset-top)) 16px 30px;background:linear-gradient(rgba(3,5,11,.72),rgba(3,5,11,.3) 65%,transparent);z-index:4}
-.k{font:600 11px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.38em;color:var(--dim);text-transform:uppercase}
-.k b{color:#8fc2ff;font-weight:600}
-.name{font-weight:700;font-size:clamp(30px,6.2vw,76px);line-height:1.02;letter-spacing:.06em;text-transform:uppercase;margin:.18em 0 .12em;color:#fff;text-shadow:0 0 28px rgba(110,165,255,.7),0 0 6px rgba(160,200,255,.55),0 2px 14px rgba(0,0,0,.9);animation:rise 1.1s cubic-bezier(.2,.8,.2,1)}
-@keyframes rise{from{opacity:0;letter-spacing:.3em;filter:blur(6px)}to{opacity:1;letter-spacing:.06em;filter:blur(0)}}
-.sub{font:400 clamp(11px,1.3vw,14px)/1.5 "JetBrains Mono",ui-monospace,monospace;color:var(--dim);letter-spacing:.05em;max-width:920px;margin:0 auto}
-:root{--acc:#8fc2ff}
-body{perspective:2400px;background:#000}
-#page{position:fixed;inset:0;transform-origin:50% 50%;will-change:transform;background:#03050b;overflow:hidden}
-#shade{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:40;background:linear-gradient(90deg,rgba(0,0,0,.8),rgba(0,0,0,.05) 42%,rgba(255,255,255,.22) 52%,rgba(0,0,0,.65))}
-#cc{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(max(12px,env(safe-area-inset-bottom)) + 74px);width:max-content;max-width:min(92vw,820px);text-align:center;pointer-events:none;z-index:6}
-#cc span{display:inline-block;font:500 clamp(16px,2.2vw,25px)/1.4 "Space Grotesk",system-ui,sans-serif;color:#fff;background:rgba(3,6,14,.74);padding:.34em .8em;border-radius:10px;box-shadow:0 0 0 1px rgba(143,194,255,.22),0 8px 30px rgba(0,0,0,.5)}
-#cc span:empty{display:none}
-#snd{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(max(12px,env(safe-area-inset-bottom)) + 132px);z-index:7;font:600 clamp(12px,1.5vw,15px)/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:#03050b;background:linear-gradient(180deg,#d7e9ff,#8fc2ff);padding:.8em 1.2em;border-radius:999px;box-shadow:0 0 30px rgba(143,194,255,.6);cursor:pointer;user-select:none;-webkit-user-select:none;animation:pulse 1.6s ease-in-out infinite;white-space:nowrap}
-#snd.on{left:auto;right:max(14px,env(safe-area-inset-right));top:max(14px,env(safe-area-inset-top));bottom:auto;transform:none;animation:none;background:rgba(3,6,14,.7);color:var(--acc);box-shadow:0 0 0 1px rgba(143,194,255,.4);font-size:11px;padding:.7em 1em}
-@keyframes pulse{50%{box-shadow:0 0 54px rgba(143,194,255,.95)}}
-#flip{position:fixed;left:max(14px,env(safe-area-inset-left));top:max(14px,env(safe-area-inset-top));z-index:8;cursor:pointer;user-select:none;-webkit-user-select:none;font:600 11px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:#03050b;background:linear-gradient(135deg,#fff 0 46%,#8fc2ff 46% 100%);padding:.9em 1.15em .9em 1em;border-radius:4px 14px 4px 14px;box-shadow:0 0 22px rgba(143,194,255,.55),0 6px 16px rgba(0,0,0,.5);transition:transform .2s;outline:none}
-#flip:hover,#flip:focus-visible{transform:rotate(-3deg) scale(1.06)}
-#ruler{position:fixed;left:max(52px,env(safe-area-inset-left));right:max(52px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));height:56px;z-index:6}
-#ruler:before{content:"";position:absolute;left:0;right:0;top:20px;height:1px;background:linear-gradient(90deg,transparent,rgba(143,194,255,.55) 6%,rgba(143,194,255,.55) 94%,transparent)}
-#ruler a{position:absolute;top:0;transform:translateX(-50%);text-decoration:none;color:rgba(214,228,255,.66);font:400 10px/1.25 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.04em;text-align:center;white-space:nowrap;padding-top:30px;outline:none}
-#ruler a:before{content:"";position:absolute;left:50%;top:15px;width:9px;height:9px;margin-left:-5px;border-radius:50%;background:#0b1326;box-shadow:0 0 0 1.5px rgba(143,194,255,.75);transition:transform .2s,background .2s}
-#ruler a:hover,#ruler a:focus-visible{color:#fff}
-#ruler a:hover:before,#ruler a:focus-visible:before{transform:scale(1.5);background:var(--acc)}
-#ruler a.up{padding-top:0;top:-14px}
-#ruler a.up:before{top:29px}
-#ruler a.me{color:#fff;font-weight:600}
-#ruler a.me:before{background:#fff;box-shadow:0 0 0 2px var(--acc),0 0 18px 4px rgba(143,194,255,.9);transform:scale(1.35)}
-#ruler a b{display:block;font-weight:600;color:var(--acc)}
-#ruler .cap{position:absolute;top:-30px;font:400 10px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.2em;text-transform:uppercase;color:rgba(214,228,255,.4)}
-#ruler .cap.l{left:-30px}#ruler .cap.r{right:-30px}
-.nav{position:fixed;top:50%;transform:translateY(-50%);z-index:5;display:flex;flex-direction:column;align-items:center;gap:7px;text-decoration:none;color:rgba(214,228,255,.7);font:400 10px/1.25 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.08em;text-align:center;text-transform:uppercase;padding:14px 8px;outline:none;text-shadow:0 0 8px #000}
-.nav i{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:rgba(3,6,14,.62);box-shadow:0 0 0 1.5px rgba(143,194,255,.55);font:300 28px/1 system-ui,sans-serif;font-style:normal;color:#fff;padding-bottom:3px;box-sizing:border-box;transition:transform .2s,box-shadow .2s,background .2s}
-.nav:hover i,.nav:focus-visible i{transform:scale(1.12);background:rgba(143,194,255,.25);box-shadow:0 0 0 2px #8fc2ff,0 0 24px rgba(143,194,255,.75)}
-.nav.l{left:max(6px,env(safe-area-inset-left))}
-.nav.r{right:max(6px,env(safe-area-inset-right))}
-.nav b{display:block;color:#8fc2ff;font-weight:600}
-/* ---- the back of the page: everything the other way round. Ink on paper instead of light on black, a quiet serif
-   instead of loud capitals, the ruler and the arrows reversed. */
-#hud2{display:none;position:fixed;left:0;right:0;top:0;pointer-events:none;text-align:center;padding:max(16px,env(safe-area-inset-top)) 16px 26px;z-index:4}
-.bk{font:400 12px/1 Georgia,"Times New Roman",serif;font-style:italic;letter-spacing:.06em;color:rgba(40,28,16,.7)}
-.bname{font:500 clamp(34px,6.6vw,84px)/1.02 "Playfair Display",Georgia,"Times New Roman",serif;font-style:italic;letter-spacing:-.01em;text-transform:lowercase;margin:.16em 0 .14em;color:#17110a;animation:settle 1.1s cubic-bezier(.2,.8,.2,1)}
-@keyframes settle{from{opacity:0;letter-spacing:-.08em;filter:blur(5px)}to{opacity:1;letter-spacing:-.01em;filter:blur(0)}}
-.bsub{font:400 clamp(12px,1.35vw,15px)/1.5 Georgia,"Times New Roman",serif;font-style:italic;color:rgba(40,28,16,.75);max-width:860px;margin:0 auto}
-body.flip #hud2{display:block}
-body.flip .fronthide{display:none!important}
-body.flip #page{background:#f1eadc}
-body.flip canvas.ink{filter:invert(1) hue-rotate(180deg);mix-blend-mode:multiply}
-#c2{position:fixed;inset:0;width:100%;height:100%;display:none}
-body.flip #c2{display:block}
-body.flip #cc span{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-weight:400;color:#17110a;background:rgba(255,252,244,.9);box-shadow:0 0 0 1px rgba(70,45,20,.28),0 8px 26px rgba(70,45,20,.18)}
-body.flip #snd{color:#f1eadc;background:linear-gradient(180deg,#3a2a18,#17110a);box-shadow:0 0 26px rgba(60,40,20,.45)}
-body.flip #snd.on{background:rgba(255,252,244,.85);color:#7a3d0e;box-shadow:0 0 0 1px rgba(90,60,30,.5)}
-body.flip #flip{color:#f1eadc;background:linear-gradient(315deg,#17110a 0 46%,#7a3d0e 46% 100%);box-shadow:0 6px 16px rgba(60,40,20,.35);border-radius:14px 4px 14px 4px}
-body.flip #ruler:before{background:linear-gradient(90deg,transparent,rgba(70,45,20,.55) 6%,rgba(70,45,20,.55) 94%,transparent)}
-body.flip #ruler a{color:rgba(40,28,16,.7);font-family:Georgia,serif;font-style:italic;font-size:11px}
-body.flip #ruler a:before{background:#f1eadc;box-shadow:0 0 0 1.5px rgba(70,45,20,.8)}
-body.flip #ruler a:hover,body.flip #ruler a:focus-visible{color:#000}
-body.flip #ruler a.me{color:#17110a}
-body.flip #ruler a.me:before{background:#17110a;box-shadow:0 0 0 2px #7a3d0e}
-body.flip #ruler a b{color:#7a3d0e}
-body.flip #ruler .cap{color:rgba(40,28,16,.45);font-family:Georgia,serif;font-style:italic;text-transform:none;letter-spacing:.06em;font-size:11px}
-body.flip .nav{color:rgba(40,28,16,.75);text-shadow:none;font-family:Georgia,serif;font-style:italic;text-transform:none;font-size:11px}
-body.flip .nav i{background:rgba(255,252,244,.82);color:#17110a;box-shadow:0 0 0 1.5px rgba(70,45,20,.6)}
-body.flip .nav:hover i,body.flip .nav:focus-visible i{background:#17110a;color:#f1eadc;box-shadow:0 0 0 2px #7a3d0e}
-body.flip .nav b{color:#7a3d0e}
-@media (max-width:760px){.nav{top:auto;bottom:calc(max(12px,env(safe-area-inset-bottom)) - 4px);transform:none;padding:4px 2px}.nav.l{left:max(4px,env(safe-area-inset-left))}.nav.r{right:max(4px,env(safe-area-inset-right))}#hud,#hud2{padding-top:calc(max(14px,env(safe-area-inset-top)) + 84px)}.sub,.bsub{font-size:11px;line-height:1.4}#ruler a:not(.me) span{display:none}#ruler a:not(.me) b{font-size:9px}#ruler .cap{display:none}#cc{bottom:calc(max(12px,env(safe-area-inset-bottom)) + 70px)}.nav span{display:none}.nav i{width:40px;height:40px;font-size:23px}#flip{font-size:10px;padding:.8em .9em}}
-@media (prefers-reduced-motion:reduce){#snd,.bname{animation:none}}
-/* ---- talking to the page. Front: a glass panel on the right. Back: paper, on the left, the bubbles swapped. */
-#askb{position:fixed;right:max(14px,env(safe-area-inset-right));top:calc(max(14px,env(safe-area-inset-top)) + 44px);z-index:9;border:0;cursor:pointer;font:600 11px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:#03050b;background:linear-gradient(180deg,#d7e9ff,#8fc2ff);padding:.9em 1.15em;border-radius:999px;box-shadow:0 0 22px rgba(143,194,255,.5),0 6px 16px rgba(0,0,0,.5);transition:transform .2s}
-#askb:hover,#askb:focus-visible{transform:scale(1.06);outline:none}
-#askb.open{background:rgba(3,6,14,.7);color:var(--acc);box-shadow:0 0 0 1px rgba(143,194,255,.4)}
-#ask{position:fixed;right:max(78px,env(safe-area-inset-right));top:calc(max(14px,env(safe-area-inset-top)) + 92px);width:min(380px,calc(100vw - 156px));max-height:min(520px,calc(100vh - 270px));z-index:9;display:none;flex-direction:column;background:rgba(3,6,14,.88);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:16px;box-shadow:0 0 0 1px rgba(143,194,255,.35),0 18px 50px rgba(0,0,0,.6);color:#eaf2ff;font:400 15px/1.45 "Space Grotesk",system-ui,sans-serif;overflow:hidden}
-#ask.open{display:flex;animation:askin .25s ease-out}
-@keyframes askin{from{opacity:0;transform:translateY(-8px)}}
-#ask header{display:flex;align-items:center;gap:8px;padding:11px 10px 10px 14px;border-bottom:1px solid rgba(143,194,255,.2)}
-#ask header div{flex:1;min-width:0;font:400 10px/1.4 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:rgba(214,228,255,.6)}
-#ask header b{display:block;color:var(--acc);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#ask button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-#ask header button{width:32px;height:32px;border-radius:50%;font-size:16px;line-height:1;color:rgba(214,228,255,.85)}
-#ask header button:hover,#ask header button:focus-visible{background:rgba(143,194,255,.2);outline:none}
-#askv.off{opacity:.45}
-#asklog{flex:1;overflow-y:auto;padding:12px 14px 4px;display:flex;flex-direction:column;gap:9px;overscroll-behavior:contain}
-#asklog p{margin:0;max-width:88%;padding:.5em .8em;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere}
-#asklog p.ai{align-self:flex-start;background:rgba(143,194,255,.1);border-bottom-left-radius:4px}
-#asklog p.me{align-self:flex-end;background:rgba(143,194,255,.3);color:#fff;border-bottom-right-radius:4px}
-#asklog p.err{color:#ffc890}
-#asklog p.wait:empty:after{content:"· · ·";letter-spacing:.2em;animation:askw 1.1s ease-in-out infinite}
-@keyframes askw{50%{opacity:.25}}
-#asklog i{align-self:center;font:400 10px/1.3 "JetBrains Mono",ui-monospace,monospace;font-style:normal;letter-spacing:.12em;text-transform:uppercase;color:rgba(214,228,255,.5);padding:4px 0}
-#askchips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px 2px}
-#askchips button{font-size:12.5px;padding:.4em .8em;border-radius:999px;box-shadow:0 0 0 1px rgba(143,194,255,.4);color:#cfe2ff}
-#askchips button:hover,#askchips button:focus-visible{background:rgba(143,194,255,.2);outline:none}
-#askf{display:flex;align-items:center;gap:6px;padding:10px}
-#aski{flex:1;min-width:0;font:inherit;color:#fff;background:rgba(143,194,255,.1);border:0;border-radius:999px;padding:.62em 1em;outline:none;box-shadow:0 0 0 1px rgba(143,194,255,.25)}
-#aski:focus{box-shadow:0 0 0 1.5px var(--acc)}
-#aski::placeholder{color:rgba(214,228,255,.45)}
-#askf button{flex:none;width:38px;height:38px;border-radius:50%;font-size:17px;line-height:1}
-#asks{background:var(--acc)!important;color:#03050b!important;font-weight:700}
-#asks:disabled{opacity:.4;cursor:default}
-#askm{box-shadow:0 0 0 1px rgba(143,194,255,.4)}
-#askm.on{background:#ff6b6b!important;color:#fff;box-shadow:0 0 0 0 rgba(255,107,107,.7);animation:askmic 1.2s ease-out infinite}
-@keyframes askmic{to{box-shadow:0 0 0 14px rgba(255,107,107,0)}}
-body.flip #askb{right:auto;left:max(14px,env(safe-area-inset-left));color:#f1eadc;background:linear-gradient(180deg,#3a2a18,#17110a);box-shadow:0 6px 16px rgba(60,40,20,.35);font-family:Georgia,serif;font-style:italic;text-transform:none;letter-spacing:.04em;font-size:13px;font-weight:400}
-body.flip #askb.open{background:rgba(255,252,244,.85);color:#7a3d0e;box-shadow:0 0 0 1px rgba(90,60,30,.5)}
-body.flip #ask{right:auto;left:max(78px,env(safe-area-inset-left));background:rgba(255,252,244,.94);color:#17110a;font-family:Georgia,"Times New Roman",serif;box-shadow:0 0 0 1px rgba(70,45,20,.35),0 18px 44px rgba(70,45,20,.28)}
-body.flip #ask header{border-color:rgba(70,45,20,.2);flex-direction:row-reverse;padding:11px 14px 10px 10px}
-body.flip #ask header div{font-family:Georgia,serif;font-style:italic;text-transform:none;letter-spacing:.04em;font-size:11.5px;color:rgba(40,28,16,.6);text-align:right}
-body.flip #ask header b{color:#7a3d0e}
-body.flip #ask header button{color:rgba(40,28,16,.8)}
-body.flip #ask header button:hover,body.flip #ask header button:focus-visible{background:rgba(70,45,20,.14)}
-body.flip #asklog p.ai{align-self:flex-end;background:rgba(70,45,20,.08);font-style:italic;border-radius:14px 14px 4px 14px}
-body.flip #asklog p.me{align-self:flex-start;background:#17110a;color:#f1eadc;border-radius:14px 14px 14px 4px}
-body.flip #asklog p.err{color:#a8421a}
-body.flip #asklog i{font-family:Georgia,serif;font-style:italic;text-transform:none;letter-spacing:.04em;font-size:11.5px;color:rgba(40,28,16,.55)}
-body.flip #askchips{flex-direction:row-reverse}
-body.flip #askchips button{box-shadow:0 0 0 1px rgba(70,45,20,.45);color:#3a2a18;font-style:italic}
-body.flip #askchips button:hover,body.flip #askchips button:focus-visible{background:rgba(70,45,20,.12)}
-body.flip #askf{flex-direction:row-reverse}
-body.flip #aski{color:#17110a;background:rgba(70,45,20,.07);box-shadow:0 0 0 1px rgba(70,45,20,.3)}
-body.flip #aski:focus{box-shadow:0 0 0 1.5px #7a3d0e}
-body.flip #aski::placeholder{color:rgba(40,28,16,.45)}
-body.flip #asks{background:#17110a!important;color:#f1eadc!important}
-body.flip #askm{box-shadow:0 0 0 1px rgba(70,45,20,.45)}
-@media (max-width:760px){#askb{font-size:10px;padding:.8em .9em}#ask,body.flip #ask{left:8px;right:8px;top:auto;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 70px);width:auto;max-height:min(62vh,480px)}}
-
+  :root { --paper: #f6efe2; --ink: #2b2a33; --soft: #6b6878; --body: #fffaf0; --line: #2b2a33; --accent: #ff8a5c; --accent2: #4fb7a8; --cheek: #ffb3a1; --screen: #26303f; --glow: #9ff0df; --shadow: rgba(43, 42, 51, .14); }
+  @media (prefers-color-scheme: dark) { :root { --paper: #171a22; --ink: #f3eee4; --soft: #a5a2b3; --body: #e9e4d8; --line: #0e1016; --accent: #ff9a70; --accent2: #5fcdbd; --cheek: #ff9d8a; --screen: #1d2531; --glow: #a8f5e5; --shadow: rgba(0, 0, 0, .45); } }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { background: var(--paper); color: var(--ink); font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 16px; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+  .sun { position: fixed; width: 60vmax; height: 60vmax; border-radius: 50%; right: -22vmax; top: -26vmax; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 34%, transparent), transparent 68%); pointer-events: none; }
+  .stage { position: relative; width: min(420px, 86vw); }
+  .bubble { position: relative; margin: 0 auto 6px; width: fit-content; max-width: 100%; background: var(--body); color: #2b2a33; border: 3px solid var(--line); border-radius: 26px; padding: 14px 24px; font-size: clamp(26px, 7.4vw, 40px); font-weight: 800; letter-spacing: -.01em; line-height: 1.1; text-align: center; box-shadow: 0 8px 0 var(--shadow); transform-origin: 50% 100%; animation: pop .7s cubic-bezier(.2, 1.5, .4, 1) .5s both; }
+  .bubble::after { content: ""; position: absolute; left: 50%; bottom: -14px; width: 22px; height: 22px; margin-left: -11px; background: var(--body); border-right: 3px solid var(--line); border-bottom: 3px solid var(--line); transform: rotate(45deg); border-bottom-right-radius: 5px; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; cursor: pointer; }
+  .bot { animation: bob 3.2s ease-in-out infinite; transform-origin: 200px 380px; }
+  .arm { transform-origin: 290px 262px; animation: wave 1.5s ease-in-out infinite; }
+  .eye { transform-origin: center; transform-box: fill-box; animation: blink 4.6s infinite; }
+  .ant { transform-origin: 200px 92px; animation: sway 3.2s ease-in-out infinite; }
+  .bulb { animation: pulse 1.6s ease-in-out infinite; }
+  .ground { transform-origin: 200px 404px; animation: squash 3.2s ease-in-out infinite; }
+  .talk .mouth { animation: say .26s ease-in-out infinite alternate; transform-origin: center; transform-box: fill-box; }
+  button { margin-top: 18px; font: inherit; font-size: 16px; font-weight: 700; color: var(--ink); background: transparent; border: 2px solid color-mix(in srgb, var(--ink) 30%, transparent); border-radius: 999px; padding: 10px 18px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  button:hover { border-color: var(--ink); }
+  button:focus-visible, svg:focus-visible { outline: 3px solid var(--accent2); outline-offset: 4px; }
+  @keyframes pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+  @keyframes squash { 0%, 100% { transform: scaleX(1); opacity: 1; } 50% { transform: scaleX(.86); opacity: .7; } }
+  @keyframes wave { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(26deg); } }
+  @keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+  @keyframes pulse { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+  @keyframes blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.08); } }
+  @keyframes say { from { transform: scaleY(.75); } to { transform: scaleY(1.2); } }
+  @media (prefers-reduced-motion: reduce) { .bot, .ground, .ant, .bulb, .eye { animation: none; } .arm { animation-duration: 3s; } }
 </style>
 </head>
 <body>
-<canvas id="c" class="ink"></canvas>
-<div id="hud" class="fronthide">
-  <div class="k" id="k"></div>
-  <h1 class="name" id="name"></h1>
-  <div class="sub" id="sub"></div>
-</div>
+<div class="sun"></div>
+<main class="stage">
+  <h1 class="bubble">Have a nice weekend!</h1>
+  <svg id="bot" viewBox="0 0 400 420" role="img" aria-label="A smiling A.I. robot waving" tabindex="0">
+    <ellipse class="ground" cx="200" cy="404" rx="96" ry="11" fill="var(--shadow)"/>
+    <g class="bot" stroke="var(--line)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+      <!-- the waving arm, behind the body -->
+      <g class="arm">
+        <path d="M290 262 Q336 232 340 176" fill="none" stroke-width="22" stroke="var(--line)"/>
+        <path d="M290 262 Q336 232 340 176" fill="none" stroke-width="11" stroke="var(--body)"/>
+        <circle cx="341" cy="160" r="22" fill="var(--accent)"/>
+        <path d="M329 144 L325 128 M341 140 L341 122 M353 144 L357 128" fill="none"/>
+      </g>
+      <!-- the resting arm -->
+      <path d="M110 262 Q78 290 82 330" fill="none" stroke-width="22" stroke="var(--line)"/>
+      <path d="M110 262 Q78 290 82 330" fill="none" stroke-width="11" stroke="var(--body)"/>
+      <circle cx="82" cy="340" r="19" fill="var(--accent)"/>
+      <!-- legs -->
+      <rect x="150" y="352" width="34" height="44" rx="14" fill="var(--body)"/>
+      <rect x="216" y="352" width="34" height="44" rx="14" fill="var(--body)"/>
+      <!-- body -->
+      <rect x="106" y="232" width="188" height="136" rx="44" fill="var(--body)"/>
+      <path d="M200 290 c-9 -15 -31 -5 -22 12 c5 9 15 15 22 21 c7 -6 17 -12 22 -21 c9 -17 -13 -27 -22 -12z" fill="var(--accent)"/>
+      <!-- antenna -->
+      <g class="ant">
+        <path d="M200 92 L200 58" fill="none"/>
+        <circle class="bulb" cx="200" cy="46" r="13" fill="var(--accent2)"/>
+      </g>
+      <!-- head -->
+      <rect x="60" y="88" width="24" height="60" rx="10" fill="var(--accent2)"/>
+      <rect x="316" y="88" width="24" height="60" rx="10" fill="var(--accent2)"/>
+      <rect x="78" y="88" width="244" height="158" rx="56" fill="var(--body)"/>
+      <rect x="102" y="110" width="196" height="114" rx="40" fill="var(--screen)"/>
+      <g stroke="none">
+        <ellipse class="eye" cx="158" cy="154" rx="15" ry="19" fill="var(--glow)"/>
+        <ellipse class="eye" cx="242" cy="154" rx="15" ry="19" fill="var(--glow)"/>
+        <circle cx="163" cy="147" r="5" fill="#fff"/>
+        <circle cx="247" cy="147" r="5" fill="#fff"/>
+        <ellipse cx="128" cy="184" rx="13" ry="8" fill="var(--cheek)" opacity=".85"/>
+        <ellipse cx="272" cy="184" rx="13" ry="8" fill="var(--cheek)" opacity=".85"/>
+      </g>
+      <path class="mouth" d="M168 182 Q200 214 232 182 Q200 196 168 182z" fill="var(--glow)" stroke="var(--glow)" stroke-width="5"/>
+    </g>
+  </svg>
+</main>
+<button id="hear" type="button" aria-label="Hear it"><svg viewBox="0 0 24 24" style="width:20px;height:20px;cursor:inherit" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.6 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Hear it</button>
+<audio id="voice" src="weekend.mp3" preload="auto"></audio>
 <script>
-(function () {
-'use strict';
-// One of nine pages on the rules of physics, from the quark up to the universe. The front shows the rule in charge at
-// one level while an AI voice explains it; the back of the page (Flip) is the reverse of that rule, told by the other
-// narrator. Each picture is a film timed to its narrator and works its physics out here in the page from measured
-// constants. Captions are cut from the voices' own timing. The ruler and the side arrows link the nine sites.
-var D = {"i":6,"key":"motion","title":"Motion · The rules of physics, level 7 of 9","chat":"https://api.hawkesgen.ai/v1/public/scale-chat","scales":[{"exp":1,"name":"The Quark","short":"quark","size":"never alone","sub":"the smallest pieces we know · three of them make a proton · the rule down here: you can never pull one out","domain":"doseofdestruction.com"},{"exp":2,"name":"The Nucleus","short":"nucleus","size":"held tight","sub":"the heart of an atom · protons push each other away, and a stronger glue holds them · squeeze small ones together and you get a star","domain":"hawkesgames.com"},{"exp":3,"name":"The Quantum","short":"quantum","size":"a wave of maybes","sub":"the rulebook for small things · something tiny travels as a spread-out wave of possibilities · a real experiment, one electron at a time","domain":"hawkesbiomedical.com"},{"exp":4,"name":"The Atom","short":"atom","size":"energy steps","sub":"the brick everything is made of · its electron can only have certain amounts of energy · drop a step, and out comes one exact color of light","domain":"icanbe.ai"},{"exp":5,"name":"The Bond","short":"bond","size":"holding on","sub":"atoms joining up to make stuff · strong joins inside a water molecule, weak ones between them · the weak ones are why ice floats","domain":"yoobalandgame.com"},{"exp":6,"name":"The Crowd","short":"crowd","size":"spreading out","sub":"what huge numbers of pieces do together · left alone, they spread out and mix · not a law for each piece: just overwhelming odds","domain":"imaginelivetv.com"},{"exp":7,"name":"Motion","short":"motion","size":"keeps going","sub":"the rule for things our size · left alone, a moving thing keeps moving, forever · a push doesn't keep it going: a push changes it","domain":"theplacedepartment.com"},{"exp":8,"name":"Light","short":"light","size":"one speed","sub":"a ripple in the electric and magnetic field · always the same speed in empty space: 299,792,458 meters a second · nothing with any weight can catch it","domain":"phorigins.com"},{"exp":9,"name":"Gravity","short":"gravity","size":"falling together","sub":"the rule for the heaviest things · stuff bends the space and time around it, and everything follows the bend · clocks run slower lower down","domain":"hawkesgen.ai"}],"data":{},"sides":[{"cues":[[0,2.96,"Now we are up at the size of things you can hold."],[2.96,5.49,"And the rule here sounds wrong at first."],[5.49,7.55,"A thing that's moving keeps moving."],[7.55,8.77,"In a straight line."],[8.77,10.32,"At the same speed."],[10.32,11.39,"Forever."],[11.39,13.6,"It doesn't need a push to keep going."],[13.6,15.64,"It only needs a push to change."],[15.64,18.91,"To speed up, to slow down, or to turn."],[18.91,22.93,"And the heavier it is, the harder it is to change."],[22.93,27.95,"You've never seen this, because on Earth, something always gets in the way."],[27.95,30.13,"So let's go where nothing does."],[30.13,31.82,"This is Voyager One."],[31.82,34.26,"It left Earth in nineteen seventy seven."],[34.26,36.7,"Its engines finished their work long ago."],[36.7,40.85,"And it's still going, at about seventeen kilometers every second."],[40.85,41.92,"Nothing is pushing it."],[41.92,43.33,"Nothing needs to."],[43.33,47.75,"It is now so far away that its radio signal takes a whole day to reach us."],[47.75,51.19,"And it will keep going long after everyone alive today is gone."],[51.19,55,"That's what moving things do, when you leave them alone."]],"dur":55},{"name":"friction","size":"the catch","sub":"why the rule looks wrong on Earth · a push that always points backward · it is also the only reason you can walk","cues":[[0,2.68,"The front said moving things never stop."],[2.68,5.29,"So why does everything around you stop?"],[5.29,6.65,"Here is the catch."],[6.65,7.63,"Friction."],[7.63,11.51,"Slide the same block across three floors, with the same shove."],[11.51,14,"On ice, it glides a long way."],[14,15.67,"On wood, not so far."],[15.67,18.55,"On rubber, it stops almost at once."],[18.55,20.63,"The block didn't run out of push."],[20.63,23.32,"Something was pushing back, the whole time."],[23.32,25.8,"Look very closely at where they touch."],[25.8,27.76,"Nothing is really smooth."],[27.76,29.92,"The tiny bumps catch on each other,"],[29.92,33.53,"and the atoms on one side tug at the atoms on the other."],[33.53,36.47,"All that tugging turns the motion into jiggling."],[36.47,37.59,"Into heat."],[37.59,40.37,"Rub your hands together, and you can feel it."],[40.37,42.91,"So friction isn't a different rule."],[42.91,46.44,"It's one more push, that always points backward."],[46.44,48.28,"And it isn't the bad guy."],[48.28,51.26,"Without it, your feet would slide out from under you."],[51.26,54.019999999999996,"You couldn't take a single step."]],"dur":54.02}]};
-var TAU = Math.PI * 2;
-function rng(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) | 0; var t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-function gauss(r) { var u = 1 - r(), v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(TAU * v); }
-function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
-function lerp(a, b, t) { return a + (b - a) * t; }
-function smooth(t) { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); }
-// a soft glowing dot, drawn from a cached sprite (fast enough for tens of thousands a frame)
-var sprites = {};
-function sprite(col) {
-  if (sprites[col]) return sprites[col];
-  var s = document.createElement('canvas'); s.width = s.height = 64; var g = s.getContext('2d'), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-  gr.addColorStop(0, col); gr.addColorStop(0.25, col); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.globalAlpha = 1; g.fillRect(0, 0, 64, 64);
-  return (sprites[col] = s);
-}
-function dot(x, c, y, r, col, a) { x.globalAlpha = a == null ? 1 : a; x.drawImage(sprite(col), c - r, y - r, r * 2, r * 2); }
-function label(x, text, px, py, align, col, size) {
-  x.save(); x.globalAlpha = 1; x.globalCompositeOperation = 'source-over'; x.font = '500 ' + (size || 12) + 'px "JetBrains Mono", ui-monospace, monospace'; x.textAlign = align || 'left'; x.textBaseline = 'middle';
-  x.lineWidth = 4; x.strokeStyle = 'rgba(3,5,11,.85)'; x.strokeText(text, px, py); x.fillStyle = col || 'rgba(214,228,255,.9)'; x.fillText(text, px, py); x.restore();
-}
-function lead(x, x0, y0, x1, y1, col) { x.save(); x.globalAlpha = 0.6; x.globalCompositeOperation = 'source-over'; x.strokeStyle = col || 'rgba(143,194,255,.7)'; x.lineWidth = 1; x.beginPath(); x.moveTo(x0, y0); x.lineTo(x1, y1); x.stroke(); x.restore(); }
-function scaleBar(x, W, H, px, text) { // a labelled length, bottom-left above the ruler
-  var bx = Math.max(64, W * 0.05), by = H - 150; x.save(); x.globalAlpha = 0.9; x.strokeStyle = '#fff'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(bx, by - 5); x.lineTo(bx, by); x.lineTo(bx + px, by); x.lineTo(bx + px, by - 5); x.stroke(); x.restore();
-  label(x, text, bx, by + 14, 'left', 'rgba(238,244,255,.92)', 12);
-}
-var H3 = { rng: rng, gauss: gauss, clamp: clamp, lerp: lerp, smooth: smooth, dot: dot, label: label, lead: lead, scaleBar: scaleBar, TAU: TAU };
-
-
-// The drawing kit shared by the eighteen pictures. Every picture is a film timed to its narrator: K.at(side, 'words')
-// gives the second at which the caption containing those words starts, and the picture is a function of that clock.
-var K = (function () {
-  var SANS = '"Space Grotesk",system-ui,sans-serif', MONO = '"JetBrains Mono",ui-monospace,monospace';
-  var C = { ink: '#eef4ff', dim: 'rgba(214,228,255,.62)', faint: 'rgba(214,228,255,.28)', acc: '#8fc2ff', warm: '#ffc46b', hot: '#ff7a5c', good: '#7dffb0', vio: '#c9a2ff', bg: '#03050b' };
-  var GROUP = ['#ffc46b', '#ff7a9c', '#8fc2ff', '#7dffb0', '#ff9a5c', '#c9a2ff', '#6fe3e1', '#f5f07a', '#b8c4d9'];
-  function at(side, words) { var cs = D.sides[side].cues, w = words.toLowerCase(); for (var i = 0; i < cs.length; i++) if (cs[i][2].toLowerCase().indexOf(w) >= 0) return cs[i][0]; if (window.console) console.warn('no caption has: ' + words); return 0; }
-  function end(side) { return D.sides[side].dur; }
-  // the narrator's clock; once the explanation is over the picture rests on its last moment (plus a slow idle clock)
-  function clock(side, nt) { return nt > 1e8 ? D.sides[side].dur + 2 : nt; }
-  function cl(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
-  function ramp(n, a, d) { return H3.smooth((n - a) / (d || 0.6)); }               // 0 -> 1 starting at second a, over d seconds
-  function span(n, a, b, d) { d = d || 0.5; return Math.min(ramp(n, a, d), 1 - ramp(n, b, d)); }   // on between a and b
-  function bump(n, a, d) { var u = (n - a) / (d || 0.8); return u < 0 || u > 1 ? 0 : Math.sin(u * Math.PI); }
-  function lerp(a, b, t) { return a + (b - a) * t; }
-  function font(size, o) { o = o || {}; return (o.w || 500) + ' ' + size.toFixed(1) + 'px ' + (o.mono ? MONO : SANS); }
-  function text(x, s, px, py, size, o) {
-    o = o || {}; var al = o.al == null ? 1 : o.al; if (al <= 0.003) return 0; x.save(); x.globalAlpha = al; x.globalCompositeOperation = 'source-over'; x.font = font(size, o); x.textAlign = o.a || 'left'; x.textBaseline = o.base || 'middle';
-    if (o.glow) { x.shadowColor = o.glow; x.shadowBlur = size * 0.7; }
-    // a line never runs off the screen: if it would, it is drawn smaller (pictures written for a wide screen stay readable on a phone)
-    var w = x.measureText(s).width, sw = x.canvas.clientWidth || innerWidth, room = (o.a === 'center' ? 2 * Math.min(px, sw - px) : o.a === 'right' ? px : sw - px) - 6;
-    if (!o.free && w > room && room > 20) { var k = Math.max(0.5, room / w); x.font = font(size * k, o); w = x.measureText(s).width; }
-    x.fillStyle = o.c || C.ink; x.fillText(s, px, py); x.restore(); return w;
-  }
-  function width(x, s, size, o) { x.save(); x.font = font(size, o); var w = x.measureText(s).width; x.restore(); return w; }
-  function rr(x, px, py, w, h, r) { r = Math.min(r, w / 2, h / 2); x.beginPath(); x.moveTo(px + r, py); x.arcTo(px + w, py, px + w, py + h, r); x.arcTo(px + w, py + h, px, py + h, r); x.arcTo(px, py + h, px, py, r); x.arcTo(px, py, px + w, py, r); x.closePath(); }
-  function box(x, px, py, w, h, o) { // a rounded panel: o.fill, o.line, o.r, o.al, o.lw
-    o = o || {}; var al = o.al == null ? 1 : o.al; if (al <= 0.003) return; x.save(); x.globalAlpha = al; x.globalCompositeOperation = 'source-over'; rr(x, px, py, w, h, o.r == null ? 8 : o.r);
-    if (o.fill) { x.fillStyle = o.fill; x.fill(); } if (o.line) { x.strokeStyle = o.line; x.lineWidth = o.lw || 1.2; x.stroke(); } x.restore();
-  }
-  // a piece of text in its own little box. Spaces at the front of a piece are shown as a small dot so they can be seen.
-  function chipW(x, s, size, o) { return width(x, show(s), size, o) + size * 0.9; }
-  function show(s) { return s.replace(/^ /, '·').replace(/\n/g, '↵'); }
-  function chip(x, s, px, py, size, o) { // left edge px, centre line py; returns its width
-    o = o || {}; var w = o.wd || chipW(x, s, size, o), h = size * 1.75, al = o.al == null ? 1 : o.al; if (al <= 0.003) return w;
-    box(x, px, py - h / 2, w, h, { fill: o.bg || 'rgba(143,194,255,.10)', line: o.bd || 'rgba(143,194,255,.55)', r: size * 0.38, al: al, lw: o.lw });
-    text(x, o.raw ? s : show(s), px + w / 2, py + size * 0.04, size, { a: 'center', c: o.c || C.ink, mono: o.mono, w: o.w || 500, al: al, glow: o.glow }); return w;
-  }
-  // lay pieces out in centred rows that fit a width; returns [{x, y, w}] and the height used
-  function flow(x, list, size, cx, top, maxW, gap, o) {
-    var ws = list.map(function (s) { return chipW(x, s, size, o); }), rows = [[]], rw = [0], i;
-    for (i = 0; i < list.length; i++) { var r = rows.length - 1; if (rows[r].length && rw[r] + gap + ws[i] > maxW) { rows.push([]); rw.push(0); r++; } rw[r] += (rows[r].length ? gap : 0) + ws[i]; rows[r].push(i); }
-    var out = [], lh = size * ((o && o.lh) || 2.5); rows.forEach(function (row, r) { var px = cx - rw[r] / 2; row.forEach(function (k) { out[k] = { x: px, y: top + r * lh + size, w: ws[k], row: r }; px += ws[k] + gap; }); });
-    out.h = rows.length * lh; out.rows = rows.length; return out;
-  }
-  function bar(x, px, py, w, h, f, col, o) { // a track with a filled part f (0..1)
-    o = o || {}; var al = o.al == null ? 1 : o.al; if (al <= 0.003) return; box(x, px, py, w, h, { fill: o.track || 'rgba(143,194,255,.10)', r: h / 2, al: al }); if (f > 0.002) box(x, px, py, Math.max(h, w * cl(f)), h, { fill: col || C.acc, r: h / 2, al: al });
-  }
-  function line(x, x0, y0, x1, y1, col, lw, al) { if (al != null && al <= 0.003) return; x.save(); x.globalAlpha = al == null ? 1 : al; x.strokeStyle = col || C.acc; x.lineWidth = lw || 1; x.lineCap = 'round'; x.beginPath(); x.moveTo(x0, y0); x.lineTo(x1, y1); x.stroke(); x.restore(); }
-  function arc(x, x0, y0, x1, y1, lift, col, lw, al, f) { // a curved link from one point up and over to another; f draws only the first part of it
-    if (al != null && al <= 0.003) return; x.save(); x.globalAlpha = al == null ? 1 : al; x.strokeStyle = col || C.acc; x.lineWidth = lw || 1; x.lineCap = 'round'; x.beginPath(); var mx = (x0 + x1) / 2, my = Math.min(y0, y1) - lift, n = 28, m = Math.max(1, Math.round(n * (f == null ? 1 : cl(f))));
-    for (var i = 0; i <= m; i++) { var u = i / n, a = (1 - u) * (1 - u), b = 2 * u * (1 - u), c = u * u; x.lineTo(a * x0 + b * mx + c * x1, a * y0 + b * my + c * y1); } x.stroke(); x.restore();
-  }
-  function disc(x, px, py, r, col, al) { if (al != null && al <= 0.003) return; x.save(); x.globalAlpha = al == null ? 1 : al; x.fillStyle = col || C.ink; x.beginPath(); x.arc(px, py, r, 0, 7); x.fill(); x.restore(); }
-  function ring(x, px, py, r, col, lw, al) { if (al != null && al <= 0.003) return; x.save(); x.globalAlpha = al == null ? 1 : al; x.strokeStyle = col || C.ink; x.lineWidth = lw || 1; x.beginPath(); x.arc(px, py, r, 0, 7); x.stroke(); x.restore(); }
-  function glow(x, px, py, r, col, al) { x.save(); x.globalCompositeOperation = 'lighter'; H3.dot(x, px, py, r, col, al); x.restore(); }
-  function clear(x, W, H, col) { x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1; x.fillStyle = col || C.bg; x.fillRect(0, 0, W, H); }
-  // the part of the screen a picture may use: under the title, above the captions, between the side arrows
-  function area(W, H) {
-    var wide = W > 760, top = wide ? Math.max(178, H * 0.235) : Math.max(240, H * 0.295), bot = H - (wide ? 192 : 196), l = wide ? 78 : 14, r = W - (wide ? 78 : 14);
-    return { x: l, y: top, w: r - l, h: Math.max(120, bot - top), cx: (l + r) / 2, cy: (top + bot) / 2, r: r, b: bot, wide: wide, u: Math.max(0.62, Math.min(1.25, Math.min((r - l) / 900, (bot - top) / 430))) };
-  }
-  function credit(x, A, s, al) { // where the numbers come from; on a narrow screen it takes two lines
-    var size = Math.max(9.5, 11 * A.u), o = { a: 'center', c: C.dim, mono: true, w: 400, al: al == null ? 0.85 : al };
-    if (width(x, s, size, o) <= A.w) return void text(x, s, A.cx, A.b + 3, size, o);
-    var mid = s.length / 2, cut = -1, i; for (i = 0; i < s.length; i++) if (s[i] === ' ' && (cut < 0 || Math.abs(i - mid) < Math.abs(cut - mid))) cut = i;
-    text(x, s.slice(0, cut), A.cx, A.b - 4, size, o); text(x, s.slice(cut + 1), A.cx, A.b - 4 + size * 1.25, size, o);
-  } // where the numbers come from
-  function pct(p, d) { var v = p * 100; return (v >= 10 ? v.toFixed(d == null ? 0 : d) : v >= 1 ? v.toFixed(d == null ? 1 : d) : v >= 0.1 ? v.toFixed(2) : v >= 0.001 ? v.toFixed(3) : v.toExponential(0)) + '%'; }
-  function commas(n) { return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
-  function dial(x, px, py, r, ang, col, al) { // a little dial with its mark at an angle
-    if (al != null && al <= 0.003) return; x.save(); x.globalAlpha = al == null ? 1 : al; x.strokeStyle = col || C.acc; x.lineWidth = Math.max(0.8, r * 0.16); x.beginPath(); x.arc(px, py, r, 0, 7); x.stroke(); x.beginPath(); x.moveTo(px, py); x.lineTo(px + Math.sin(ang) * r * 0.92, py - Math.cos(ang) * r * 0.92); x.stroke(); x.restore();
-  }
-  function tick(x, px, py, r, ok, al) { // a check mark or a cross
-    if (al != null && al <= 0.003) return; x.save(); x.globalAlpha = al == null ? 1 : al; x.lineWidth = Math.max(1.6, r * 0.3); x.lineCap = 'round'; x.strokeStyle = ok ? C.good : C.hot; x.beginPath();
-    if (ok) { x.moveTo(px - r * 0.6, py); x.lineTo(px - r * 0.15, py + r * 0.5); x.lineTo(px + r * 0.7, py - r * 0.55); } else { x.moveTo(px - r * 0.55, py - r * 0.55); x.lineTo(px + r * 0.55, py + r * 0.55); x.moveTo(px + r * 0.55, py - r * 0.55); x.lineTo(px - r * 0.55, py + r * 0.55); } x.stroke(); x.restore();
-  }
-  // the screen color nearest to light of one wavelength (in nanometres); an approximation: a screen cannot show pure spectral colors
-  function nm(w, al) {
-    var r = 0, g = 0, b = 0, f = 1;
-    if (w < 380 || w > 780) { r = g = b = 0; } else if (w < 440) { r = (440 - w) / 60; b = 1; } else if (w < 490) { g = (w - 440) / 50; b = 1; } else if (w < 510) { g = 1; b = (510 - w) / 20; } else if (w < 580) { r = (w - 510) / 70; g = 1; } else if (w < 645) { r = 1; g = (645 - w) / 65; } else { r = 1; }
-    if (w < 420) f = 0.35 + 0.65 * (w - 380) / 40; else if (w > 700) f = 0.35 + 0.65 * (780 - w) / 80;
-    f = Math.max(0, f); return 'rgba(' + Math.round(255 * Math.pow(r * f, 0.8)) + ',' + Math.round(255 * Math.pow(g * f, 0.8)) + ',' + Math.round(255 * Math.pow(b * f, 0.8)) + ',' + (al == null ? 1 : al) + ')';
-  }
-  // a whole rainbow strip from 380 to 750 nanometres, drawn once and reused
-  var bowC = null;
-  function rainbow(x, px, py, w, h, al) { if (!bowC) { bowC = document.createElement('canvas'); bowC.width = 740; bowC.height = 1; var g = bowC.getContext('2d'); for (var i = 0; i < 740; i++) { g.fillStyle = nm(380 + i / 2); g.fillRect(i, 0, 1, 1); } } x.save(); x.globalAlpha = al == null ? 1 : al; x.drawImage(bowC, px, py, w, h); x.restore(); }
-  // The back of a page is shown as ink on paper (the canvas is inverted and its hues turned half way round). A true
-  // color has to be drawn as the color that comes back as itself after that: nmP and rainbowP do so.
-  function paper(r, g, b) { var R = -0.574 * r + 1.43 * g + 0.144 * b, G = 0.426 * r + 0.43 * g + 0.144 * b, B = 0.426 * r + 1.43 * g - 0.856 * b, c = function (v) { return Math.round(255 * (1 - Math.max(0, Math.min(1, v)))); }; return [c(R), c(G), c(B)]; }
-  function nmP(w, al) { var m = nm(w).slice(5).split(','), p = paper(m[0] / 255, m[1] / 255, m[2] / 255); return 'rgba(' + p[0] + ',' + p[1] + ',' + p[2] + ',' + (al == null ? 1 : al) + ')'; }
-  var bowP = null;
-  function rainbowP(x, px, py, w, h, al) { if (!bowP) { bowP = document.createElement('canvas'); bowP.width = 740; bowP.height = 1; var g = bowP.getContext('2d'); for (var i = 0; i < 740; i++) { g.fillStyle = nmP(380 + i / 2); g.fillRect(i, 0, 1, 1); } } x.save(); x.globalAlpha = al == null ? 1 : al; x.drawImage(bowP, px, py, w, h); x.restore(); }
-  function nmX(w, px, wd) { return px + (w - 380) / 370 * wd; }
-  return { C: C, GROUP: GROUP, nm: nm, rainbow: rainbow, nmX: nmX, nmP: nmP, rainbowP: rainbowP, at: at, end: end, clock: clock, cl: cl, ramp: ramp, span: span, bump: bump, lerp: lerp, text: text, width: width, rr: rr, box: box, chip: chip, chipW: chipW, show: show, flow: flow, bar: bar, line: line, arc: arc, disc: disc, ring: ring, glow: glow, clear: clear, area: area, credit: credit, pct: pct, commas: commas, dial: dial, tick: tick };
-})();
-
-
-// ---------------------------------------------------------------- the front
-// MOTION (Newton's first two laws). A puck gliding where nothing touches it leaves marks at equal spacing: same speed,
-// straight line, with no push. Three short cases show what a push does: from behind it speeds up, from in front it
-// slows, from the side it turns. Two balls given the same push show that the heavier one changes less (four times
-// the weight, a quarter of the change). Then a real example of motion left alone: Voyager 1, launched in 1977, its
-// rocket burns long finished, still travelling at about 17 kilometres every second; on 18 November 2026 NASA put it
-// one light-day from Earth (about 25.9 billion kilometres), so its radio signal takes about a day to arrive. A
-// counter adds 17 kilometres a second while you watch.
-var SCENE = (function () {
-  var t = {}, C = K.C, r = H3.rng(77), stars = [];
-  function init() {
-    t.size = K.at(0, 'size of things you can hold'); t.wrong = K.at(0, 'sounds wrong at first'); t.keeps = K.at(0, 'keeps moving'); t.line = K.at(0, 'In a straight line'); t.speed = K.at(0, 'At the same speed'); t.forever = K.at(0, 'Forever');
-    t.nopush = K.at(0, "doesn't need a push"); t.change = K.at(0, 'a push to change'); t.three = K.at(0, 'to speed up, to slow down'); t.heavy = K.at(0, 'the heavier it is'); t.earth = K.at(0, 'something always gets in the way'); t.go = K.at(0, 'where nothing does');
-    t.voy = K.at(0, 'This is Voyager One'); t.left = K.at(0, 'nineteen seventy seven'); t.eng = K.at(0, 'engines finished'); t.still = K.at(0, 'seventeen kilometers'); t.nothing = K.at(0, 'Nothing is pushing it'); t.need = K.at(0, 'Nothing needs to');
-    t.far = K.at(0, 'takes a whole day'); t.long = K.at(0, 'long after everyone'); t.alone = K.at(0, 'when you leave them alone');
-    for (var i = 0; i < 160; i++) stars.push([r(), r(), 0.4 + r() * 1.3, 0.3 + r() * 0.7]);
-  }
-  function arrow(x, x0, y0, x1, y1, col, al, w) { if (al <= 0.01) return; K.line(x, x0, y0, x1, y1, col, w || 3, al); var a = Math.atan2(y1 - y0, x1 - x0); K.line(x, x1, y1, x1 - Math.cos(a - 0.45) * 10, y1 - Math.sin(a - 0.45) * 10, col, w || 3, al); K.line(x, x1, y1, x1 - Math.cos(a + 0.45) * 10, y1 - Math.sin(a + 0.45) * 10, col, w || 3, al); }
-  function draw(x, W, H, tt, dt, nt) {
-    var n = K.clock(0, nt), A = K.area(W, H), u = A.u, i, fs = Math.max(11.5, 16 * u);
-    K.clear(x, W, H);
-    var p1 = K.span(n, t.wrong, t.change, 0.5), p2 = K.span(n, t.change, t.heavy, 0.5), p3 = K.span(n, t.heavy, t.earth, 0.5), p4 = K.span(n, t.earth, t.go + 1.4, 0.5), p5 = K.ramp(n, t.go + 1.2, 1);
-    var intro = K.span(n, t.size, t.keeps, 0.4); K.text(x, 'the rule for things our size', A.cx, A.cy, fs * 1.6, { a: 'center', w: 700, al: intro });
-    // ---- a puck, left alone
-    if (p1 > 0.01) { var y = A.cy, x0 = A.x + A.w * 0.06, x1 = A.r - A.w * 0.06, v = (x1 - x0) / 7, px = x0 + ((n - t.keeps) * v), sp = v * 0.75; K.line(x, x0, y + 18 * u, x1, y + 18 * u, C.faint, 1, p1);
-      for (i = 0; i < 12; i++) { var mx = x0 + i * sp; if (mx < Math.min(px, x1) && n >= t.keeps) { K.disc(x, mx, y, 3 * u, C.acc, p1 * 0.6); if (n >= t.speed && i > 0) K.text(x, i === 1 ? 'same gap' : '', mx - sp / 2, y - 22 * u, fs * 0.72, { a: 'center', mono: true, c: C.dim, w: 400, al: p1 }); } }
-      var qx = n < t.keeps ? x0 : Math.min(px, x1 + 60); if (qx < x1 + 40) { K.glow(x, qx, y, 30 * u, 'rgba(143,194,255,1)', p1 * 0.6); K.disc(x, qx, y, 12 * u, '#dbe9ff', p1); }
-      var lab = n < t.line ? 'a thing that is moving keeps moving' : n < t.speed ? 'in a straight line' : n < t.forever ? 'at the same speed' : n < t.nopush ? 'forever' : 'no push needed'; K.text(x, lab, A.cx, A.y + fs * 1.2, fs * 1.4, { a: 'center', w: 700, al: p1 * K.ramp(n, t.keeps, 0.3) }); }
-    // ---- what a push does
-    if (p2 > 0.01) { var names = ['from behind: it speeds up', 'from in front: it slows down', 'from the side: it turns'], gw = A.w / 3, cyc = ((n - t.change) % 2.6) / 2.6; K.text(x, 'a push only changes the motion', A.cx, A.y + fs * 1.2, fs * 1.3, { a: 'center', w: 700, al: p2 });
-      for (i = 0; i < 3; i++) { var cx = A.x + gw * (i + 0.5), cy = A.cy + fs, hw = gw * 0.38, f = cyc, bx, by = cy, push = f > 0.3 && f < 0.55; if (i === 0) bx = cx - hw + (f < 0.3 ? f * hw * 1.2 : 0.36 * hw + (f - 0.3) * hw * 3.4); else if (i === 1) bx = cx - hw + (f < 0.3 ? f * hw * 3 : 0.9 * hw + (f - 0.3) * hw * 0.9); else { bx = cx - hw + f * hw * 2; by = cy + (f > 0.3 ? -(f - 0.3) * hw * 1.6 : 0); }
-        K.line(x, cx - hw, cy + 16 * u, cx + hw, cy + 16 * u, C.faint, 1, p2 * (i < 2 ? 1 : 0)); K.disc(x, Math.min(bx, cx + hw * 1.1), by, 10 * u, '#dbe9ff', p2); if (push) { if (i === 0) arrow(x, bx - 44 * u, by, bx - 14 * u, by, C.warm, p2); else if (i === 1) arrow(x, bx + 44 * u, by, bx + 14 * u, by, C.warm, p2); else arrow(x, bx, by + 44 * u, bx, by + 14 * u, C.warm, p2); }
-        K.text(x, names[i], cx, cy + hw * 0.75 + fs, Math.min(fs * 0.88, gw / 16), { a: 'center', mono: true, c: C.dim, al: p2 }); } }
-    // ---- heavier things change less
-    if (p3 > 0.01) { var f3 = K.cl((n - t.heavy - 0.8) / 2.6), xs = A.x + A.w * 0.14, len = A.w * 0.62; K.text(x, 'the same push on each', A.cx, A.y + fs * 1.2, fs * 1.3, { a: 'center', w: 700, al: p3 });
-      [[10, 1, 'light'], [20, 0.25, 'four times as heavy']].forEach(function (b, k) { var yy = A.cy - fs * 2.4 + k * fs * 5.6, bx3 = xs + f3 * f3 * len * b[1]; K.line(x, xs - 30 * u, yy + b[0] * u + 5, xs + len + 30 * u, yy + b[0] * u + 5, C.faint, 1, p3); K.disc(x, bx3, yy, b[0] * u, '#dbe9ff', p3); if (f3 < 0.25) arrow(x, bx3 - b[0] * u - 34 * u, yy, bx3 - b[0] * u - 4, yy, C.warm, p3); K.text(x, b[2], xs - 40 * u, yy, fs * 0.82, { a: 'right', mono: true, c: C.dim, al: p3 * (A.wide ? 1 : 0) }); K.text(x, k ? 'a quarter as far' : 'far', xs + len + 40 * u, yy, fs * 0.82, { mono: true, c: k ? C.hot : C.good, al: p3 * K.cl(f3 * 3 - 1.6) * (A.wide ? 1 : 0) }); }); }
-    // ---- on Earth something always gets in the way
-    if (p4 > 0.01) { var f4 = K.cl((n - t.earth) / 4), xr = A.x + A.w * 0.12 + (1 - Math.pow(1 - f4, 2.2)) * A.w * 0.6, gy = A.cy + 20 * u; K.line(x, A.x + A.w * 0.06, gy, A.r - A.w * 0.06, gy, '#7a6a4f', 4, p4); for (i = 0; i < 40; i++) K.line(x, A.x + A.w * 0.06 + i * A.w * 0.022, gy, A.x + A.w * 0.06 + i * A.w * 0.022 - 6, gy + 8, '#7a6a4f', 1.5, p4 * 0.7);
-      K.disc(x, xr, gy - 14 * u, 12 * u, '#dbe9ff', p4); K.text(x, n < t.go ? 'on Earth, something always gets in the way' : 'so let’s go where nothing does', A.cx, A.y + fs * 1.2, Math.min(fs * 1.3, A.w / 30), { a: 'center', w: 700, al: p4 }); }
-    // ---- Voyager 1
-    if (p5 > 0.01) { for (i = 0; i < stars.length; i++) { var s = stars[i], sx = (((s[0] - (n - t.go) * 0.004 * s[2]) % 1) + 1) % 1; K.disc(x, A.x + sx * A.w, A.y + s[1] * A.h, s[2] * u, '#fff', p5 * s[3]); }
-      var vx = A.wide ? A.x + A.w * 0.3 : A.cx, vy = A.wide ? A.cy : A.y + A.h * 0.3, sc = Math.min(A.h * 0.2, A.w * 0.1), drift = Math.sin(tt * 0.6) * 4;
-      // the spacecraft: a dish, a body, a long boom and two thin antennas
-      x.save(); x.translate(vx, vy + drift); x.rotate(-0.25); x.globalAlpha = p5; x.strokeStyle = '#e8eefc'; x.fillStyle = '#e8eefc'; x.lineWidth = 2.5; x.beginPath(); x.ellipse(0, 0, sc * 0.9, sc * 0.28, 0, 0, 6.283); x.stroke(); x.beginPath(); x.ellipse(0, 0, sc * 0.9, sc * 0.28, 0, 0, 3.1416); x.globalAlpha = p5 * 0.25; x.fill(); x.globalAlpha = p5; x.fillRect(-sc * 0.22, sc * 0.2, sc * 0.44, sc * 0.4);
-      x.beginPath(); x.moveTo(sc * 0.2, sc * 0.4); x.lineTo(sc * 2.1, sc * 0.9); x.moveTo(-sc * 0.2, sc * 0.4); x.lineTo(-sc * 1.5, sc * 1.2); x.moveTo(0, sc * 0.6); x.lineTo(sc * 0.4, sc * 2); x.moveTo(0, sc * 0.6); x.lineTo(-sc * 0.9, sc * 1.7); x.stroke(); x.fillRect(sc * 1.95, sc * 0.78, sc * 0.28, sc * 0.2); x.restore();
-      K.text(x, 'Voyager 1', vx, vy - sc * 1.3, fs * 1.2, { a: 'center', w: 700, al: p5 * K.ramp(n, t.voy, 0.5) });
-      var np = K.span(n, t.nothing, t.far, 0.4); if (np > 0.01) { K.text(x, 'no push', vx - sc * 1.6, vy + drift - sc * 0.2, fs * 0.9, { a: 'right', mono: true, c: C.dim, al: np * p5 }); }
-      var rx = A.wide ? A.x + A.w * 0.58 : A.x + 8, rw = A.wide ? A.w * 0.38 : A.w - 16, ry = A.wide ? A.y + fs * 2 : vy + sc * 2.6, rows = [['left Earth', '1977', t.left], ['rocket burns', 'finished long ago', t.eng], ['speed now', 'about 17 km every second', t.still], ['distance', 'about one light-day', t.far]];
-      for (i = 0; i < rows.length; i++) { var on = p5 * K.ramp(n, rows[i][2], 0.5), yy2 = ry + i * fs * 2.9; K.text(x, rows[i][0], rx, yy2, fs * 0.78, { mono: true, c: C.dim, w: 400, al: on }); K.text(x, rows[i][1], rx, yy2 + fs * 1.3, Math.min(fs * 1.2, rw / 16), { w: 700, c: i === 2 ? C.warm : C.ink, al: on }); }
-      var km = Math.max(0, (n - t.still)) * 17, kc = p5 * K.ramp(n, t.still + 0.6, 0.5); K.text(x, 'travelled while you watched: ' + K.commas(km) + ' km', rx, ry + 4 * fs * 2.9 + fs * 0.3, Math.min(fs * 0.9, rw / 24), { mono: true, w: 700, c: C.good, al: kc });
-      var fr = p5 * K.ramp(n, t.far, 0.6); K.text(x, '25,900,000,000 km: its radio signal takes a day', rx, ry + 4 * fs * 2.9 + fs * 2, Math.min(fs * 0.82, rw / 28), { mono: true, c: C.dim, w: 400, al: fr });
-      var en = p5 * K.ramp(n, t.alone, 0.6); K.text(x, 'this is what moving things do, left alone', A.cx, A.b - fs * 1.6, Math.min(fs * 1.25, A.w / 34), { a: 'center', w: 700, c: C.acc, al: en }); }
-    K.credit(x, A, p5 > 0.5 ? 'Voyager 1: launched 1977; NASA put it one light-day from Earth on 18 November 2026 · the drawing is not to scale' : 'drawings of Newton’s first two laws of motion');
-  }
-  return { init: init, draw: draw };
-})();
-
-
-// ---------------------------------------------------------------- the back: its opposite (drawn light on black, shown as ink on paper)
-// THE REVERSE OF "KEEPS GOING": friction. The same block is given the same shove (2 metres a second) across three
-// floors, and its slide is worked out here from the real rule (it stops after its speed squared, divided by twice the
-// friction number times gravity, 9.81): on ice (friction number about 0.03) it travels 6.8 metres in 6.8 seconds; on
-// wood (about 0.3) 0.68 metres; on rubber (about 0.7) 0.29 metres. The friction numbers are typical measured values
-// and vary with the surfaces. An arrow shows friction as a push on the block that always points against the motion.
-// A close-up of the two surfaces shows what it is: nothing is perfectly smooth, the high points catch, and the atoms
-// of one surface tug on those of the other (electric forces); the block's motion is not lost but turned into heat, as
-// a pair of bars shows (motion going down, warmth going up, the total unchanged). Last: friction is also what lets a
-// foot push off the ground, and without it there is no walking.
-var SCENE2 = (function () {
-  var t = {}, C = K.C, G = 9.81, V0 = 2, FL = [['ice', 0.03, '#bfe3ff'], ['wood', 0.3, '#d9a56a'], ['rubber', 0.7, '#9aa3b5']], r = H3.rng(31), rough = [];
-  function init() {
-    t.front = K.at(1, 'moving things never stop'); t.why = K.at(1, 'everything around you stop'); t.catch = K.at(1, 'Here is the catch'); t.fr = K.at(1, 'Friction.'); t.slide = K.at(1, 'three floors'); t.ice = K.at(1, 'On ice');
-    t.wood = K.at(1, 'On wood'); t.rubber = K.at(1, 'On rubber'); t.run = K.at(1, "didn't run out of push"); t.back = K.at(1, 'pushing back, the whole time'); t.close = K.at(1, 'Look very closely'); t.smooth = K.at(1, 'Nothing is really smooth');
-    t.bumps = K.at(1, 'tiny bumps catch'); t.atoms = K.at(1, 'atoms on one side tug'); t.jig = K.at(1, 'motion into jiggling'); t.heat = K.at(1, 'Into heat'); t.hands = K.at(1, 'Rub your hands'); t.rule = K.at(1, "isn't a different rule");
-    t.one = K.at(1, 'one more push'); t.bad = K.at(1, "isn't the bad guy"); t.feet = K.at(1, 'slide out from under you'); t.step = K.at(1, 'a single step');
-    for (var i = 0; i < 80; i++) rough.push(r());
-  }
-  function arrow(x, x0, y0, x1, y1, col, al) { if (al <= 0.01) return; K.line(x, x0, y0, x1, y1, col, 3, al); var a = Math.atan2(y1 - y0, x1 - x0); K.line(x, x1, y1, x1 - Math.cos(a - 0.45) * 10, y1 - Math.sin(a - 0.45) * 10, col, 3, al); K.line(x, x1, y1, x1 - Math.cos(a + 0.45) * 10, y1 - Math.sin(a + 0.45) * 10, col, 3, al); }
-  function draw(x, W, H, tt, dt, nt) {
-    var n = K.clock(1, nt), A = K.area(W, H), u = A.u, i, fs = Math.max(11.5, 16 * u);
-    K.clear(x, W, H, '#000');
-    var intro = K.span(n, t.front, t.slide, 0.4); if (intro > 0.01) K.text(x, n < t.why ? 'moving things never stop…' : n < t.fr ? '…so why does everything stop?' : 'friction', A.cx, A.cy, n >= t.fr ? fs * 2.6 : Math.min(fs * 1.6, A.w / 26), { a: 'center', w: 700, c: n >= t.fr ? C.warm : C.ink, al: intro });
-    // ---- three floors, the same shove, worked out for real
-    var lanes = K.span(n, t.slide - 0.3, t.close, 0.5);
-    if (lanes > 0.01) { var lx = A.x + A.w * (A.wide ? 0.14 : 0.2), lw = A.r - lx - A.w * 0.06, m = lw / 7.4, lh = Math.min(A.h / 4.2, 84 * u), ly0 = A.y + fs * 3, T0 = t.ice - 0.6, el = Math.max(0, n - T0), bs = Math.min(lh * 0.44, 30 * u);
-      K.text(x, 'the same block, the same shove: 2 metres a second', A.cx, A.y + fs * 0.9, Math.min(fs * 1.05, A.w / 40), { a: 'center', w: 700, al: lanes });
-      for (i = 0; i < 3; i++) { var f = FL[i], y = ly0 + i * lh + lh * 0.6, tStop = V0 / (f[1] * G), tm = Math.min(el, tStop), d = V0 * tm - 0.5 * f[1] * G * tm * tm, dStop = V0 * V0 / (2 * f[1] * G), bx = lx + d * m, moving = el > 0 && el < tStop;
-        K.box(x, lx - bs, y, lw + bs * 2, 7, { fill: f[2], r: 3, al: lanes * 0.9 }); K.text(x, f[0], lx - bs - 12, y - bs * 0.4, fs * 1.05, { a: 'right', w: 700, c: f[2], al: lanes }); for (var k = 0; k <= 7; k++) { K.line(x, lx + k * m, y + 7, lx + k * m, y + 13, C.dim, 1, lanes * 0.8); if (i === 2) K.text(x, k + ' m', lx + k * m, y + 24, fs * 0.7, { a: 'center', mono: true, c: C.dim, w: 400, al: lanes }); }
-        K.box(x, bx - bs / 2, y - bs, bs, bs, { fill: '#e8eefc', r: 4, al: lanes });
-        if (moving) { var back = K.ramp(n, t.back - 6, 0.4); arrow(x, bx + bs * 0.5 + 34 * u, y - bs * 0.5, bx + bs * 0.5 + 6, y - bs * 0.5, C.hot, lanes * (n >= t.run ? 1 : 0.0)); K.glow(x, bx, y, 14 * u, 'rgba(255,122,92,1)', lanes * 0.5 * f[1]); }
-        if (el >= tStop) K.text(x, 'stopped at ' + dStop.toFixed(2) + ' m', Math.min(bx + bs, A.r - fs * 8), y - bs - fs * 0.6, fs * 0.82, { mono: true, w: 700, c: C.ink, al: lanes }); }
-      var bk = K.span(n, t.run, t.close, 0.4); K.text(x, n < t.back ? 'it did not run out of push' : 'something pushed back the whole time', A.cx, ly0 + 3 * lh + fs * 2.6, Math.min(fs * 1.1, A.w / 36), { a: 'center', w: 700, c: C.hot, al: lanes * bk }); }
-    // ---- up close: where the two surfaces touch
-    var cl = K.span(n, t.close - 0.3, t.rule, 0.5);
-    if (cl > 0.01) { var zx = A.wide ? A.x + A.w * 0.04 : A.x + 4, zw = A.wide ? A.w * 0.58 : A.w - 8, zy = A.y + fs * 2.4, zh = A.wide ? A.h - fs * 4.4 : A.h * 0.46, mid = zy + zh / 2, slide = (tt * 26 * u) % (zw / 20), heat = K.ramp(n, t.jig, 2.4), tug = K.ramp(n, t.atoms, 0.6);
-      x.save(); x.beginPath(); K.rr(x, zx, zy, zw, zh, 12); x.clip(); x.fillStyle = 'rgba(255,255,255,.03)'; x.fillRect(zx, zy, zw, zh);
-      // two rough surfaces: the lower still, the upper sliding
-      var prof = function (off, flip, base, col) { x.beginPath(); x.moveTo(zx - 40, flip ? zy - 10 : zy + zh + 10); for (var k = -2; k <= 44; k++) { var px = zx + k * zw / 20 * 0.5 + off, hh = (rough[(k + 200) % 80] - 0.2) * zh * 0.12; x.lineTo(px, base + (flip ? hh : -hh)); } x.lineTo(zx + zw + 40, flip ? zy - 10 : zy + zh + 10); x.closePath(); x.fillStyle = col; x.fill(); };
-      x.globalAlpha = cl; prof(0, false, mid + zh * 0.07, '#5b6b88'); prof(slide, true, mid - zh * 0.07, '#8aa0c4');
-      for (i = 0; i < 26; i++) { var ax = zx + (i + 0.5) * zw / 26, jx = Math.sin(tt * (9 + heat * 22) + i) * (1 + heat * 4) * u, jy = Math.cos(tt * (8 + heat * 20) + i * 1.7) * (1 + heat * 4) * u; K.disc(x, ax + jx, mid + zh * 0.11 + jy, 3.4 * u, heat > 0.3 ? C.warm : '#c9d6ee', cl); K.disc(x, ax + slide + jx, mid - zh * 0.11 - jy, 3.4 * u, heat > 0.3 ? C.warm : '#eef4ff', cl); if (tug > 0.01 && i % 3 === 0) K.line(x, ax + jx, mid + zh * 0.11 + jy, ax + slide + jx, mid - zh * 0.11 - jy, C.good, 1.5, cl * tug * 0.8); }
-      if (heat > 0.01) K.glow(x, zx + zw / 2, mid, zw * 0.5, 'rgba(255,122,92,1)', 0.35 * heat * cl); x.restore(); K.ring(x, zx + zw / 2, mid, 2, C.dim, 1, 0); x.save(); x.globalAlpha = cl; x.strokeStyle = C.dim; x.lineWidth = 1.5; K.rr(x, zx, zy, zw, zh, 12); x.stroke(); x.restore();
-      K.text(x, 'the block, sliding →', zx + fs, zy + fs * 1.1, fs * 0.8, { mono: true, c: C.ink, al: cl }); K.text(x, 'the floor', zx + fs, zy + zh - fs * 1.1, fs * 0.8, { mono: true, c: C.ink, al: cl });
-      var cap = n < t.bumps ? 'up close, nothing is really smooth' : n < t.atoms ? 'the tiny bumps catch on each other' : n < t.jig ? 'and atoms tug at atoms across the gap' : n < t.hands ? 'the motion becomes jiggling: heat' : 'rub your hands together: you can feel it'; K.text(x, cap, zx + zw / 2, zy - fs * 0.9, Math.min(fs * 1.05, zw / 26), { a: 'center', w: 700, al: cl });
-      // nothing is lost: motion goes down, warmth goes up
-      var ex = A.wide ? zx + zw + A.w * 0.05 : A.x + 8, ew = A.wide ? A.r - ex - 4 : A.w - 16, ey = A.wide ? zy + fs : zy + zh + fs * 1.6, ea = cl * K.ramp(n, t.jig - 0.4, 0.6), share = K.ramp(n, t.jig, 4);
-      if (ea > 0.01) { K.text(x, 'where the motion goes', ex, ey, fs * 0.8, { mono: true, c: C.dim, w: 400, al: ea }); K.text(x, 'motion', ex, ey + fs * 1.9, fs * 0.9, { w: 600, al: ea }); K.bar(x, ex, ey + fs * 2.7, ew, 12, Math.max(0.01, 1 - share), C.acc, { al: ea }); K.text(x, 'warmth', ex, ey + fs * 4.9, fs * 0.9, { w: 600, al: ea }); K.bar(x, ex, ey + fs * 5.7, ew, 12, Math.max(0.01, share), C.hot, { al: ea });
-        K.text(x, 'together: always the same', ex, ey + fs * 7.9, fs * 0.9, { w: 600, al: ea }); K.bar(x, ex, ey + fs * 8.7, ew, 12, 1, C.good, { al: ea }); K.text(x, 'energy is never lost, only moved', ex, ey + fs * 10.6, Math.min(fs * 0.8, ew / 22), { mono: true, c: C.dim, w: 400, al: ea * K.ramp(n, t.heat, 0.5) }); } }
-    // ---- one more push, and why you need it
-    var en = K.ramp(n, t.rule - 0.3, 0.6);
-    if (en > 0.01) { var walk = K.ramp(n, t.bad, 0.6), gy = A.cy + fs * 3.4, cx = A.cx, s = Math.min(62 * u, A.h * 0.16), slip = K.ramp(n, t.feet, 0.8) * (1 - K.ramp(n, t.step, 0.6)) * 0;
-      K.text(x, n < t.one ? 'friction is not a different rule' : n < t.bad ? 'it is one more push, always pointing backward' : 'and it is not the bad guy', A.cx, A.y + fs * 1.2, Math.min(fs * 1.3, A.w / 34), { a: 'center', w: 700, al: en });
-      if (walk < 0.5) { var by = A.cy + fs, bxp = A.cx - A.w * 0.1 + Math.sin(tt * 0.9) * 0; K.box(x, A.x + A.w * 0.2, by + 20 * u, A.w * 0.6, 6, { fill: '#d9a56a', r: 3, al: en * (1 - walk) }); K.box(x, A.cx - 18 * u, by - 16 * u, 36 * u, 36 * u, { fill: '#e8eefc', r: 4, al: en * (1 - walk) }); arrow(x, A.cx + 26 * u, by - 26 * u, A.cx + 86 * u, by - 26 * u, C.acc, en * (1 - walk)); K.text(x, 'its motion', A.cx + 92 * u, by - 26 * u, fs * 0.8, { mono: true, c: C.acc, al: en * (1 - walk) }); arrow(x, A.cx - 26 * u, by + 6 * u, A.cx - 86 * u, by + 6 * u, C.hot, en * (1 - walk)); K.text(x, 'friction', A.cx - 92 * u, by + 6 * u, fs * 0.8, { a: 'right', mono: true, c: C.hot, al: en * (1 - walk) }); }
-      if (walk > 0.01) { var wa = en * walk; K.line(x, cx - s * 3.4, gy, cx + s * 3.4, gy, '#9aa3b5', 5, wa); // a walker pushing off
-        K.ring(x, cx, gy - s * 3.1, s * 0.32, C.ink, 3, wa); K.line(x, cx, gy - s * 2.78, cx + s * 0.1, gy - s * 1.5, C.ink, 3, wa); K.line(x, cx + s * 0.1, gy - s * 1.5, cx + s * 0.7, gy - s * 0.75, C.ink, 3, wa); K.line(x, cx + s * 0.7, gy - s * 0.75, cx + s * 0.6, gy, C.ink, 3, wa); K.line(x, cx + s * 0.1, gy - s * 1.5, cx - s * 0.5, gy - s * 0.7, C.ink, 3, wa); K.line(x, cx - s * 0.5, gy - s * 0.7, cx - s * 1.0, gy - s * 0.05, C.ink, 3, wa); K.line(x, cx - s * 1.0, gy - s * 0.05, cx - s * 0.7, gy, C.ink, 3, wa);
-        K.line(x, cx + s * 0.02, gy - s * 2.5, cx + s * 0.6, gy - s * 2.0, C.ink, 3, wa); K.line(x, cx + s * 0.02, gy - s * 2.5, cx - s * 0.5, gy - s * 2.0, C.ink, 3, wa);
-        arrow(x, cx - s * 0.9, gy + s * 0.4, cx - s * 1.9, gy + s * 0.4, C.acc, wa); K.text(x, 'your foot pushes the ground back', cx - s * 2, gy + s * 0.4, Math.min(fs * 0.82, A.w / 46), { a: 'right', mono: true, c: C.acc, al: wa }); arrow(x, cx - s * 0.7, gy + s * 0.95, cx + s * 0.4, gy + s * 0.95, C.good, wa); K.text(x, 'friction pushes you forward', cx + s * 0.55, gy + s * 0.95, Math.min(fs * 0.82, A.w / 46), { mono: true, c: C.good, al: wa });
-        K.text(x, n >= t.step ? 'no friction, no step' : '', A.cx, gy + s * 1.9, fs * 1.1, { a: 'center', w: 700, al: wa }); } }
-    K.credit(x, A, lanes > 0.5 ? 'worked out here from the real rule, with typical friction numbers (ice 0.03, wood 0.3, rubber 0.7) and gravity 9.81' : 'a drawing: friction comes from electric forces between the atoms of the two surfaces');
-  }
-  return { init: init, draw: draw };
-})();
-
-
-// The page itself: captions, the voice, the ruler of the nine levels, the side arrows, and the flip.
-// Each page has two sides. The front is the rule in charge at one level of physics; the back is its opposite, with the other narrator. Flipping turns
-// the whole page over in 3D (it swaps sides when it is edge-on) and everything on the back runs the other way:
-// ink on paper instead of light on black, the ruler and arrows reversed.
-function Chrome(D, opt) {
-  opt = opt || {};
-  var doc = document, body = doc.body, page = doc.createElement('div'); page.id = 'page';
-  Array.prototype.slice.call(body.childNodes).forEach(function (n) { if (n.nodeName !== 'SCRIPT') page.appendChild(n); });
-  body.insertBefore(page, body.firstChild);
-  var f = doc.createElement('link'); f.rel = 'stylesheet'; f.href = 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500&display=swap'; doc.head.appendChild(f);
-  function el(tag, id, html, cls) { var e = doc.createElement(tag); if (id) e.id = id; if (cls) e.className = cls; e.innerHTML = html || ''; page.appendChild(e); return e; }
-  el('div', 'hud2', '<div class="bk" id="bk"></div><div class="bname" id="bname"></div><div class="bsub" id="bsub"></div>');
-  var cc = el('div', 'cc', '<span id="cap"></span>'); cc.setAttribute('aria-live', 'polite');
-  var snd = el('div', 'snd', '&#128266; Tap anywhere to hear it explained'); snd.setAttribute('role', 'button'); snd.tabIndex = 0;
-  var flipB = el('div', 'flip', ''); flipB.setAttribute('role', 'button'); flipB.tabIndex = 0;
-  var ruler = el('nav', 'ruler', ''); ruler.setAttribute('aria-label', 'The nine levels, from the quark to the universe');
-  var navL = el('a', '', '', 'nav l'), navR = el('a', '', '', 'nav r'), shade = el('div', 'shade', ''), cap = doc.getElementById('cap');
-  var A = [new Audio('./narration.mp3'), new Audio('./narration-flip.mp3')]; A[0].loop = A[1].loop = false; /* each explanation plays once */ A[0].preload = 'auto'; A[1].preload = 'none'; A[0].muted = A[1].muted = true;
-  var subs = [], side = 0, started = false, done = false, userMute = false, t0 = performance.now(), shown = -2, turning = false, fresh = false;
-  function nt() { if (opt.fix != null) return opt.fix + (opt.go ? (performance.now() - t0) / 1000 : 0); var a = A[side]; if (a.ended || done) return 1e9; if (!a.paused && a.readyState > 1 && isFinite(a.currentTime)) return a.currentTime; var s = (performance.now() - t0) / 1000; if (s > D.sides[side].dur + 1) { done = true; setSnd(); } return s; } // once through, then quiet
-  function over() { return done || A[side].ended; }
-  function setSnd() { if (!started) return; snd.classList.add('on'); snd.innerHTML = over() ? '&#8635; Play again' : userMute ? '&#128263; Sound off' : '&#128266; Sound on'; snd.setAttribute('aria-label', userMute ? 'Turn the sound on' : 'Turn the sound off'); }
-  function playSide() { done = false; A[1 - side].pause(); var a = A[side]; a.muted = !started || userMute; try { a.currentTime = 0; } catch (e) {} t0 = performance.now(); shown = -2; var p = a.play(); if (p && p.catch) p.catch(function () {}); }
-  function begin() { if (started) return; started = true; fresh = true; playSide(); setSnd(); }
-  function render() {
-    var n = D.scales.length, lo = D.scales[0].exp, hi = D.scales[n - 1].exp, back = side === 1, me = D.scales[D.i];
-    body.classList.toggle('flip', back);
-    ruler.innerHTML = '<span class="cap l">' + (back ? '← bigger' : '← smaller') + '</span><span class="cap r">' + (back ? 'smaller →' : 'bigger →') + '</span>' + D.scales.map(function (s, i) {
-      var pct = (s.exp - lo) / (hi - lo) * 100; if (back) pct = 100 - pct;
-      return '<a href="https://' + s.domain + '/" class="' + (i === D.i ? 'me ' : '') + (i % 2 ? 'up' : '') + '" style="left:' + pct.toFixed(2) + '%"' + (i === D.i ? ' aria-current="page"' : '') + ' title="Level ' + (i + 1) + ': ' + s.name + ' · ' + s.domain + '"><b>' + (i + 1) + '</b><span>' + s.short + '</span></a>';
-    }).join('');
-    var smaller = D.scales[(D.i - 1 + n) % n], bigger = D.scales[(D.i + 1) % n];
-    function nav(a, s, arrow, word) { a.href = 'https://' + s.domain + '/'; a.title = word + ': ' + s.name; a.setAttribute('aria-label', word + ': ' + s.name); a.innerHTML = '<i>' + arrow + '</i><span>' + word + '<b>' + s.short + '</b></span>'; }
-    var wS = D.i === 0 ? 'the biggest' : 'smaller', wB = D.i === n - 1 ? 'the smallest' : 'bigger';
-    if (back) { nav(navL, bigger, '‹', wB); nav(navR, smaller, '›', wS); } else { nav(navL, smaller, '‹', wS); nav(navR, bigger, '›', wB); }
-    var b = D.sides[1];
-    doc.getElementById('bk').textContent = 'the other side of ' + me.name.toLowerCase() + '  ·  ' + b.size;
-    doc.getElementById('bname').textContent = b.name; doc.getElementById('bsub').textContent = b.sub;
-    flipB.innerHTML = back ? '↩ Flip back' : 'Flip the page ↪'; flipB.title = back ? 'Back to ' + me.name : 'See the opposite: ' + b.name; flipB.setAttribute('aria-label', flipB.title);
-    doc.title = back ? b.name.charAt(0).toUpperCase() + b.name.slice(1) + ' (the other side of ' + me.name + ')' : D.title;
-    var bn = doc.getElementById('bname'); bn.style.animation = 'none'; void bn.offsetWidth; bn.style.animation = '';
-    if (opt.onSide) opt.onSide(side); subs.forEach(function (f) { f(side); });
-  }
-  function flip() { // turn the page: to edge-on, swap sides, and on round
-    if (turning) return; turning = true; var start = performance.now(), dur = 1150, swapped = false, dir = side === 0 ? -1 : 1;
-    (function step(now) {
-      var p = Math.min(1, (now - start) / dur), e, ang;
-      if (p < 0.5) { e = p * 2; e = e * e; ang = dir * 90 * e; }
-      else { if (!swapped) { swapped = true; side = 1 - side; render(); playSide(); setSnd(); } e = (p - 0.5) * 2; e = 1 - (1 - e) * (1 - e); ang = -dir * 90 * (1 - e); }
-      page.style.transform = 'rotateY(' + ang.toFixed(2) + 'deg) scale(' + (1 - 0.14 * Math.sin(p * Math.PI)).toFixed(4) + ')'; shade.style.opacity = (Math.sin(p * Math.PI) * 0.9).toFixed(3);
-      if (p < 1) requestAnimationFrame(step); else { page.style.transform = ''; shade.style.opacity = 0; turning = false; }
-    })(start);
-  }
-  addEventListener('pointerdown', function () { if (!started) begin(); }, { passive: true });
-  function sndTap() { if (over()) { userMute = false; playSide(); setSnd(); return; } userMute = !userMute; A[side].muted = userMute; setSnd(); }
-  snd.addEventListener('click', function () { if (fresh) { fresh = false; return; } sndTap(); });
-  A.forEach(function (a) { a.addEventListener('ended', setSnd); });
-  flipB.addEventListener('click', function () { fresh = false; flip(); });
-  addEventListener('click', function (e) { if (e.target !== snd) fresh = false; });
-  addEventListener('keydown', function (e) {
-    if (e.altKey || e.ctrlKey || e.metaKey || (e.target && e.target.closest && e.target.closest('#ask'))) return; var first = !started; if (first) begin();
-    if (e.key === 'ArrowLeft') location.href = navL.href; else if (e.key === 'ArrowRight') location.href = navR.href;
-    else if (e.key === 'f' || e.key === 'F' || ((e.key === 'Enter' || e.key === ' ') && e.target === flipB)) { e.preventDefault(); flip(); }
-    else if (!first && (e.key === 'Enter' || e.key === ' ') && e.target === snd) sndTap();
-  });
-  render();
-  var p0 = A[0].play(); if (p0 && p0.catch) p0.catch(function () {});
-  (function tick() { requestAnimationFrame(tick); var n = nt(), cues = D.sides[side].cues, q = -1; for (var j = 0; j < cues.length; j++) { if (n >= cues[j][0] && n < cues[j][1]) { q = j; break; } } if (q !== shown) { shown = q; cap.textContent = q < 0 ? '' : cues[q][2]; } })();
-  var api = { side: function () { return side; }, nt: nt, flip: flip, hush: function () { A[side].pause(); done = true; setSnd(); }, onSide: function (f) { subs.push(f); } };
-  if (D.chat && typeof Chat === 'function') Chat(D, api, page);
-  return api;
-}
-
-// Talking to the page. A visitor types or speaks a question; the answer comes back as text and is read aloud in the
-// voice of the side they are on. The server (D.chat) is told which scale and which side, so the page knows what it is
-// showing. Replies are spoken with the browser's own voice (a different one on the back of the page). The pictures are
-// timed to the narrator, so opening the chat only quiets the narrator: the film stays where it is.
-function Chat(D, CH, page) {
-  var doc = document, API = D.chat.replace(/\/+$/, ''), SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  var busy = false, voice = true, hist = [], rec = null, au = null, greeted = [false, false], lastSide = -1;
-  function mk(tag, id, html) { var e = doc.createElement(tag); e.id = id; e.innerHTML = html || ''; page.appendChild(e); return e; }
-  var btn = mk('button', 'askb', ''); btn.type = 'button';
-  var box = mk('section', 'ask', '<header><div><b id="askwho"></b><span id="askon"></span></div><button type="button" id="askv"></button><button type="button" id="askx" aria-label="Close" title="Close">&times;</button></header><div id="asklog" role="log" aria-live="polite"></div><div id="askchips"></div><form id="askf"><button type="button" id="askm" aria-label="Ask by voice" title="Ask by voice">&#127908;</button><input id="aski" maxlength="400" autocomplete="off" enterkeyhint="send"><button id="asks" aria-label="Send" title="Send">&uarr;</button></form>');
-  box.setAttribute('aria-label', 'Talk to the page');
-  function $(id) { return doc.getElementById(id); }
-  var logE = $('asklog'), inp = $('aski'), chips = $('askchips'), micB = $('askm'), vB = $('askv');
-  if (!SR) micB.style.display = 'none';
-  function front() { return D.scales[D.i].name; } function back() { return D.sides[1].name; }
-  function now() { return CH.side() ? back() : front(); }
-  function isOpen() { return box.classList.contains('open'); }
-  function add(cls, text, tag) { var p = doc.createElement(tag || 'p'); p.className = cls; p.textContent = text; logE.appendChild(p); logE.scrollTop = 1e6; return p; }
-  function setVoice() { vB.innerHTML = voice ? '&#128266;' : '&#128263;'; vB.className = voice ? '' : 'off'; vB.title = voice ? 'Answers are read aloud. Tap to turn that off.' : 'Answers are silent. Tap to hear them.'; vB.setAttribute('aria-label', vB.title); }
-  function paint() { // everything that depends on which side is showing
-    var s = CH.side(), lc = now().toLowerCase();
-    btn.textContent = isOpen() ? 'Close the chat' : 'Ask about ' + lc; btn.classList.toggle('open', isOpen());
-    $('askwho').textContent = 'The A.I. on this page'; $('askon').textContent = (s ? 'the back: ' : 'the front: ') + lc;
-    inp.placeholder = 'Ask about ' + lc + '…';
-    var qs = s ? ['What am I looking at?', 'Why is this the opposite?', 'Is that known for sure?'] : ['What am I looking at?', 'Is that really true?', 'How do we know?'];
-    chips.innerHTML = ''; qs.forEach(function (q) { var b = doc.createElement('button'); b.type = 'button'; b.textContent = q; b.onclick = function () { send(q); }; chips.appendChild(b); });
-    if (!isOpen()) return;
-    if (lastSide >= 0 && lastSide !== s) add('', (s ? 'you turned the page: now ' : 'you turned back: now ') + lc, 'i');
-    if (!greeted[s]) {
-      greeted[s] = true;
-      add('ai', s ? 'As far as I can tell, you are now looking at ' + lc + ', which this page calls the reverse of ' + front().toLowerCase() + '. What are you wondering?'
-        : 'From what I can tell, you are looking at ' + lc + '. I do not know everything about it, but I like working it out. What would you like to know?');
-    }
-    lastSide = s;
-  }
-  function hushSay() { if (au) { au.pause(); au = null; } if (window.speechSynthesis) speechSynthesis.cancel(); }
-  function show(on) { box.classList.toggle('open', on); paint(); if (on) { try { inp.focus({ preventScroll: true }); } catch (e) {} } else { hushSay(); if (rec) rec.abort(); } }
-  function say(text, side) {
-    hushSay(); if (!voice || !window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
-    var u = new SpeechSynthesisUtterance(text), en = /^en/i.test(navigator.language || 'en');
-    if (en) { var vs = speechSynthesis.getVoices().filter(function (v) { return /^en/i.test(v.lang); }); if (vs.length) u.voice = vs[side ? Math.min(1, vs.length - 1) : 0]; }
-    u.rate = 0.98; u.pitch = side ? 0.85 : 1.05; speechSynthesis.speak(u);
-  }
-  function send(text) {
-    text = String(text || '').trim().slice(0, 400); if (!text || busy) return;
-    busy = true; $('asks').disabled = true; inp.value = ''; CH.hush(); hushSay();
-    var side = CH.side(), q = { role: 'user', content: text, side: side }; add('me', text); var b = add('ai wait', '');
-    fetch(API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ key: D.key, side: side, messages: hist.slice(-12).concat([q]) }) })
-      .then(function (r) {
-        if (!r.ok) throw r.status; var rd = r.body.getReader(), dec = new TextDecoder(), all = '';
-        return (function pump() { return rd.read().then(function (x) { if (x.done) return all; all += dec.decode(x.value, { stream: true }); b.textContent = all.split('\u001e')[0]; logE.scrollTop = 1e6; return pump(); }); })();
-      })
-      .then(function (all) { var p = all.split('\u001e'), t = p[0].trim(); if (!t) throw 0; b.textContent = t; hist.push(q, { role: 'assistant', content: t, side: side }); say(t, side); })
-      .catch(function (e) { b.classList.add('err'); b.textContent = e === 429 ? 'I need a short rest: a lot of people are asking me things. Could you try again in a minute?' : 'Hmm, I lost my train of thought. Could you ask me that again?'; })
-      .then(function () { busy = false; $('asks').disabled = false; b.classList.remove('wait'); logE.scrollTop = 1e6; });
-  }
-  btn.onclick = function () { show(!isOpen()); };
-  $('askx').onclick = function () { show(false); };
-  vB.onclick = function () { voice = !voice; if (!voice) hushSay(); setVoice(); };
-  $('askf').onsubmit = function (e) { e.preventDefault(); send(inp.value); };
-  box.addEventListener('keydown', function (e) { if (e.key === 'Escape') { show(false); btn.focus(); } });
-  if (SR) micB.onclick = function () {
-    if (rec) { rec.stop(); return; }
-    CH.hush(); hushSay(); var r = rec = new SR(), heard = '';
-    r.lang = navigator.language || 'en-US'; r.interimResults = true;
-    r.onresult = function (e) { heard = ''; for (var i = 0; i < e.results.length; i++) heard += e.results[i][0].transcript; inp.value = heard; };
-    r.onerror = function (e) { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') add('ai err', 'I could not use the microphone. You can type to me instead.'); };
-    r.onend = function () { if (rec === r) rec = null; micB.classList.remove('on'); if (heard.trim()) send(heard); };
-    try { r.start(); micB.classList.add('on'); } catch (e) { rec = null; }
-  };
-  CH.onSide(function () { hushSay(); paint(); });
-  setVoice(); paint();
-}
-
-
-// ---------------------------------------------------------------- page
-var cv = document.getElementById('c'), cx = cv.getContext('2d'), W = 0, Hh = 0, dpr = 1, me = D.scales[D.i];
-document.getElementById('k').innerHTML = 'Level ' + (D.i + 1) + ' of ' + D.scales.length + ' · <b>' + me.size + '</b>';
-document.getElementById('name').textContent = me.name;
-document.getElementById('sub').textContent = me.sub;
-var QS = new URLSearchParams(location.search), CH = Chrome(D, QS.get('n') != null ? { fix: +QS.get('n'), go: QS.get('go') != null } : {}); // ?n=seconds holds the film at that moment (&go lets it run on from there)
-function fit() { dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; Hh = innerHeight; cv.width = Math.round(W * dpr); cv.height = Math.round(Hh * dpr); cx.setTransform(dpr, 0, 0, dpr, 0, 0); }
-addEventListener('resize', fit); fit();
-var last = performance.now(), T = 0, Tb = 0, inited = [false, false];
-if (QS.get('flip') != null) CH.flip();
-function frame(now) {
-  requestAnimationFrame(frame);
-  var dt = Math.min(0.05, (now - last) / 1000); last = now; var s = CH.side(), sc = s ? SCENE2 : SCENE;
-  if (s) Tb += dt; else T += dt;
-  if (!inited[s]) { inited[s] = true; sc.init(W, Hh); }
-  cx.globalCompositeOperation = 'source-over'; cx.globalAlpha = 1;
-  sc.draw(cx, W, Hh, s ? Tb : T, dt, CH.nt());
-}
-requestAnimationFrame(frame);
-})();
+  // The robot says its line out loud: straight away where the browser allows sound, otherwise on the first tap.
+  var a = document.getElementById('voice'), bot = document.getElementById('bot'), said = false;
+  function say() { a.currentTime = 0; var p = a.play(); if (p) p.then(function () { said = true; }).catch(function () {}); }
+  a.addEventListener('play', function () { bot.classList.add('talk'); });
+  a.addEventListener('pause', function () { bot.classList.remove('talk'); });
+  a.addEventListener('ended', function () { bot.classList.remove('talk'); });
+  document.getElementById('hear').addEventListener('click', function (e) { e.stopPropagation(); say(); });
+  bot.addEventListener('click', function (e) { e.stopPropagation(); say(); });
+  bot.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); say(); } });
+  document.addEventListener('pointerdown', function first() { document.removeEventListener('pointerdown', first); if (!said) say(); });
+  setTimeout(say, 900);
 </script>
 </body>
 </html>
